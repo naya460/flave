@@ -1,0 +1,13 @@
+{
+	"useTabs": true,
+	"trailingComma": "es5",
+	"printWidth": 80,
+	"overrides": [
+		{
+			"files": "*.ts",
+			"options": {
+				"useTabs": false
+			}
+		}
+	]
+}
