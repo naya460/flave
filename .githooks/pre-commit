@@ -1,0 +1,23 @@
+#!/bin/sh
+
+echo "=== web ==="
+cd web
+npx lint-staged
+
+if [ $? -ne 0 ]; then
+    return $?
+fi
+
+echo ""
+echo "=== server ==="
+cd ../server
+npx lint-staged
+
+if [ $? -ne 0 ]; then
+    return $?
+fi
+
+echo ""
+
+# apply formatted files
+git add --all
