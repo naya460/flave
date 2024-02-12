@@ -8,3 +8,14 @@ services:
       - ./web:/web
     working_dir: /web
     entrypoint: npm run dev
+    depends_on:
+      - server
+
+  server:
+    image: node:20-alpine
+    ports:
+      - 8080:8080
+    volumes:
+      - ./server:/server
+    working_dir: /server
+    entrypoint: npm run dev
