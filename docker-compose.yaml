@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    image: node:20-alpine
+    ports:
+      - 3000:5173
+    volumes:
+      - ./web:/web
+    working_dir: /web
+    entrypoint: npm run dev
