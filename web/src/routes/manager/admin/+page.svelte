@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { PageData } from "./$types";
+  import Index from "$lib/gui/common/list/list.svelte";
+
   export let data: PageData;
 </script>
 
-{#each data.json as user}
-  <p>id: {user._id}, name: {user.name}</p>
-{/each}
+<Index initial_items={data.items} />
 
 <form
   on:submit={(event) => {
