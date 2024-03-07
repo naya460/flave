@@ -5,7 +5,11 @@
   export let data: PageData;
 </script>
 
-<List initial_items={data.items} />
+<List
+  initial_items={data.items.map((value) => {
+    return `id: ${value.id}, name: ${value.name}`;
+  })}
+/>
 
 <form
   on:submit={(event) => {
