@@ -7,7 +7,7 @@
 
 <List
   initial_items={data.items.map((value) => {
-    return `id: ${value.id}, name: ${value.name}`;
+    return { title: value.name, description: value.id };
   })}
 />
 
