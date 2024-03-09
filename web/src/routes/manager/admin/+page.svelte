@@ -17,7 +17,7 @@
     const data = JSON.stringify({
       name: form_data.get("name"),
     });
-    fetch(`http://${location.hostname}:8080/flave/user/add`, {
+    fetch(`http://${location.hostname}:8080/users`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: data,
@@ -25,6 +25,6 @@
   }}
 >
   <label for="name">name</label>
-  <input type="text" id="name" autocomplete="off" />
+  <input type="text" id="name" name="name" autocomplete="off" />
   <button>add</button>
 </form>
