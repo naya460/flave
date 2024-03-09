@@ -1,11 +1,12 @@
 import { apiRoute } from "lib/api_route";
-import { mongoClient } from "lib/mongo";
+import { createUser } from "mongo/user/create_user";
+import { getUserList } from "mongo/user/get_list";
 
 export const flvUserRoute: apiRoute = (server, opt, done) => {
   // get user list
-  server.get("/", async (_, res) => {
+  server.get("/", async (req, res) => {
     res.type("application/json");
-    return await mongoClient.db("flave").collection("user").find({}).toArray();
+    return await getUserList();
   });
 
   // create user
@@ -16,7 +17,7 @@ export const flvUserRoute: apiRoute = (server, opt, done) => {
   }>("/", async (req, res) => {
     const name = req.body.name;
     if (!name) return;
-    mongoClient.db("flave").collection("user").insertOne({ name });
+    await createUser(name, name);
     res.status(200);
   });
 
