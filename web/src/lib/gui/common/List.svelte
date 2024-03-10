@@ -20,12 +20,14 @@
   .top {
     display: grid;
     grid-template-rows: auto;
-    background-color: #dddddd;
-    gap: 1px;
+    gap: 0.4rem;
+    margin: 0.4rem 0;
   }
 
   .item {
     background-color: #ffffff;
+    padding: 0.5rem;
+    box-shadow: 0 0 1px #000000;
   }
 
   .description {
