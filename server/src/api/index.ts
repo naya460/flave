@@ -1,4 +1,4 @@
-import { apiRoute } from "lib/api_route";
+import { apiRoute } from "lib/fastify";
 import { flvUserRoute } from "./users";
 
 export const flvApiRoute: apiRoute = (server, opt, done) => {

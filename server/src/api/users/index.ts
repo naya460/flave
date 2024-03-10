@@ -1,6 +1,6 @@
-import { apiRoute } from "lib/api_route";
-import { createUser } from "mongo/user/create_user";
+import { apiRoute } from "lib/fastify";
 import { getUserList } from "mongo/user/get_list";
+import { flvCreateUserHandler, flvCreateUserSchema } from "./create_user";
 
 export const flvUserRoute: apiRoute = (server, opt, done) => {
   // get user list
@@ -10,16 +10,7 @@ export const flvUserRoute: apiRoute = (server, opt, done) => {
   });
 
   // create user
-  server.post<{
-    Body: {
-      name: "string";
-    };
-  }>("/", async (req, res) => {
-    const name = req.body.name;
-    if (!name) return;
-    await createUser(name, name);
-    res.status(200);
-  });
+  server.post("/", { schema: flvCreateUserSchema }, flvCreateUserHandler);
 
   done();
 };
