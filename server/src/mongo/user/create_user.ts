@@ -1,5 +1,5 @@
 import { FromSchema } from "json-schema-to-ts";
-import { mongoClient } from "lib/mongo";
+import { mongoClient, mongoHandler } from "lib/mongo";
 
 export const createUserData = {
   type: "object",
@@ -11,23 +11,26 @@ export const createUserData = {
   required: ["auth_id", "name", "hash"],
 } as const;
 
-export async function createUser(
-  auth_id: string,
-  hash: string
-): Promise<{ ok: boolean; data: FromSchema<typeof createUserData> }> {
-  const data = {
-    auth_id,
-    name: auth_id,
-    hash,
+export const createUser: mongoHandler<
+  {
+    auth_id: string;
+    hash: string;
+  },
+  FromSchema<typeof createUserData>
+> = async (data) => {
+  const doc = {
+    auth_id: data.auth_id,
+    name: data.auth_id,
+    hash: data.hash,
   };
 
   const result = await mongoClient
     .db("flave")
     .collection("user")
-    .insertOne(data);
+    .insertOne(doc);
 
   return {
     ok: result.acknowledged,
-    data,
+    data: doc,
   };
-}
+};

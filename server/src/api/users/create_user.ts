@@ -34,7 +34,7 @@ export const flvCreateUserHandler: apiHandler<{
   }
   const hash = await bcrypt.hash(password, 10);
 
-  const result = await createUser(auth_id, hash);
+  const result = await createUser({ auth_id, hash });
   if (result.ok === false) {
     res.status(400);
     return;
