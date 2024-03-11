@@ -7,7 +7,10 @@
 
 <List
   initial_items={data.items.map((value) => {
-    return { title: value.name, description: value.id };
+    return {
+      title: value.name,
+      description: `_id: ${value.id}, auth_id: ${value.auth_id}`,
+    };
   })}
 />
 
