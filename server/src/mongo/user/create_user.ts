@@ -1,5 +1,6 @@
 import { FromSchema } from "json-schema-to-ts";
-import { mongoClient, mongoHandler } from "lib/mongo";
+import { mongoHandler } from "lib/mongo";
+import { flvUserCollection } from "mongo/collections/flave/user";
 
 export const createUserData = {
   type: "object",
@@ -24,10 +25,7 @@ export const createUser: mongoHandler<
     hash: data.hash,
   };
 
-  const result = await mongoClient
-    .db("flave")
-    .collection("user")
-    .insertOne(doc);
+  const result = await flvUserCollection.insertOne(doc);
 
   return {
     ok: result.acknowledged,

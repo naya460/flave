@@ -1,5 +1,7 @@
-import { mongoClient } from "lib/mongo";
+import { flvUserCollection } from "mongo/collections/flave/user";
 
 export async function getUserList() {
-  return await mongoClient.db("flave").collection("user").find({}).toArray();
+  return await flvUserCollection
+    .find({}, { projection: { name: true, auth_id: true, admin: true } })
+    .toArray();
 }
