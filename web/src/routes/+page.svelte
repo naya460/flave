@@ -7,12 +7,12 @@
       auth_id: form_data.get("auth_id"),
       password: form_data.get("password"),
     });
-    const res = await fetch(`http://${location.hostname}:8080/sessions`, {
+    await fetch(`http://${location.hostname}:8080/sessions`, {
       method: "post",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: data,
     });
-    console.log(await res.json());
   }}
 >
   <label for="auth_id">auth_id</label>

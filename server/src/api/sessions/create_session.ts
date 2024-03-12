@@ -38,8 +38,12 @@ export const flvCreateSessionHandler: apiHandler<{
     }
 
     res.status(200);
-    res.type("application/json");
-    return { session: session.toString() };
+    res.setCookie("session", session.toString(), {
+      path: "/",
+      httpOnly: true,
+      maxAge: 3600,
+    });
+    return;
   } else {
     res.status(400);
     return;

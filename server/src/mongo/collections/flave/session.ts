@@ -10,4 +10,7 @@ export const flvSessionCollection = mongoClient
   .db("flave")
   .collection<flvSessionType>("session");
 
-flvSessionCollection.createIndex({ created_at: 1 }, { expireAfterSeconds: 10 });
+flvSessionCollection.createIndex(
+  { created_at: 1 },
+  { expireAfterSeconds: 3600 }
+);
