@@ -1,18 +1,18 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import List from "$lib/gui/common/List.svelte";
+  import Cards from "$lib/gui/common/Cards.svelte";
 
   export let data: PageData;
 </script>
 
-<List
-  initial_items={data.items.map((value) => {
-    return {
-      title: value.name,
-      description: `_id: ${value.id}, auth_id: ${value.auth_id}`,
-    };
-  })}
-/>
+<Cards items={data.items}>
+  <div slot="item" let:item>
+    <div>{item.name}</div>
+    <div>id: {item.id}</div>
+    <div>auth_id: {item.auth_id}</div>
+    {#if item.admin === true}ADMIN{/if}
+  </div>
+</Cards>
 
 <form
   on:submit={(event) => {
