@@ -2,6 +2,7 @@ import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
 import { getUserHash } from "mongo/user/get_hash";
 import bcrypt from "bcrypt";
+import { createSession } from "mongo/session/create_session";
 
 const bodySchema = {
   type: "object",
@@ -22,17 +23,23 @@ export const flvCreateSessionHandler: apiHandler<{
   const auth_id = req.body.auth_id;
   const password = req.body.password;
 
-  const hash = await getUserHash(auth_id);
-  if (hash === null) {
+  const user = await getUserHash(auth_id);
+  if (user === null) {
     res.status(400);
     return;
   }
 
-  const match = await bcrypt.compare(password, hash);
+  const match = await bcrypt.compare(password, user.hash);
   if (match) {
+    const session = await createSession(user.id);
+    if (session === null) {
+      res.status(400);
+      return;
+    }
+
     res.status(200);
     res.type("application/json");
-    return { ok: true };
+    return { session: session.toString() };
   } else {
     res.status(400);
     return;

@@ -9,5 +9,8 @@ export async function getUserHash(auth_id: string) {
     return null;
   }
 
-  return result[0].hash;
+  return {
+    id: result[0]._id,
+    hash: result[0].hash,
+  };
 }
