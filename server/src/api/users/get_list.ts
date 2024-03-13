@@ -1,6 +1,4 @@
-import { apiHandler } from "lib/fastify";
-import { getSession } from "mongo/session/get_session";
-import { checkAdminUser } from "mongo/user/check_admin";
+import { apiHandler, checkAuth } from "lib/fastify";
 import { getUserList } from "mongo/user/get_list";
 import { FromSchema } from "json-schema-to-ts";
 
@@ -18,19 +16,8 @@ const replySchema = {
 export const flvGetUserListHandler: apiHandler<{
   Reply: FromSchema<typeof replySchema>;
 }> = async (req, res) => {
-  const session = req.cookies.session;
-  if (session === undefined) {
-    res.status(400);
-    return;
-  }
-
-  const user_id = (await getSession(session)).user_id;
-  const is_admin = await checkAdminUser(user_id);
-
-  if (is_admin === false) {
-    res.status(400);
-    return;
-  }
+  const auth = checkAuth("admin", req, res);
+  if (auth === null) return;
 
   res.type("application/json");
   return await getUserList();
