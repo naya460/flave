@@ -2,6 +2,7 @@ import { mongoClient } from "lib/mongo";
 import { ObjectId } from "mongodb";
 
 type flvSessionType = {
+  session_id: string;
   user_id: ObjectId;
   created_at: Date;
 };

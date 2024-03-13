@@ -38,7 +38,7 @@ export const flvCreateSessionHandler: apiHandler<{
     }
 
     res.status(200);
-    res.setCookie("session", session.toString(), {
+    res.setCookie("session", session, {
       path: "/",
       httpOnly: true,
       maxAge: 3600,
