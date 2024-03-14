@@ -4,30 +4,49 @@
 
 <a href="/">top page</a>
 
-<form
-  on:submit={async (event) => {
-    const form_data = new FormData(event.currentTarget);
-    const data = JSON.stringify({
-      auth_id: form_data.get("auth_id"),
-      password: form_data.get("password"),
-    });
-    const result = await fetch(`http://${location.hostname}:8080/sessions`, {
-      method: "post",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: data,
-    });
+<div class="top">
+  <form
+    class="form"
+    on:submit={async (event) => {
+      const form_data = new FormData(event.currentTarget);
+      const data = JSON.stringify({
+        auth_id: form_data.get("auth_id"),
+        password: form_data.get("password"),
+      });
+      const result = await fetch(`http://${location.hostname}:8080/sessions`, {
+        method: "post",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: data,
+      });
 
-    if (result.ok === true) {
-      location.assign("/");
-    }
-  }}
->
-  <label for="auth_id">auth_id</label>
-  <TextInput id="auth_id" name="auth_id" />
+      if (result.ok === true) {
+        location.assign("/");
+      }
+    }}
+  >
+    <label for="auth_id">Auth ID</label>
+    <TextInput id="auth_id" name="auth_id" />
 
-  <label for="password">password</label>
-  <TextInput type="password" id="password" name="password" />
+    <label for="password">Password</label>
+    <TextInput type="password" id="password" name="password" />
 
-  <button>sign in</button>
-</form>
+    <button>sign in</button>
+  </form>
+</div>
+
+<style>
+  .top {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    width: min(20rem, 90%);
+    gap: 0.2rem;
+  }
+</style>
