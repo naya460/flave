@@ -16,7 +16,7 @@ const replySchema = {
 export const flvGetUserListHandler: apiHandler<{
   Reply: FromSchema<typeof replySchema>;
 }> = async (req, res) => {
-  const auth = checkAuth("admin", req, res);
+  const auth = await checkAuth("admin", req, res);
   if (auth === null) return;
 
   res.type("application/json");
