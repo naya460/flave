@@ -1,4 +1,5 @@
 <script>
+  import Button from "$lib/gui/common/Button.svelte";
   import TextInput from "$lib/gui/common/TextInput.svelte";
 </script>
 
@@ -31,7 +32,7 @@
     <label for="password">Password</label>
     <TextInput type="password" id="password" name="password" />
 
-    <button>sign in</button>
+    <Button style="filled">Sign In</Button>
   </form>
 </div>
 
