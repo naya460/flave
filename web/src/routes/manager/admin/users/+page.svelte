@@ -1,9 +1,12 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import Cards from "$lib/gui/common/Cards.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
 
   export let data: PageData;
 </script>
+
+<Button style="text">Create User</Button>
 
 <Cards items={data.items}>
   <div slot="item" let:item>
