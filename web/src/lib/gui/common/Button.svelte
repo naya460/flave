@@ -3,6 +3,7 @@
 </script>
 
 <button
+  on:click
   class="main"
   class:filled={style === "filled"}
   class:outline={style === "outline"}
