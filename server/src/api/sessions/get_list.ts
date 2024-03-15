@@ -1,5 +1,5 @@
 import { apiHandler, checkAuth } from "lib/fastify";
-import { getSessionList } from "mongo/session/get_list";
+import { getSessionList } from "mongo/sessions/get_list";
 import { FromSchema } from "json-schema-to-ts";
 
 const replySchema = {

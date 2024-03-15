@@ -9,7 +9,7 @@ import {
   RouteGenericInterface,
   RouteHandlerMethod,
 } from "fastify";
-import { getSession } from "mongo/session/get_session";
+import { getSession } from "mongo/sessions/get_session";
 import { checkAdminUser } from "mongo/user/check_admin";
 
 export type apiRoute = (
@@ -38,8 +38,13 @@ export const checkAuth = async (
     res?.status(401);
     return null;
   }
+  console.log("ok");
 
-  const user_id = (await getSession(session)).user_id;
+  const user_id = (await getSession(session))?.user_id;
+  if (user_id === undefined) {
+    res?.status(400);
+    return null;
+  }
 
   if (type === "admin") {
     const is_admin = await checkAdminUser(user_id);
