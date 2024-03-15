@@ -1,5 +1,5 @@
 import { FromSchema } from "json-schema-to-ts";
-import { apiHandler } from "lib/fastify";
+import { apiHandler, checkAuth } from "lib/fastify";
 import { getUserHash } from "mongo/user/get_hash";
 import bcrypt from "bcrypt";
 import { createSession } from "mongo/session/create_session";
@@ -20,6 +20,12 @@ export const flvCreateSessionSchema = {
 export const flvCreateSessionHandler: apiHandler<{
   Body: FromSchema<typeof bodySchema>;
 }> = async (req, res) => {
+  const auth = await checkAuth("auth", req);
+  if (auth !== null) {
+    res.status(400);
+    return;
+  }
+
   const auth_id = req.body.auth_id;
   const password = req.body.password;
 

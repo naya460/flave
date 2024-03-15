@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import TextInput from "$lib/gui/common/TextInput.svelte";
 </script>

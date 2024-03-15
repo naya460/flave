@@ -31,11 +31,11 @@ type Auth = "auth" | "admin";
 export const checkAuth = async (
   type: Auth,
   req: FastifyRequest,
-  res: FastifyReply
+  res?: FastifyReply
 ) => {
   const session = req.cookies.session;
   if (session === undefined) {
-    res.status(400);
+    res?.status(401);
     return null;
   }
 
@@ -45,7 +45,7 @@ export const checkAuth = async (
     const is_admin = await checkAdminUser(user_id);
 
     if (is_admin === false) {
-      res.status(400);
+      res?.status(403);
       return null;
     }
   }

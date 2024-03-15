@@ -14,7 +14,6 @@ export const flvGetSessionListHandler: apiHandler<{
   Reply: FromSchema<typeof replySchema>;
 }> = async (req, res) => {
   const auth = await checkAuth("admin", req, res);
-  console.log(auth);
   if (auth === null) return;
 
   res.status(200);
