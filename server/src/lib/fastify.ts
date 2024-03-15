@@ -38,7 +38,6 @@ export const checkAuth = async (
     res?.status(401);
     return null;
   }
-  console.log("ok");
 
   const user_id = (await getSession(session))?.user_id;
   if (user_id === undefined) {

@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
 	const json = await res.json();
 	const ok: boolean = json.ok;
 
-	if (ok) {
-		redirect(302, "/");
+	if (ok === false) {
+		redirect(302, "/signin");
 	}
 };

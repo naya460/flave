@@ -1,31 +1,37 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import TextInput from "$lib/gui/common/TextInput.svelte";
-</script>
 
-<a href="/">top page</a>
+  const onSubmit = async (
+    event: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
+  ) => {
+    event.preventDefault();
+    const form_data = new FormData(event.currentTarget);
+    const data = JSON.stringify({
+      auth_id: form_data.get("auth_id"),
+      password: form_data.get("password"),
+    });
+    const result = await fetch(`http://${location.hostname}:8080/sessions`, {
+      method: "post",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: data,
+    });
 
-<div class="top">
-  <form
-    class="form"
-    on:submit={async (event) => {
-      const form_data = new FormData(event.currentTarget);
-      const data = JSON.stringify({
-        auth_id: form_data.get("auth_id"),
-        password: form_data.get("password"),
-      });
-      const result = await fetch(`http://${location.hostname}:8080/sessions`, {
-        method: "post",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: data,
-      });
-
-      if (result.ok === true) {
+    if (result.ok === true) {
+      const param = new URLSearchParams(location.search);
+      const next = param.get("next");
+      if (next !== null) {
+        location.assign(next);
+      } else {
         location.assign("/");
       }
-    }}
-  >
+    }
+  };
+</script>
+
+<div class="top">
+  <form class="form" on:submit={onSubmit}>
     <label for="auth_id">Auth ID</label>
     <TextInput id="auth_id" name="auth_id" />
 
