@@ -20,10 +20,13 @@
 <style>
   .top {
     position: fixed;
+    display: flex;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
+    align-items: center;
+    justify-content: center;
   }
 
   .background {
@@ -40,8 +43,6 @@
     background-color: rgb(255, 255, 255);
     width: 20rem;
     height: 20rem;
-    margin: 50%;
-    transform: translate(-50%, -50%);
     padding: 1rem;
     box-sizing: border-box;
     border-radius: 0.5rem;
