@@ -12,7 +12,7 @@ const paramsSchema = {
 } as const;
 
 const replySchema = {
-  type: "array",
+  type: ["object", "null"],
   properties: {
     name: { type: "string" },
   },
@@ -26,9 +26,10 @@ export const flvGetUserDataSchema = {
 
 export const flvGetUserDataHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
+  Reply: FromSchema<typeof replySchema>;
 }> = async (req, res) => {
   const auth = await checkAuth("auth", req, res);
-  if (auth === null) return;
+  if (auth === null) return null;
 
   res.status(200);
   res.type("application/json");

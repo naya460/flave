@@ -15,11 +15,19 @@ export const load: PageLoad = async ({ fetch, url }) => {
 
 	const user_res = await fetch(
 		`http://${url.hostname}:8080/users/${json.user_id}`,
-		{
-			credentials: "include",
-		}
+		{ credentials: "include" }
 	);
 	const user_json = await user_res.json();
 
-	return { user_id: json.user_id, name: user_json.name };
+	const workspaces = await fetch(
+		`http://${url.hostname}:8080/users/${json.user_id}/workspaces`,
+		{ credentials: "include" }
+	);
+	const workspaces_json: { name: string }[] = await workspaces.json();
+
+	return {
+		user_id: json.user_id,
+		name: user_json.name,
+		workspaces: workspaces_json,
+	};
 };

@@ -1,7 +1,7 @@
 import { apiRoute } from "lib/fastify";
 import { flvCreateUserHandler, flvCreateUserSchema } from "./create_user";
 import { flvGetUserListHandler } from "./get_list";
-import { flvGetUserDataHandler, flvGetUserDataSchema } from "./_id";
+import { flvUserIdRoute } from "./id";
 
 export const flvUserRoute: apiRoute = (server, opt, done) => {
   // get user list
@@ -10,12 +10,8 @@ export const flvUserRoute: apiRoute = (server, opt, done) => {
   // create user
   server.post("/", { schema: flvCreateUserSchema }, flvCreateUserHandler);
 
-  // get user data
-  server.get(
-    "/:user_id",
-    { schema: flvGetUserDataSchema },
-    flvGetUserDataHandler
-  );
+  // routes with user id
+  server.register(flvUserIdRoute);
 
   done();
 };

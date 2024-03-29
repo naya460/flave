@@ -1,5 +1,6 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
+  import Cards from "$lib/gui/common/Cards.svelte";
   import type { PageData } from "./$types";
   export let data: PageData;
 
@@ -18,3 +19,9 @@
 <a href="/manager">manager</a>
 <br />
 <Button style="text" on:click={handleSignOut}>sign out</Button>
+
+<Cards items={data.workspaces}>
+  <div slot="item" let:item>
+    <div>{item.name}</div>
+  </div>
+</Cards>
