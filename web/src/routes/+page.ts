@@ -12,4 +12,6 @@ export const load: PageLoad = async ({ fetch, url }) => {
 	if (ok === false) {
 		redirect(302, "/signin");
 	}
+
+	return { user_id: json.user_id };
 };

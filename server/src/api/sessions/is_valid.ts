@@ -5,6 +5,7 @@ const replySchema = {
   type: "object",
   properties: {
     ok: { type: "boolean" },
+    user_id: { type: "string" },
   },
   required: ["ok"],
 } as const;
@@ -16,7 +17,7 @@ export const flvIsSessionValidHandler: apiHandler<{
 
   if (auth) {
     res.status(200);
-    return { ok: true };
+    return { ok: true, user_id: auth.toString() };
   } else {
     res.status(200);
     return { ok: false };
