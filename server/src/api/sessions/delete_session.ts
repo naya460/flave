@@ -1,4 +1,5 @@
-import { apiHandler, checkAuth } from "lib/fastify";
+import { apiHandler } from "lib/fastify";
+import { checkAuth } from "api/common/check_auth";
 import { deleteSession } from "mongo/sessions/delete_session";
 
 export const flvDeleteSessionHandler: apiHandler<{

@@ -1,4 +1,5 @@
-import { apiHandler, checkAuth } from "lib/fastify";
+import { apiHandler } from "lib/fastify";
+import { checkAuth } from "api/common/check_auth";
 import { getUserData } from "mongo/user/get_user_data";
 import { FromSchema } from "json-schema-to-ts";
 

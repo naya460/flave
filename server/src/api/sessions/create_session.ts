@@ -1,5 +1,6 @@
 import { FromSchema } from "json-schema-to-ts";
-import { apiHandler, checkAuth } from "lib/fastify";
+import { apiHandler } from "lib/fastify";
+import { checkAuth } from "api/common/check_auth";
 import { getUserHash } from "mongo/user/get_hash";
 import bcrypt from "bcrypt";
 import { createSession } from "mongo/sessions/create_session";

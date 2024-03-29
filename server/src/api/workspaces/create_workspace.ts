@@ -1,5 +1,6 @@
 import { FromSchema } from "json-schema-to-ts";
-import { apiHandler, checkAuth } from "lib/fastify";
+import { apiHandler } from "lib/fastify";
+import { checkAuth } from "api/common/check_auth";
 import { createWorkspace } from "mongo/workspaces/create_workspace";
 
 const bodySchema = {

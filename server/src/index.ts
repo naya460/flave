@@ -10,4 +10,10 @@ server.register(fastifyCookie);
 
 server.register(flvApiRoute);
 
-server.listen({ host: "0.0.0.0", port: 8080 });
+server.listen({ host: "0.0.0.0", port: 8080 }, (err, address) => {
+  if (err === null) {
+    console.log(`listen: ${address}`);
+  } else {
+    console.log(err.message);
+  }
+});
