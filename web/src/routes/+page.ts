@@ -13,5 +13,13 @@ export const load: PageLoad = async ({ fetch, url }) => {
 		redirect(302, "/signin");
 	}
 
-	return { user_id: json.user_id };
+	const user_res = await fetch(
+		`http://${url.hostname}:8080/users/${json.user_id}`,
+		{
+			credentials: "include",
+		}
+	);
+	const user_json = await user_res.json();
+
+	return { user_id: json.user_id, name: user_json.name };
 };

@@ -14,7 +14,7 @@
   };
 </script>
 
-<div>{data.user_id}</div>
+<div>name: {data.name}</div>
 <a href="/manager">manager</a>
 <br />
 <Button style="text" on:click={handleSignOut}>sign out</Button>
