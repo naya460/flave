@@ -21,7 +21,14 @@ export const flvGetUserWorkspaceListHandler: apiHandler<{
   const auth = await checkAuth("auth", req, res);
   if (auth === null) return;
 
+  const admin = await checkAuth("admin", req);
+
+  if (admin === null && auth.toString() !== req.params.user_id) {
+    res.status(400);
+    return;
+  }
+
   res.status(200);
   res.type("application/json");
-  return await getWorkspaceList(auth);
+  return await getWorkspaceList(req.params.user_id);
 };

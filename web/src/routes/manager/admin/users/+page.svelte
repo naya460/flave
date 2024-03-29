@@ -25,10 +25,20 @@
     });
     location.reload();
   };
+
+  async function getUserWorkspaceList(user_id: string) {
+    const res = await fetch(
+      `http://${location.hostname}:8080/users/${user_id}/workspaces`,
+      { credentials: "include" }
+    );
+    const json: { name: string }[] = await res.json();
+    return json;
+  }
 </script>
 
-<Button style="text" on:click={() => (hidden_popup = false)}>Create User</Button
->
+<Button style="text" on:click={() => (hidden_popup = false)}>
+  Create User
+</Button>
 
 <Cards items={data.items}>
   <div slot="item" let:item>
@@ -36,6 +46,17 @@
     <div>id: {item.id}</div>
     <div>auth_id: {item.auth_id}</div>
     {#if item.admin === true}ADMIN{/if}
+  </div>
+  <div slot="popup" let:popup_data>
+    {#await getUserWorkspaceList(popup_data.id)}
+      <div>LOADING</div>
+    {:then value}
+      <Cards items={value}>
+        <div slot="item" let:item>
+          <div>{item.name}</div>
+        </div>
+      </Cards>
+    {/await}
   </div>
 </Cards>
 
