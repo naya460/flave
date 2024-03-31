@@ -1,29 +1,25 @@
 <script lang="ts">
-  import Popup from "./Popup.svelte";
   type T = $$Generic;
   export let items: T[];
+  export let onItemClick: ((event: MouseEvent, item: T) => void) | null = null;
 
-  const is_button = $$slots.popup;
-  let popup_hidden = true;
-  let popup_data: T;
-
-  function showPopup(data: T) {
-    if (is_button) {
-      popup_hidden = false;
-      popup_data = data;
+  function handleItemClick(event: MouseEvent, item: T) {
+    if (onItemClick !== null) {
+      return onItemClick(event, item);
     }
   }
 </script>
 
 <div class="top">
   {#each items as item}
-    <button class="item" disabled={!is_button} on:click={() => showPopup(item)}>
+    <button
+      class="item"
+      disabled={onItemClick === null}
+      on:click={(e) => handleItemClick(e, item)}
+    >
       <slot name="item" {item} />
     </button>
   {/each}
-  <Popup bind:hidden={popup_hidden}>
-    <slot name="popup" {popup_data} />
-  </Popup>
 </div>
 
 <style>
