@@ -4,4 +4,4 @@
   export let data: PageData;
 </script>
 
-<div>{data.workspace_id}</div>
+<div>{data.name}</div>

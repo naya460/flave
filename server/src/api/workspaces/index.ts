@@ -4,6 +4,7 @@ import {
   flvCreateWorkspaceSchema,
 } from "./create_workspace";
 import { flvGetWorkspaceListHandler } from "./get_list";
+import { flvWorkspaceIdRoute } from "./id";
 
 export const flvWorkspaceRoute: apiRoute = (server, opt, done) => {
   // get workspace list
@@ -15,6 +16,9 @@ export const flvWorkspaceRoute: apiRoute = (server, opt, done) => {
     { schema: flvCreateWorkspaceSchema },
     flvCreateWorkspaceHandler
   );
+
+  // routes with workspace id
+  server.register(flvWorkspaceIdRoute);
 
   done();
 };
