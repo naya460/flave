@@ -23,7 +23,8 @@ export const load: PageLoad = async ({ fetch, url }) => {
 		`http://${url.hostname}:8080/users/${json.user_id}/workspaces`,
 		{ credentials: "include" }
 	);
-	const workspaces_json: { name: string }[] = await workspaces.json();
+	const workspaces_json: { _id: string; name: string }[] =
+		await workspaces.json();
 
 	return {
 		user_id: json.user_id,

@@ -20,7 +20,12 @@
 <br />
 <Button style="text" on:click={handleSignOut}>sign out</Button>
 
-<Cards items={data.workspaces}>
+<Cards
+  items={data.workspaces}
+  onItemClick={(event, item) => {
+    location.href = `/workspace/${item._id}`;
+  }}
+>
   <div slot="item" let:item>
     <div>{item.name}</div>
   </div>
