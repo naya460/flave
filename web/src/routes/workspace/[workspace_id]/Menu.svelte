@@ -1,12 +1,13 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import Cards from "$lib/gui/common/Cards.svelte";
-  import type { PageData } from "./$types";
+  import type { LayoutData } from "./$types";
 
-  export let data: PageData;
+  export let data: LayoutData;
 
   async function getPageList(): Promise<
     {
+      _id: string;
       title: string;
     }[]
   > {
@@ -36,7 +37,12 @@
 </Button>
 
 {#await getPageList() then pages}
-  <Cards items={pages}>
+  <Cards
+    items={pages}
+    onItemClick={(event, item) => {
+      location.assign(`/workspace/${data.workspace_id}/${item._id}`);
+    }}
+  >
     <div slot="item" let:item>
       {item.title}
     </div>
