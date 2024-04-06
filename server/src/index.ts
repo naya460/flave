@@ -4,7 +4,11 @@ import { flvApiRoute } from "api";
 import fastifyCookie from "@fastify/cookie";
 
 const server = fastify();
-server.register(cors, { origin: true, credentials: true });
+server.register(cors, {
+  origin: true,
+  credentials: true,
+  methods: ["GET", "POST", "PATCH", "OPTIONS"],
+});
 
 server.register(fastifyCookie);
 
