@@ -11,9 +11,10 @@
       title: string;
     }[]
   > {
-    const res = await fetch(`http://${location.hostname}:8080/pages/`, {
-      credentials: "include",
-    });
+    const res = await fetch(
+      `http://${location.hostname}:8080/workspaces/${data.workspace_id}/pages`,
+      { credentials: "include" }
+    );
     return await res.json();
   }
 </script>
