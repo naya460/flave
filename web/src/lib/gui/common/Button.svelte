@@ -1,13 +1,25 @@
 <script lang="ts">
-  export let style: "filled" | "outline" | "text" = "filled";
+  export let style: {
+    buttonStyle: "filled" | "outline" | "text";
+    textAlign?: "left" | "right" | "center";
+    width?: "auto" | `${number}${"px" | "rem" | "%"}`;
+    height?: "auto" | `${number}${"px" | "rem" | "%"}`;
+    boxSizing?: "border-box" | "content-box";
+  } = {
+    buttonStyle: "filled",
+  };
 </script>
 
 <button
   on:click
   class="main"
-  class:filled={style === "filled"}
-  class:outline={style === "outline"}
-  class:text={style === "text"}
+  class:filled={style.buttonStyle === "filled"}
+  class:outline={style.buttonStyle === "outline"}
+  class:text={style.buttonStyle === "text"}
+  style:text-align={style.textAlign}
+  style:width={style.width}
+  style:height={style.height}
+  style:box-sizing={style.boxSizing}
 >
   <slot />
 </button>

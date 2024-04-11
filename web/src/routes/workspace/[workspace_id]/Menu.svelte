@@ -1,6 +1,6 @@
 <script lang="ts">
+  import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
   import Button from "$lib/gui/common/Button.svelte";
-  import Cards from "$lib/gui/common/Cards.svelte";
   import type { LayoutData } from "./$types";
 
   export let data: LayoutData;
@@ -22,7 +22,9 @@
 <div>{data.name}</div>
 
 <Button
-  style="text"
+  style={{
+    buttonStyle: "text",
+  }}
   on:click={async () => {
     await fetch(`http://${location.hostname}:8080/pages`, {
       method: "post",
@@ -38,14 +40,20 @@
 </Button>
 
 {#await getPageList() then pages}
-  <Cards
-    items={pages}
-    onItemClick={(event, item) => {
-      location.assign(`/workspace/${data.workspace_id}/${item._id}`);
-    }}
-  >
-    <div slot="item" let:item>
-      {item.title}
-    </div>
-  </Cards>
+  {#each pages as page}
+    <ToggleMenu>
+      <Button
+        slot="summary"
+        style={{
+          buttonStyle: "text",
+          textAlign: "left",
+        }}
+        on:click={() => {
+          location.assign(`/workspace/${data.workspace_id}/${page._id}`);
+        }}
+      >
+        {page.title}
+      </Button>
+    </ToggleMenu>
+  {/each}
 {/await}
