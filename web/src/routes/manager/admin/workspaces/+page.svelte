@@ -26,7 +26,7 @@
   };
 </script>
 
-<Button style="text" on:click={() => (hidden_popup = false)}>
+<Button style={{ buttonStyle: "text" }} on:click={() => (hidden_popup = false)}>
   Create Workspace
 </Button>
 
@@ -42,6 +42,6 @@
   <form on:submit={onSubmit} class="form">
     <label for="name">Workspace Name</label>
     <TextInput type="text" id="name" name="name" autocomplete="off" />
-    <Button style="filled">Create</Button>
+    <Button style={{ buttonStyle: "filled" }}>Create</Button>
   </form>
 </Popup>

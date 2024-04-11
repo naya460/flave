@@ -18,7 +18,9 @@
 <div>name: {data.name}</div>
 <a href="/manager">manager</a>
 <br />
-<Button style="text" on:click={handleSignOut}>sign out</Button>
+<Button style={{ buttonStyle: "text" }} on:click={handleSignOut}
+  >sign out</Button
+>
 
 <Cards
   items={data.workspaces}

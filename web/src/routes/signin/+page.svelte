@@ -38,7 +38,7 @@
     <label for="password">Password</label>
     <TextInput type="password" id="password" name="password" />
 
-    <Button style="filled">Sign In</Button>
+    <Button style={{ buttonStyle: "filled" }}>Sign In</Button>
   </form>
 </div>
 

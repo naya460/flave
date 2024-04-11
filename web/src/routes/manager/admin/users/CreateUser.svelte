@@ -23,7 +23,7 @@
   };
 </script>
 
-<Button style="text" on:click={() => (hidden_popup = false)}>
+<Button style={{ buttonStyle: "text" }} on:click={() => (hidden_popup = false)}>
   Create User
 </Button>
 
@@ -45,7 +45,7 @@
       name="confirm_password"
       autocomplete="off"
     />
-    <Button style="filled">add</Button>
+    <Button style={{ buttonStyle: "filled" }}>add</Button>
   </form>
 </Popup>
 
