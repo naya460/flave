@@ -1,7 +1,7 @@
 import { flvPageCollection } from "mongo/collections/flave/page";
 import { ObjectId } from "mongodb";
 
-export async function getPageList(workspace_id: ObjectId | string) {
+export async function getPageList(workspace_id?: ObjectId | string) {
   const filter: {
     workspace?: ObjectId;
   } = {};
