@@ -74,7 +74,7 @@
   .summary {
     display: grid;
     grid-template-columns: 1fr 1.5rem;
-    width: 10rem;
+    width: 100%;
   }
 
   .contents {

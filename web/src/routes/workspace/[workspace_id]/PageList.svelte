@@ -10,6 +10,8 @@
   }[];
 </script>
 
-{#each pages as page}
-  <PageContents {data} {page} />
-{/each}
+<div class="top">
+  {#each pages as page}
+    <PageContents {data} {page} />
+  {/each}
+</div>
