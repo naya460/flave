@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
   import Button from "$lib/gui/common/Button.svelte";
   import type { LayoutData } from "./$types";
+  import PageList from "./PageList.svelte";
 
   export let data: LayoutData;
 
@@ -40,20 +40,5 @@
 </Button>
 
 {#await getPageList() then pages}
-  {#each pages as page}
-    <ToggleMenu>
-      <Button
-        slot="summary"
-        style={{
-          buttonStyle: "text",
-          textAlign: "left",
-        }}
-        on:click={() => {
-          location.assign(`/workspace/${data.workspace_id}/${page._id}`);
-        }}
-      >
-        {page.title}
-      </Button>
-    </ToggleMenu>
-  {/each}
+  <PageList {data} {pages} />
 {/await}

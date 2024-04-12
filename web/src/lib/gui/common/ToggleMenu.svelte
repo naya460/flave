@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Button from "./Button.svelte";
 
   export let expand = false;
@@ -21,7 +21,11 @@
     <slot name="summary" />
   </div>
 </div>
-<slot name="detail" />
+<div>
+  {#if expand === true}
+    <slot name="contents" />
+  {/if}
+</div>
 
 <style>
   .header {

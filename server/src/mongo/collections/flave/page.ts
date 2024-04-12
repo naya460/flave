@@ -8,6 +8,7 @@ type flvPageType = {
   created_by: ObjectId;
   updated_at: Date;
   updated_by: ObjectId;
+  parent?: ObjectId;
 };
 
 export const flvPageCollection = mongoClient

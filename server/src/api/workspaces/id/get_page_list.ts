@@ -23,5 +23,5 @@ export const flvGetWorkspacePageListHandler: apiHandler<{
 
   res.status(200);
   res.type("application/json");
-  return await getPageList(req.params.workspace_id);
+  return await getPageList({ workspace_id: req.params.workspace_id });
 };

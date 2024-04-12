@@ -7,6 +7,7 @@ const bodySchema = {
   type: "object",
   properties: {
     workspace_id: { type: "string" },
+    parent: { type: "string" },
   },
   required: ["workspace_id"],
 } as const;
@@ -23,5 +24,5 @@ export const flvCreatePageHandler: apiHandler<{
 
   res.status(200);
   res.type("application/json");
-  return await createPage(req.body.workspace_id, auth);
+  return await createPage(req.body.workspace_id, auth, req.body.parent);
 };
