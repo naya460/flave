@@ -4,6 +4,7 @@ import {
   flvPatchPageDataHandler,
   flvPatchPageDataSchema,
 } from "./patch_page_data";
+import { flvGetPagePathHandler, flvGetPagePathSchema } from "./get_path";
 
 export const flvPageIdRoute: apiRoute = (server, opt, done) => {
   // get page data
@@ -18,6 +19,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id",
     { schema: flvPatchPageDataSchema },
     flvPatchPageDataHandler
+  );
+
+  // get page path
+  server.get(
+    "/:page_id/path",
+    { schema: flvGetPagePathSchema },
+    flvGetPagePathHandler
   );
 
   done();

@@ -6,6 +6,7 @@ export async function getPageData(page_id: string) {
     { _id: new ObjectId(page_id) },
     {
       projection: {
+        parent: true,
         title: true,
       },
     }

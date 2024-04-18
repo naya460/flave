@@ -2,6 +2,8 @@
   import Button from "$lib/gui/common/Button.svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
+  import { page_path_store } from "$lib/store/page_path";
+  import { get } from "svelte/store";
 
   export let data: LayoutData;
 
@@ -40,5 +42,5 @@
 </Button>
 
 {#await getPageList() then pages}
-  <PageList {data} {pages} />
+  <PageList {data} {pages} page_path={get(page_path_store)} />
 {/await}

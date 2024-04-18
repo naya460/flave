@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
-  import { afterUpdate } from "svelte";
+  import { afterUpdate, onMount } from "svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
   import { page_title_store } from "$lib/store/page_title";
@@ -15,8 +15,16 @@
 
   export let page: PageData;
 
+  export let page_path: string[] = [];
+
   let expand = false;
+
   let child_pages: PageData[] | null = null;
+
+  onMount(() => {
+    if (page_path.length === 0) return;
+    expand = true;
+  });
 
   afterUpdate(async () => {
     if (expand === true && child_pages === null) {
@@ -70,7 +78,11 @@
   <!-- child pages -->
   <div slot="contents" class="contents">
     {#if child_pages !== null}
-      <PageList {data} pages={child_pages} />
+      <PageList
+        {data}
+        pages={child_pages}
+        page_path={page_path.length !== 0 ? page_path.slice(1) : []}
+      />
     {/if}
   </div>
 </ToggleMenu>

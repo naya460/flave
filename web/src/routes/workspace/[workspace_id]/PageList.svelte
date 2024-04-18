@@ -3,6 +3,7 @@
   import type { LayoutData } from "./$types";
 
   export let data: LayoutData;
+  export let page_path: string[] = [];
 
   export let pages: {
     _id: string;
@@ -12,6 +13,10 @@
 
 <div class="top">
   {#each pages as page}
-    <PageContents {data} {page} />
+    <PageContents
+      {data}
+      {page}
+      page_path={page_path[0] === page._id ? page_path : []}
+    />
   {/each}
 </div>
