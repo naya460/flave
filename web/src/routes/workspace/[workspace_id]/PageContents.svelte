@@ -4,6 +4,7 @@
   import { afterUpdate } from "svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
+  import { page_title_store } from "$lib/store/page_title";
 
   type PageData = {
     _id: string;
@@ -40,7 +41,11 @@
         location.assign(`/workspace/${data.workspace_id}/${page._id}`);
       }}
     >
-      {page.title}
+      {#if page._id === data.page_id}
+        {$page_title_store}
+      {:else}
+        {page.title}
+      {/if}
     </Button>
     <!-- page creation button -->
     <Button

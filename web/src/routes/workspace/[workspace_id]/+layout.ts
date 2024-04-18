@@ -10,6 +10,7 @@ export const load: LayoutLoad = async ({ params, fetch, url }) => {
 
 	return {
 		workspace_id: params.workspace_id,
+		page_id: params.page_id,
 		name: json.name,
 	};
 };

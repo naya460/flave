@@ -22,5 +22,6 @@
 
   .menu {
     min-width: 10rem;
+    max-width: 20rem;
   }
 </style>
