@@ -1,7 +1,7 @@
 import { checkAuth } from "api/common/check_auth";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
-import { getWorkspaceList } from "mongo/workspaces/get_list";
+import { getWorkspaceList } from "mongo/workspace/get_list";
 
 const paramsSchema = {
   type: "object",

@@ -1,6 +1,6 @@
 import { flvUserCollection } from "mongo/collections/flave/user";
 
-export const createUser = async (auth_id: string, hash: string) => {
+export async function createUser(auth_id: string, hash: string) {
   const doc = {
     auth_id: auth_id,
     name: auth_id,
@@ -14,4 +14,4 @@ export const createUser = async (auth_id: string, hash: string) => {
   } else {
     return doc;
   }
-};
+}

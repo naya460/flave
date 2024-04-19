@@ -1,7 +1,7 @@
 import { checkAuth } from "api/common/check_auth";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
-import { getWorkspaceData } from "mongo/workspaces/get_workspace_data";
+import { getWorkspaceData } from "mongo/workspace/get_data";
 
 const paramsSchema = {
   type: "object",
@@ -27,7 +27,11 @@ export const flvGetWorkspaceDataHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
   Reply: FromSchema<typeof replySchema>;
 }> = async (req, res) => {
-  const auth = await checkAuth("auth", req, res);
+  const auth = await checkAuth(
+    { workspace: req.params.workspace_id },
+    req,
+    res
+  );
   if (auth === null) return null;
 
   res.status(200);

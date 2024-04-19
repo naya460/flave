@@ -1,7 +1,7 @@
 import { checkAuth } from "api/common/check_auth";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
-import { createPage } from "mongo/page/create_page";
+import { createPage } from "mongo/page/create";
 
 const bodySchema = {
   type: "object",

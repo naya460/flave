@@ -18,7 +18,11 @@ export const flvGetWorkspacePageListSchema = {
 export const flvGetWorkspacePageListHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
 }> = async (req, res) => {
-  const auth = await checkAuth("auth", req, res);
+  const auth = await checkAuth(
+    { workspace: req.params.workspace_id },
+    req,
+    res
+  );
   if (auth === null) return;
 
   res.status(200);

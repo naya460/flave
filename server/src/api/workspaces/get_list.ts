@@ -1,6 +1,6 @@
 import { apiHandler } from "lib/fastify";
 import { checkAuth } from "api/common/check_auth";
-import { getWorkspaceList } from "mongo/workspaces/get_list";
+import { getWorkspaceList } from "mongo/workspace/get_list";
 
 export const flvGetWorkspaceListHandler: apiHandler<{
   Reply: undefined;

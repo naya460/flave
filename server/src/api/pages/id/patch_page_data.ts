@@ -1,7 +1,7 @@
 import { checkAuth } from "api/common/check_auth";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
-import { updatePage } from "mongo/page/update_page";
+import { updatePage } from "mongo/page/update";
 
 const paramsSchema = {
   type: "object",

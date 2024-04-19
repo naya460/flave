@@ -1,6 +1,6 @@
 import { flvSessionCollection } from "mongo/collections/flave/session";
 
-export async function getSession(session_id: string) {
+export async function getSessionData(session_id: string) {
   const result = await flvSessionCollection
     .find({ session_id }, { projection: { user_id: true } })
     .toArray();

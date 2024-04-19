@@ -1,6 +1,6 @@
 import { apiHandler } from "lib/fastify";
 import { checkAuth } from "api/common/check_auth";
-import { deleteSession } from "mongo/sessions/delete_session";
+import { deleteSession } from "mongo/session/delete";
 
 export const flvDeleteSessionHandler: apiHandler<{
   Reply: undefined;

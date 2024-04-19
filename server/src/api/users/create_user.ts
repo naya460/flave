@@ -1,6 +1,6 @@
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
-import { createUser } from "mongo/user/create_user";
+import { createUser } from "mongo/user/create";
 import bcrypt from "bcrypt";
 
 const bodySchema = {
