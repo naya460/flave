@@ -46,7 +46,7 @@
         textAlign: "left",
       }}
       on:click={() => {
-        location.assign(`/workspace/${data.workspace_id}/${page._id}`);
+        location.assign(`/${data.workspace_id}/${page._id}`);
       }}
     >
       {#if page._id === data.page_id}

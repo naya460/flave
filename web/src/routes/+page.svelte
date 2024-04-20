@@ -25,7 +25,7 @@
 <Cards
   items={data.workspaces}
   onItemClick={(event, item) => {
-    location.href = `/workspace/${item._id}`;
+    location.href = `/${item._id}`;
   }}
 >
   <div slot="item" let:item>
