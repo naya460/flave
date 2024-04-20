@@ -18,7 +18,7 @@ export const flvGetPageListSchema = {
 export const flvGetPageList: apiHandler<{
   Querystring: FromSchema<typeof queryStringSchema>;
 }> = async (req, res) => {
-  const auth = await checkAuth("auth", req, res);
+  const auth = await checkAuth({ page: req.query.parent }, req, res);
   if (auth === null) return;
 
   res.status(200);

@@ -28,7 +28,7 @@ export const flvPatchPageDataHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
   Body: FromSchema<typeof bodySchema>;
 }> = async (req, res) => {
-  const auth = await checkAuth("auth", req, res);
+  const auth = await checkAuth({ page: req.params.page_id }, req, res);
   if (auth === null) return null;
 
   await updatePage(req.params.page_id, req.body.title, auth);

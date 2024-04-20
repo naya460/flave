@@ -19,7 +19,7 @@ export const flvCreatePageSchema = {
 export const flvCreatePageHandler: apiHandler<{
   Body: FromSchema<typeof bodySchema>;
 }> = async (req, res) => {
-  const auth = await checkAuth("auth", req, res);
+  const auth = await checkAuth({ workspace: req.body.workspace_id }, req, res);
   if (auth === null) return;
 
   res.status(200);

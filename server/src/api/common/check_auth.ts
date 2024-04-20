@@ -1,9 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
+import { getPageData } from "mongo/page/get_data";
 import { getSessionData } from "mongo/session/get_data";
 import { getUserData } from "mongo/user/get_data";
 import { getWorkspaceData } from "mongo/workspace/get_data";
 
-type Auth = "auth" | "admin" | { workspace: string };
+type Auth = "auth" | "admin" | { workspace: string } | { page: string };
 
 export const checkAuth = async (
   type: Auth,
@@ -37,8 +38,36 @@ export const checkAuth = async (
     }
   }
   // especially type is "workspace"
-  else if (typeof type === "object") {
+  else if (typeof type === "object" && "workspace" in type) {
     const member = await getWorkspaceData(type.workspace, {
+      projection: { owner: true, member: true },
+    });
+
+    if (member === null) {
+      res?.status(400);
+      return null;
+    }
+
+    if (
+      member.owner.equals(user_id) === false &&
+      member.member.some((v) => v.user_id.equals(user_id)) === false
+    ) {
+      res?.status(403);
+      return null;
+    }
+  }
+  // especially type is "page"
+  else if (typeof type === "object" && "page" in type) {
+    const page = await getPageData(type.page, {
+      projection: { workspace: true },
+    });
+
+    if (page === null) {
+      res?.status(400);
+      return null;
+    }
+
+    const member = await getWorkspaceData(page.workspace.toString(), {
       projection: { owner: true, member: true },
     });
 

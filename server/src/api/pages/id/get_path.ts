@@ -19,7 +19,7 @@ export const flvGetPagePathHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
   Reply: undefined;
 }> = async (req, res) => {
-  const auth = await checkAuth("auth", req, res);
+  const auth = await checkAuth({ page: req.params.page_id }, req, res);
   if (auth === null) return null;
 
   const pages: string[] = [];
