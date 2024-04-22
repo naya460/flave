@@ -3,6 +3,7 @@ import { flvUserRoute } from "./users";
 import { flvSessionRoute } from "./sessions";
 import { flvWorkspaceRoute } from "./workspaces";
 import { flvPageRoute } from "./pages";
+import { flvBlockRoute } from "./blocks";
 
 export const flvApiRoute: apiRoute = (server, opt, done) => {
   server.register(flvUserRoute, { prefix: "/users" });
@@ -12,6 +13,8 @@ export const flvApiRoute: apiRoute = (server, opt, done) => {
   server.register(flvWorkspaceRoute, { prefix: "/workspaces" });
 
   server.register(flvPageRoute, { prefix: "/pages" });
+
+  server.register(flvBlockRoute, { prefix: "/blocks" });
 
   done();
 };

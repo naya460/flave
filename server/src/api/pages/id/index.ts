@@ -5,6 +5,10 @@ import {
   flvPatchPageDataSchema,
 } from "./patch_page_data";
 import { flvGetPagePathHandler, flvGetPagePathSchema } from "./get_path";
+import {
+  flvGetPageBlockListHandler,
+  flvGetPageBlockListSchema,
+} from "./get_blocks";
 
 export const flvPageIdRoute: apiRoute = (server, opt, done) => {
   // get page data
@@ -26,6 +30,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id/path",
     { schema: flvGetPagePathSchema },
     flvGetPagePathHandler
+  );
+
+  // get page block list
+  server.get(
+    "/:page_id/blocks",
+    { schema: flvGetPageBlockListSchema },
+    flvGetPageBlockListHandler
   );
 
   done();

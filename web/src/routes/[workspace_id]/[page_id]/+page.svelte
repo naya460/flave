@@ -3,6 +3,7 @@
   import type { PageData } from "./$types";
   import { page_title_store } from "$lib/store/page_title";
   import { onMount } from "svelte";
+  import BlockList from "./BlockList.svelte";
 
   export let data: PageData;
 
@@ -27,3 +28,5 @@
     page_title_store.set(event.currentTarget.value);
   }}
 />
+
+<BlockList blocks={data.blocks} {data} />

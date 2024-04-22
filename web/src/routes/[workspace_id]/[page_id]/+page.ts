@@ -17,9 +17,21 @@ export const load: PageLoad = async ({ fetch, url, params }) => {
 
 	page_path_store.set(path);
 
+	const blocks_res = await fetch(
+		`http://${url.hostname}:8080/pages/${params.page_id}/blocks`,
+		{ credentials: "include" }
+	);
+	const blocks: {
+		_id: string;
+		type: "paragraph";
+		data: unknown;
+	}[] = await blocks_res.json();
+	console.log(blocks);
+
 	return {
 		workspace_id: params.workspace_id,
 		page_id: params.page_id,
 		page_data,
+		blocks,
 	};
 };
