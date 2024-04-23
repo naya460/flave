@@ -29,4 +29,4 @@
   }}
 />
 
-<BlockList blocks={data.blocks} {data} />
+<BlockList {data} />
