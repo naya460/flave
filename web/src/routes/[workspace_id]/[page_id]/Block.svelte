@@ -2,11 +2,12 @@
   import BlockParagraph from "./Block_Paragraph.svelte";
 
   export let block: {
+    _id: string;
     type: "paragraph";
     data: unknown;
   };
 
-  function getParagraph(): { text: string } | null {
+  function getParagraph(): { _id: string; text: string } | null {
     if (
       block.type === "paragraph" &&
       typeof block.data === "object" &&
@@ -15,6 +16,7 @@
       typeof block.data.text === "string"
     ) {
       return {
+        _id: block._id,
         text: block.data.text,
       };
     }
