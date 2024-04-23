@@ -16,7 +16,25 @@
       `http://${location.hostname}:8080/pages/${data.page_id}/blocks`,
       { credentials: "include" }
     );
-    blocks = await res.json();
+    let list: {
+      _id: string;
+      type: "paragraph";
+      next_of: string | null;
+      data: unknown;
+    }[] = await res.json();
+
+    for (const block of list.filter((v) => v.next_of === null)) {
+      blocks.push(block);
+    }
+    list = list.filter((v) => v.next_of !== null);
+    while (list.length !== 0) {
+      const next_of = list[0].next_of;
+      const index = blocks.findLastIndex((v) => v._id === next_of);
+      for (const block of list.filter((v) => v.next_of === next_of)) {
+        blocks.splice(index + 1, 0, block);
+      }
+      list = list.filter((v) => v.next_of !== next_of);
+    }
   }
 </script>
 
