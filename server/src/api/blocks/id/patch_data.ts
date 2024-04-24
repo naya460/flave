@@ -15,7 +15,6 @@ const paramsSchema = {
 const bodySchema = {
   type: "object",
   properties: {
-    next_of: { type: "string" },
     data: { type: "object" },
   },
 } as const;
@@ -35,8 +34,6 @@ export const flvPatchBlockDataHandler: apiHandler<{
     next_of?: ObjectId;
     data?: unknown;
   } = {};
-  if (req.body.next_of !== undefined)
-    doc.next_of = new ObjectId(req.body.next_of);
   if (req.body.data !== undefined) doc.data = req.body.data;
 
   await updateBlock(req.params.block_id, auth, doc);

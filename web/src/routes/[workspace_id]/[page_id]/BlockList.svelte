@@ -42,7 +42,47 @@
   <div>Loading...</div>
 {:then}
   {#each blocks as block}
-    <Block {block} />
+    <div class="block">
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div
+        draggable="true"
+        on:dragstart={(event) => {
+          event.dataTransfer?.setData("application/flv-blk-id", block._id);
+        }}
+      >
+        ::
+      </div>
+      <Block {block} />
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div
+        on:dragover={(event) => {
+          if (event.dataTransfer?.types.includes("application/flv-blk-id")) {
+            event.dataTransfer.dropEffect = "move";
+            event.preventDefault();
+          }
+        }}
+        on:drop={async (event) => {
+          const block_id = event.dataTransfer?.getData(
+            "application/flv-blk-id"
+          );
+          if (block_id === block._id) return;
+
+          // create new block
+          await fetch(
+            `http://${location.hostname}:8080/blocks/${block_id}/next`,
+            {
+              method: "PATCH",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                next_of: block._id,
+              }),
+            }
+          );
+          event.preventDefault();
+        }}
+      />
+    </div>
   {/each}
 {:catch}
   <div>Failed loading</div>
@@ -77,3 +117,20 @@
 >
   Create Block
 </Button>
+
+<style>
+  .block {
+    margin: 0 4rem;
+    position: relative;
+  }
+  .block div:first-child {
+    position: absolute;
+    left: -2rem;
+    cursor: grab;
+  }
+  .block div ~ div {
+    position: initial;
+    width: 100%;
+    height: 10px;
+  }
+</style>
