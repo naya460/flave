@@ -9,7 +9,7 @@ export async function updateBlock(
     data?: unknown;
   }
 ) {
-  const result = await flvBlockCollection.updateOne(
+  const target = await flvBlockCollection.findOneAndUpdate(
     { _id: new ObjectId(block_id) },
     {
       $set: {
@@ -20,5 +20,25 @@ export async function updateBlock(
     }
   );
 
-  return result.acknowledged;
+  if (target !== null && data.next_of !== undefined) {
+    // Reconnect the extracted locations
+    await flvBlockCollection.updateOne(
+      { page: target.page, next_of: new ObjectId(block_id) },
+      { $set: { next_of: target.next_of } }
+    );
+
+    // Reconnect the inserted locations
+    await flvBlockCollection.updateOne(
+      {
+        $and: [
+          { page: target.page },
+          { next_of: data.next_of },
+          { _id: { $ne: new ObjectId(block_id) } },
+        ],
+      },
+      { $set: { next_of: new ObjectId(block_id) } }
+    );
+  }
+
+  return target !== null;
 }

@@ -27,13 +27,15 @@
       blocks.push(block);
     }
     list = list.filter((v) => v.next_of !== null);
+
     while (list.length !== 0) {
-      const next_of = list[0].next_of;
-      const index = blocks.findLastIndex((v) => v._id === next_of);
-      for (const block of list.filter((v) => v.next_of === next_of)) {
-        blocks.splice(index + 1, 0, block);
+      const last_id = blocks[blocks.length - 1]._id;
+      const next_list = list.filter((v) => v.next_of === last_id);
+      if (next_list.length === 0) break;
+      for (const block of next_list) {
+        blocks.push(block);
       }
-      list = list.filter((v) => v.next_of !== next_of);
+      list = list.filter((v) => v.next_of !== last_id);
     }
   }
 </script>
@@ -68,17 +70,15 @@
           if (block_id === block._id) return;
 
           // create new block
-          await fetch(
-            `http://${location.hostname}:8080/blocks/${block_id}/next`,
-            {
-              method: "PATCH",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                next_of: block._id,
-              }),
-            }
-          );
+          await fetch(`http://${location.hostname}:8080/blocks/${block_id}`, {
+            method: "PATCH",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              next_of: block._id,
+            }),
+          });
+
           event.preventDefault();
         }}
       />
