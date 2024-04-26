@@ -7,7 +7,8 @@
     data: unknown;
   };
 
-  function getParagraph(): { _id: string; text: string } | null {
+  let block_data: { _id: string; text: string } | null;
+  $: block_data = (() => {
     if (
       block.type === "paragraph" &&
       typeof block.data === "object" &&
@@ -21,11 +22,11 @@
       };
     }
     return null;
-  }
+  })();
 </script>
 
 <div>
   {#if block.type === "paragraph"}
-    <BlockParagraph block_data={getParagraph()} />
+    <BlockParagraph {block_data} />
   {/if}
 </div>

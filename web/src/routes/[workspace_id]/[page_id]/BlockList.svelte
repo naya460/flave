@@ -79,6 +79,12 @@
             }),
           });
 
+          const target_index = blocks.findIndex((v) => v._id === block_id);
+          const [target] = blocks.splice(target_index, 1);
+          const this_index = blocks.findIndex((v) => v._id === block._id);
+          blocks.splice(this_index + 1, 0, target);
+          blocks = blocks;
+
           event.preventDefault();
         }}
       />
