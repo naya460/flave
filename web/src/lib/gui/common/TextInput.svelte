@@ -14,6 +14,9 @@
   export let onChange: (
     event: Event & { currentTarget: EventTarget & HTMLInputElement }
   ) => void = () => {};
+  export let onKeyDown: (
+    event: KeyboardEvent & { currentTarget: EventTarget & HTMLInputElement }
+  ) => void = () => {};
   export let onKeyUp: (
     event: KeyboardEvent & { currentTarget: EventTarget & HTMLInputElement }
   ) => void = () => {};
@@ -29,6 +32,7 @@
   class="input"
   class:outline={style.outline}
   on:change={onChange}
+  on:keydown={onKeyDown}
   on:keyup|preventDefault={onKeyUp}
 />
 

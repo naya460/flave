@@ -33,6 +33,17 @@ export async function createBlock(
   const result = await flvBlockCollection.insertOne(doc);
 
   if (result.acknowledged) {
+    await flvBlockCollection.updateOne(
+      {
+        $and: [
+          { page: new ObjectId(page) },
+          { next_of: next_of === null ? null : new ObjectId(next_of) },
+          { _id: { $ne: result.insertedId } },
+        ],
+      },
+      { $set: { next_of: result.insertedId } }
+    );
+
     return result.insertedId;
   } else {
     return null;

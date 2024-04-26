@@ -1,5 +1,8 @@
 <script lang="ts">
   import TextInput from "$lib/gui/common/TextInput.svelte";
+  import type { PageData } from "./$types";
+
+  export let data: PageData;
 
   export let block_data: {
     _id: string;
@@ -21,6 +24,21 @@
           body: JSON.stringify({ data: { text: event.currentTarget.value } }),
         }
       );
+    }}
+    onKeyDown={async (event) => {
+      if (event.key === "Enter") {
+        await fetch(`http://${location.hostname}:8080/blocks`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            page_id: data.page_id,
+            next_of: block_data._id,
+            type: "paragraph",
+            data: { text: "" },
+          }),
+        });
+      }
     }}
   />
 {/if}

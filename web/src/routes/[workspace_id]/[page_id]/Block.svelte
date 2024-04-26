@@ -1,5 +1,8 @@
 <script lang="ts">
+  import type { PageData } from "./$types";
   import BlockParagraph from "./Block_Paragraph.svelte";
+
+  export let data: PageData;
 
   export let block: {
     _id: string;
@@ -27,6 +30,6 @@
 
 <div>
   {#if block.type === "paragraph"}
-    <BlockParagraph {block_data} />
+    <BlockParagraph {block_data} {data} />
   {/if}
 </div>

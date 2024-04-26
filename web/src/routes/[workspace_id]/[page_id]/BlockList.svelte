@@ -1,6 +1,5 @@
 <script lang="ts">
   import Block from "./Block.svelte";
-  import Button from "$lib/gui/common/Button.svelte";
   import type { PageData } from "./$types";
 
   let blocks: {
@@ -54,7 +53,7 @@
       >
         ::
       </div>
-      <Block {block} />
+      <Block {block} {data} />
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:dragover={(event) => {
@@ -93,36 +92,6 @@
 {:catch}
   <div>Failed loading</div>
 {/await}
-
-<Button
-  on:click={async () => {
-    // create new block
-    const post_res = await fetch(`http://${location.hostname}:8080/blocks`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        page_id: data.page_id,
-        next_of: blocks.length === 0 ? null : blocks[blocks.length - 1]._id,
-        type: "paragraph",
-        data: { text: "" },
-      }),
-    });
-    // get new block id
-    const _id = await post_res.json();
-    // push new block
-    blocks = [
-      ...blocks,
-      {
-        _id,
-        type: "paragraph",
-        data: { text: "" },
-      },
-    ];
-  }}
->
-  Create Block
-</Button>
 
 <style>
   .block {
