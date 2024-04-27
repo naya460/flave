@@ -1,32 +1,47 @@
 <script lang="ts">
-  import TextInput from "$lib/gui/common/TextInput.svelte";
-
   export let page_id: string;
 
   export let block_data: {
     _id: string;
     text: string;
   } | null;
+
+  let own: HTMLDivElement;
+  let timeout: number | undefined = undefined;
+
+  async function timeoutHandler() {
+    await applyUpdate();
+    clearTimeout(timeout);
+    timeout = undefined;
+  }
+
+  async function applyUpdate() {
+    await fetch(`http://${location.hostname}:8080/blocks/${block_data?._id}`, {
+      method: "PATCH",
+      mode: "cors",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: { text: own.innerText },
+      }),
+    });
+  }
 </script>
 
 {#if block_data !== null}
-  <TextInput
-    value={block_data.text}
-    onChange={async (event) => {
-      await fetch(
-        `http://${location.hostname}:8080/blocks/${block_data?._id}`,
-        {
-          method: "PATCH",
-          mode: "cors",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ data: { text: event.currentTarget.value } }),
-        }
-      );
-    }}
-    onKeyDown={async (event) => {
+  <div
+    class="top"
+    contenteditable={true}
+    role="textbox"
+    tabindex={0}
+    bind:this={own}
+    on:keydown={(event) => {
+      if (!timeout) {
+        timeout = setInterval(timeoutHandler, 1000);
+      }
+
       if (event.key === "Enter") {
-        await fetch(`http://${location.hostname}:8080/blocks`, {
+        fetch(`http://${location.hostname}:8080/blocks`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -37,7 +52,16 @@
             data: { text: "" },
           }),
         });
+        event.preventDefault();
       }
     }}
-  />
+  >
+    {block_data.text}
+  </div>
 {/if}
+
+<style>
+  .top {
+    outline: none;
+  }
+</style>
