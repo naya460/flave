@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Block from "./Block.svelte";
+  import Block from "../../../lib/gui/block/Block.svelte";
   import type { PageData } from "./$types";
 
   let blocks: {
@@ -53,7 +53,7 @@
       >
         ::
       </div>
-      <Block {block} {data} />
+      <Block {block} page_id={data.page_id} />
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:dragover={(event) => {

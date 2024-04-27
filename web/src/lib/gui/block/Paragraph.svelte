@@ -1,8 +1,7 @@
 <script lang="ts">
   import TextInput from "$lib/gui/common/TextInput.svelte";
-  import type { PageData } from "./$types";
 
-  export let data: PageData;
+  export let page_id: string;
 
   export let block_data: {
     _id: string;
@@ -32,7 +31,7 @@
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            page_id: data.page_id,
+            page_id: page_id,
             next_of: block_data._id,
             type: "paragraph",
             data: { text: "" },
