@@ -7,7 +7,7 @@ const server = fastify();
 server.register(cors, {
   origin: true,
   credentials: true,
-  methods: ["GET", "POST", "PATCH", "OPTIONS"],
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 });
 
 server.register(fastifyCookie);

@@ -53,6 +53,15 @@
           }),
         });
         event.preventDefault();
+      } else if (event.key === "Backspace") {
+        if (own.innerText.length === 0) {
+          fetch(`http://${location.hostname}:8080/blocks/${block_data._id}`, {
+            method: "DELETE",
+            mode: "cors",
+            credentials: "include",
+          });
+          event.preventDefault();
+        }
       }
     }}
   >

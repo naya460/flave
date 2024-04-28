@@ -4,6 +4,7 @@ import {
   flvPatchBlockDataSchema,
 } from "./patch_data";
 import { flvGetBlockDataHandler, flvGetBlockDataSchema } from "./get_data";
+import { flvDeleteBlockHandler, flvDeleteBlockSchema } from "./delete";
 
 export const flvBlockIdRoute: apiRoute = (server, opt, done) => {
   // get block data
@@ -18,6 +19,13 @@ export const flvBlockIdRoute: apiRoute = (server, opt, done) => {
     "/:block_id",
     { schema: flvPatchBlockDataSchema },
     flvPatchBlockDataHandler
+  );
+
+  // delete block
+  server.delete(
+    "/:block_id",
+    { schema: flvDeleteBlockSchema },
+    flvDeleteBlockHandler
   );
 
   done();
