@@ -1,10 +1,15 @@
 <script lang="ts">
+  import type { blockListStore } from "$lib/types/block_list";
+  import { onDestroy } from "svelte";
+
   export let page_id: string;
 
   export let block_data: {
     _id: string;
     text: string;
   } | null;
+
+  export let block_list: blockListStore;
 
   let own: HTMLDivElement;
   let timeout: number | undefined = undefined;
@@ -26,6 +31,10 @@
       }),
     });
   }
+
+  onDestroy(() => {
+    clearTimeout(timeout);
+  });
 </script>
 
 {#if block_data !== null}
@@ -41,7 +50,7 @@
       }
 
       if (event.key === "Enter") {
-        fetch(`http://${location.hostname}:8080/blocks`, {
+        const res = fetch(`http://${location.hostname}:8080/blocks`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -52,14 +61,44 @@
             data: { text: "" },
           }),
         });
+
+        res.then((v) => {
+          v.text().then((w) => {
+            if (typeof w !== "string") return;
+            const index = $block_list.findIndex(
+              (v) => v._id === block_data._id
+            );
+            $block_list.splice(index + 1, 0, {
+              _id: w,
+              type: "paragraph",
+              data: { text: "" },
+            });
+            $block_list = $block_list;
+          });
+        });
+
         event.preventDefault();
       } else if (event.key === "Backspace") {
         if (own.innerText.length === 0) {
-          fetch(`http://${location.hostname}:8080/blocks/${block_data._id}`, {
-            method: "DELETE",
-            mode: "cors",
-            credentials: "include",
+          const res = fetch(
+            `http://${location.hostname}:8080/blocks/${block_data._id}`,
+            {
+              method: "DELETE",
+              mode: "cors",
+              credentials: "include",
+            }
+          );
+
+          res.then((v) => {
+            if (v.ok === false) return;
+
+            const index = $block_list.findIndex(
+              (v) => v._id === block_data._id
+            );
+            $block_list.splice(index, 1);
+            $block_list = $block_list;
           });
+
           event.preventDefault();
         }
       }

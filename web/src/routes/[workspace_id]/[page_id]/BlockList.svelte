@@ -1,12 +1,10 @@
 <script lang="ts">
   import Block from "../../../lib/gui/block/Block.svelte";
   import type { PageData } from "./$types";
+  import type { blockListStore } from "$lib/types/block_list";
+  import { writable } from "svelte/store";
 
-  let blocks: {
-    _id: string;
-    type: "paragraph";
-    data: unknown;
-  }[] = [];
+  let blocks: blockListStore = writable([]);
 
   export let data: PageData;
 
@@ -23,16 +21,16 @@
     }[] = await res.json();
 
     for (const block of list.filter((v) => v.next_of === null)) {
-      blocks.push(block);
+      $blocks.push(block);
     }
     list = list.filter((v) => v.next_of !== null);
 
     while (list.length !== 0) {
-      const last_id = blocks[blocks.length - 1]._id;
+      const last_id = $blocks[$blocks.length - 1]._id;
       const next_list = list.filter((v) => v.next_of === last_id);
       if (next_list.length === 0) break;
       for (const block of next_list) {
-        blocks.push(block);
+        $blocks.push(block);
       }
       list = list.filter((v) => v.next_of !== last_id);
     }
@@ -42,7 +40,7 @@
 {#await getBlocks()}
   <div>Loading...</div>
 {:then}
-  {#each blocks as block}
+  {#each $blocks as block}
     <div class="block">
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
@@ -53,7 +51,7 @@
       >
         ::
       </div>
-      <Block {block} page_id={data.page_id} />
+      <Block {block} page_id={data.page_id} block_list={blocks} />
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:dragover={(event) => {
@@ -78,11 +76,12 @@
             }),
           });
 
-          const target_index = blocks.findIndex((v) => v._id === block_id);
-          const [target] = blocks.splice(target_index, 1);
-          const this_index = blocks.findIndex((v) => v._id === block._id);
-          blocks.splice(this_index + 1, 0, target);
-          blocks = blocks;
+          const block_list = $blocks;
+          const target_index = block_list.findIndex((v) => v._id === block_id);
+          const [target] = block_list.splice(target_index, 1);
+          const this_index = block_list.findIndex((v) => v._id === block._id);
+          block_list.splice(this_index + 1, 0, target);
+          $blocks = block_list;
 
           event.preventDefault();
         }}

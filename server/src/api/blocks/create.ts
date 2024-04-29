@@ -43,6 +43,6 @@ export const flvCreateBlockHandler: apiHandler<{
   }
 
   res.status(200);
-  res.type("application/json");
-  return result;
+  res.type("text/plain");
+  return result.toString();
 };

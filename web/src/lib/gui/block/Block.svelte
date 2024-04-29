@@ -1,5 +1,6 @@
 <script lang="ts">
   import Paragraph from "$lib/gui/block/Paragraph.svelte";
+  import type { blockListStore } from "$lib/types/block_list";
 
   export let page_id: string;
 
@@ -8,6 +9,8 @@
     type: "paragraph";
     data: unknown;
   };
+
+  export let block_list: blockListStore;
 
   let block_data: { _id: string; text: string } | null;
   $: block_data = (() => {
@@ -29,6 +32,6 @@
 
 <div>
   {#if block.type === "paragraph"}
-    <Paragraph {block_data} {page_id} />
+    <Paragraph {block_data} {page_id} {block_list} />
   {/if}
 </div>
