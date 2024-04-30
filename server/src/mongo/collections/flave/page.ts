@@ -9,6 +9,7 @@ type flvPageType = {
   updated_at: Date;
   updated_by: ObjectId;
   parent?: ObjectId;
+  rdb?: ObjectId;
 };
 
 export const flvPageCollection = mongoClient
