@@ -44,3 +44,21 @@
 {#await getPageList() then pages}
   <PageList {data} {pages} page_path={get(page_path_store)} />
 {/await}
+
+<Button
+  style={{
+    buttonStyle: "text",
+  }}
+  on:click={async () => {
+    await fetch(`http://${location.hostname}:8080/rdbs`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workspace: data.workspace_id,
+      }),
+    });
+  }}
+>
+  Create Relational Database
+</Button>
