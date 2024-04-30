@@ -7,6 +7,10 @@ import {
   flvGetWorkspacePageListHandler,
   flvGetWorkspacePageListSchema,
 } from "./get_page_list";
+import {
+  flvGetWorkspaceRdbListHandler,
+  flvGetWorkspaceRdbListSchema,
+} from "./get_rdb_list";
 
 export const flvWorkspaceIdRoute: apiRoute = (server, opt, done) => {
   // get workspace data
@@ -21,6 +25,13 @@ export const flvWorkspaceIdRoute: apiRoute = (server, opt, done) => {
     "/:workspace_id/pages",
     { schema: flvGetWorkspacePageListSchema },
     flvGetWorkspacePageListHandler
+  );
+
+  // get relational database list
+  server.get(
+    "/:workspace_id/rdbs",
+    { schema: flvGetWorkspaceRdbListSchema },
+    flvGetWorkspaceRdbListHandler
   );
 
   done();

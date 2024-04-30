@@ -4,6 +4,7 @@
   import PageList from "./PageList.svelte";
   import { page_path_store } from "$lib/store/page_path";
   import { get } from "svelte/store";
+  import RdbList from "./RdbList.svelte";
 
   export let data: LayoutData;
 
@@ -15,6 +16,19 @@
   > {
     const res = await fetch(
       `http://${location.hostname}:8080/workspaces/${data.workspace_id}/pages`,
+      { credentials: "include" }
+    );
+    return await res.json();
+  }
+
+  async function getRdbList(): Promise<
+    {
+      _id: string;
+      title: string;
+    }[]
+  > {
+    const res = await fetch(
+      `http://${location.hostname}:8080/workspaces/${data.workspace_id}/rdbs`,
       { credentials: "include" }
     );
     return await res.json();
@@ -62,3 +76,7 @@
 >
   Create Relational Database
 </Button>
+
+{#await getRdbList() then rdbs}
+  <RdbList rdb_list={rdbs} />
+{/await}
