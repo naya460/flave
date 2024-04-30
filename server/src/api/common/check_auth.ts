@@ -1,16 +1,19 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { getBlockData } from "mongo/block/get_data";
 import { getPageData } from "mongo/page/get_data";
+import { getRdbData } from "mongo/rdb/get_data";
 import { getSessionData } from "mongo/session/get_data";
 import { getUserData } from "mongo/user/get_data";
 import { getWorkspaceData } from "mongo/workspace/get_data";
+import { ObjectId } from "mongodb";
 
 type Auth =
   | "auth"
   | "admin"
   | { workspace: string }
   | { page: string }
-  | { block: string };
+  | { block: string }
+  | { rdb: string };
 
 export const checkAuth = async (
   type: Auth,
@@ -109,6 +112,32 @@ export const checkAuth = async (
     }
 
     const member = await getWorkspaceData(page.workspace.toString(), {
+      projection: { owner: true, member: true },
+    });
+
+    if (member === null) {
+      res?.status(400);
+      return null;
+    }
+
+    if (
+      member.owner.equals(user_id) === false &&
+      member.member.some((v) => v.user_id.equals(user_id)) === false
+    ) {
+      res?.status(403);
+      return null;
+    }
+  }
+  // especially type is "rdb"
+  else if (typeof type === "object" && "rdb" in type) {
+    const rdb = await getRdbData(new ObjectId(type.rdb));
+
+    if (rdb === null) {
+      res?.status(400);
+      return null;
+    }
+
+    const member = await getWorkspaceData(rdb.workspace.toString(), {
       projection: { owner: true, member: true },
     });
 

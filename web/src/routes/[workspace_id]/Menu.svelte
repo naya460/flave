@@ -78,5 +78,5 @@
 </Button>
 
 {#await getRdbList() then rdbs}
-  <RdbList rdb_list={rdbs} />
+  <RdbList rdb_list={rdbs} {data} />
 {/await}
