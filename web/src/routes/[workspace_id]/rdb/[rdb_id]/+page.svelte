@@ -35,9 +35,21 @@
   }}
 />
 
-{#each page_list as page}
-  <div>id: {page._id}, title: {page.title}</div>
-{/each}
+<div class="table">
+  {#each page_list as page}
+    <Button
+      style={{
+        buttonStyle: "text",
+        textAlign: "left",
+      }}
+      on:click={() => {
+        location.assign(`/${data.workspace_id}/${page._id}`);
+      }}
+    >
+      {page.title}
+    </Button>
+  {/each}
+</div>
 
 <Button
   style={{
@@ -56,5 +68,12 @@
     });
   }}
 >
-  New Page
+  Create New Page
 </Button>
+
+<style>
+  .table {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+</style>
