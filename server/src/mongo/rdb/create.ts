@@ -11,6 +11,7 @@ export const createRdb = async (
   const result = await flvRdbCollection.insertOne({
     title,
     workspace,
+    properties: [],
     created_at: date,
     created_by: user_id,
     updated_at: date,
