@@ -35,19 +35,54 @@
   }}
 />
 
+<Button
+  style={{
+    buttonStyle: "text",
+  }}
+  on:click={async () => {
+    await fetch(
+      `http://${location.hostname}:8080/rdbs/${data.rdb_id}/property`,
+      {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "text", name: "new property" }),
+      }
+    );
+  }}
+>
+  Create New Property
+</Button>
+
 <div class="table">
+  <div class="row">
+    <div style:text-align="center" style:padding="0.2rem 0.5rem">page</div>
+    {#if data.rdb_data.properties !== undefined}
+      {#each data.rdb_data.properties as property}
+        <div style:text-align="center" style:padding="0.2rem 0.5rem">
+          {property.name}
+        </div>
+      {/each}
+    {/if}
+  </div>
   {#each page_list as page}
-    <Button
-      style={{
-        buttonStyle: "text",
-        textAlign: "left",
-      }}
-      on:click={() => {
-        location.assign(`/${data.workspace_id}/${page._id}`);
-      }}
-    >
-      {page.title}
-    </Button>
+    <div class="row">
+      <div>
+        <Button
+          style={{
+            buttonStyle: "text",
+            textAlign: "left",
+            width: "100%",
+          }}
+          on:click={() => {
+            location.assign(`/${data.workspace_id}/${page._id}`);
+          }}
+        >
+          {page.title}
+        </Button>
+      </div>
+    </div>
   {/each}
 </div>
 
@@ -74,6 +109,21 @@
 <style>
   .table {
     display: grid;
-    grid-template-columns: 1fr;
+    background-color: #dddddd;
+    border: 1px solid #dddddd;
+    gap: 1px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 15rem);
+    background-color: #dddddd;
+    gap: 1px;
+  }
+
+  .row * {
+    background-color: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
   }
 </style>

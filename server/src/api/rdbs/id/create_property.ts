@@ -3,6 +3,7 @@ import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
 import { updateRdb } from "mongo/rdb/update";
 import { ObjectId } from "mongodb";
+import { v4 as uuid_v4 } from "uuid";
 
 const paramsSchema = {
   type: "object",
@@ -15,17 +16,18 @@ const paramsSchema = {
 const bodySchema = {
   type: "object",
   properties: {
-    title: { type: "string" },
+    type: { type: "string" },
+    name: { type: "string" },
   },
-  required: ["title"],
+  required: ["type", "name"],
 } as const;
 
-export const flvPatchRdbDataSchema = {
+export const flvCreateRdbPropertySchema = {
   params: paramsSchema,
   body: bodySchema,
 };
 
-export const flvPatchRdbDataHandler: apiHandler<{
+export const flvCreateRdbPropertyHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
   Body: FromSchema<typeof bodySchema>;
 }> = async (req, res) => {
@@ -33,7 +35,11 @@ export const flvPatchRdbDataHandler: apiHandler<{
   if (auth === null) return null;
 
   const result = await updateRdb(new ObjectId(req.params.rdb_id), auth, {
-    title: req.body.title,
+    properties: {
+      id: uuid_v4(),
+      type: req.body.type,
+      name: req.body.name,
+    },
   });
 
   if (result === false) {
@@ -42,4 +48,5 @@ export const flvPatchRdbDataHandler: apiHandler<{
   }
 
   res.status(200);
+  return;
 };

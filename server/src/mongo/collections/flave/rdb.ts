@@ -4,6 +4,11 @@ import { ObjectId } from "mongodb";
 type flvRdbType = {
   title: string;
   workspace: ObjectId;
+  properties: {
+    id: string;
+    type: string;
+    name: string;
+  }[];
   created_at: Date;
   created_by: ObjectId;
   updated_at: Date;

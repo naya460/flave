@@ -5,6 +5,10 @@ import {
   flvGetRdbPageListHandler,
   flvGetRdbPageListSchema,
 } from "./get_page_list";
+import {
+  flvCreateRdbPropertyHandler,
+  flvCreateRdbPropertySchema,
+} from "./create_property";
 
 export const flvRdbIdRoute: apiRoute = (server, opt, done) => {
   // get rdb data
@@ -22,6 +26,13 @@ export const flvRdbIdRoute: apiRoute = (server, opt, done) => {
     "/:rdb_id/pages",
     { schema: flvGetRdbPageListSchema },
     flvGetRdbPageListHandler
+  );
+
+  // create property
+  server.post(
+    "/:rdb_id/property",
+    { schema: flvCreateRdbPropertySchema },
+    flvCreateRdbPropertyHandler
   );
 
   done();
