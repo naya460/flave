@@ -1,8 +1,8 @@
 <script lang="ts">
   export let type: "text" | "password" = "text";
   export let style: {
-    outline: boolean;
-    fontSize: string;
+    outline?: boolean;
+    fontSize?: string;
   } = {
     outline: true,
     fontSize: "1rem",

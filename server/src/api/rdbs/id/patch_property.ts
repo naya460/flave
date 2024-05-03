@@ -1,15 +1,16 @@
 import { checkAuth } from "api/common/check_auth";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
-import { createRdbProperty } from "mongo/rdb/properties/create";
+import { updateRdbProperty } from "mongo/rdb/properties/update";
 import { ObjectId } from "mongodb";
 
 const paramsSchema = {
   type: "object",
   properties: {
     rdb_id: { type: "string" },
+    property_id: { type: "string" },
   },
-  required: ["rdb_id"],
+  required: ["rdb_id", "property_id"],
 } as const;
 
 const bodySchema = {
@@ -18,38 +19,48 @@ const bodySchema = {
     type: { type: "string" },
     name: { type: "string" },
   },
-  required: ["type", "name"],
+  required: [],
 } as const;
 
-export const flvCreateRdbPropertySchema = {
+export const flvPatchRdbPropertySchema = {
   params: paramsSchema,
   body: bodySchema,
 };
 
-export const flvCreateRdbPropertyHandler: apiHandler<{
+export const flvPatchRdbPropertyHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
   Body: FromSchema<typeof bodySchema>;
 }> = async (req, res) => {
   const auth = await checkAuth({ rdb: req.params.rdb_id }, req, res);
   if (auth === null) return null;
 
-  const result = await createRdbProperty(
+  const data: {
+    id: string;
+    type?: string;
+    name?: string;
+  } = {
+    id: req.params.property_id,
+  };
+
+  if (req.body.type !== undefined) {
+    data.type = req.body.type;
+  }
+
+  if (req.body.name !== undefined) {
+    data.name = req.body.name;
+  }
+
+  const result = await updateRdbProperty(
     new ObjectId(req.params.rdb_id),
     auth,
-    {
-      property: {
-        type: req.body.type,
-        name: req.body.name,
-      },
-    }
+    { property: data }
   );
 
-  if (result === null) {
+  if (result === false) {
     res.status(400);
     return;
   }
 
   res.status(200);
-  res.type("text/plain");
-  return result;
+  return;
 };

@@ -9,6 +9,10 @@ import {
   flvCreateRdbPropertyHandler,
   flvCreateRdbPropertySchema,
 } from "./create_property";
+import {
+  flvPatchRdbPropertyHandler,
+  flvPatchRdbPropertySchema,
+} from "./patch_property";
 
 export const flvRdbIdRoute: apiRoute = (server, opt, done) => {
   // get rdb data
@@ -33,6 +37,13 @@ export const flvRdbIdRoute: apiRoute = (server, opt, done) => {
     "/:rdb_id/property",
     { schema: flvCreateRdbPropertySchema },
     flvCreateRdbPropertyHandler
+  );
+
+  // patch property
+  server.patch(
+    "/:rdb_id/property/:property_id",
+    { schema: flvPatchRdbPropertySchema },
+    flvPatchRdbPropertyHandler
   );
 
   done();

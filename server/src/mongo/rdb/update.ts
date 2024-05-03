@@ -6,11 +6,6 @@ export async function updateRdb(
   user_id: ObjectId,
   data: {
     title?: string;
-    properties?: {
-      id: string;
-      type: string;
-      name: string;
-    };
   }
 ) {
   const doc: {
@@ -18,13 +13,6 @@ export async function updateRdb(
       title?: string;
       updated_at: Date;
       updated_by: ObjectId;
-    };
-    $push?: {
-      properties?: {
-        id: string;
-        type: string;
-        name: string;
-      };
     };
   } = {
     $set: {
@@ -35,11 +23,6 @@ export async function updateRdb(
 
   if (data.title !== undefined) {
     doc.$set.title = data.title;
-  }
-
-  if (data.properties !== undefined) {
-    if (doc.$push === undefined) doc.$push = {};
-    doc.$push.properties = data.properties;
   }
 
   const result = await flvRdbCollection.updateOne({ _id: rdb_id }, { ...doc });

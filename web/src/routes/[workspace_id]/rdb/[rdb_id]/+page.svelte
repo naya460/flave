@@ -57,12 +57,25 @@
 
 <div class="table">
   <div class="row">
-    <div style:text-align="center" style:padding="0.2rem 0.5rem">page</div>
+    <div style:padding="0.2rem 0.5rem">page</div>
     {#if data.rdb_data.properties !== undefined}
       {#each data.rdb_data.properties as property}
-        <div style:text-align="center" style:padding="0.2rem 0.5rem">
-          {property.name}
-        </div>
+        <TextInput
+          style={{ outline: false }}
+          value={property.name}
+          onChange={async (event) => {
+            await fetch(
+              `http://${location.hostname}:8080/rdbs/${data.rdb_id}/property/${property.id}`,
+              {
+                method: "PATCH",
+                mode: "cors",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: event.currentTarget.value }),
+              }
+            );
+          }}
+        />
       {/each}
     {/if}
   </div>
