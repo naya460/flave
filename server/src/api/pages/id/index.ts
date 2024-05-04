@@ -9,6 +9,10 @@ import {
   flvGetPageBlockListHandler,
   flvGetPageBlockListSchema,
 } from "./get_blocks";
+import {
+  flvPatchPagePropertyHandler,
+  flvPatchPagePropertySchema,
+} from "./patch_property";
 
 export const flvPageIdRoute: apiRoute = (server, opt, done) => {
   // get page data
@@ -37,6 +41,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id/blocks",
     { schema: flvGetPageBlockListSchema },
     flvGetPageBlockListHandler
+  );
+
+  // patch page property
+  server.patch(
+    "/:page_id/property/:property_id",
+    { schema: flvPatchPagePropertySchema },
+    flvPatchPagePropertyHandler
   );
 
   done();

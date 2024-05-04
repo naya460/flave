@@ -10,6 +10,10 @@ type flvPageType = {
   updated_by: ObjectId;
   parent?: ObjectId;
   rdb?: ObjectId;
+  properties?: {
+    id: string;
+    value: unknown;
+  }[];
 };
 
 export const flvPageCollection = mongoClient

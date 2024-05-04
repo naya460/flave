@@ -9,6 +9,10 @@
   let page_list: {
     _id: string;
     title: string;
+    properties?: {
+      id: string;
+      value: string;
+    }[];
   }[] = [];
 
   onMount(async () => {
@@ -95,6 +99,28 @@
           {page.title}
         </Button>
       </div>
+      {#if data.rdb_data.properties !== undefined}
+        {#each data.rdb_data.properties as property}
+          <TextInput
+            style={{ outline: false }}
+            value={page.properties !== undefined
+              ? page.properties.find((v) => v.id === property.id)?.value
+              : ""}
+            onChange={async (event) => {
+              await fetch(
+                `http://${location.hostname}:8080/pages/${page._id}/property/${property.id}`,
+                {
+                  method: "PATCH",
+                  mode: "cors",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ value: event.currentTarget.value }),
+                }
+              );
+            }}
+          />
+        {/each}
+      {/if}
     </div>
   {/each}
 </div>

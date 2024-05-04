@@ -39,6 +39,7 @@ export async function getPageList(arg: {
         created_by: true,
         updated_at: true,
         updated_by: true,
+        properties: true,
       },
     })
     .toArray();
