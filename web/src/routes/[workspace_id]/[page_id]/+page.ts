@@ -7,7 +7,14 @@ export const load: PageLoad = async ({ fetch, url, params }) => {
 		`http://${url.hostname}:8080/pages/${params.page_id}`,
 		{ credentials: "include" }
 	);
-	const page_data: { title: string } = await res.json();
+	const page_data: {
+		title: string;
+		rdb?: string;
+		properties?: {
+			id: string;
+			value: string;
+		}[];
+	} = await res.json();
 
 	const path_res = await fetch(
 		`http://${url.hostname}:8080/pages/${params.page_id}/path`,

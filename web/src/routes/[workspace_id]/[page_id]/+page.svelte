@@ -4,6 +4,7 @@
   import { page_title_store } from "$lib/store/page_title";
   import { onMount } from "svelte";
   import BlockList from "./BlockList.svelte";
+  import PropertyList from "./PropertyList.svelte";
 
   export let data: PageData;
 
@@ -28,5 +29,13 @@
     page_title_store.set(event.currentTarget.value);
   }}
 />
+
+{#if data.page_data.rdb !== undefined && data.page_data.properties !== undefined}
+  <PropertyList
+    page_id={data.page_id}
+    rdb_id={data.page_data.rdb}
+    properties={data.page_data.properties}
+  />
+{/if}
 
 <BlockList {data} />

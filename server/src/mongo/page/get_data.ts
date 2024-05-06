@@ -6,6 +6,8 @@ type Condition = {
     title?: boolean;
     workspace?: boolean;
     parent?: boolean;
+    rdb?: boolean;
+    properties?: boolean;
   };
 };
 
@@ -15,6 +17,8 @@ export async function getPageData(
     projection: {
       parent: true,
       title: true,
+      rdb: true,
+      properties: true,
     },
   }
 ) {
