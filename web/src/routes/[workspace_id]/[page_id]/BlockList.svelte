@@ -34,6 +34,8 @@
       }
       list = list.filter((v) => v.next_of !== last_id);
     }
+
+    $blocks.push({ _id: "", type: "paragraph", data: { text: "" } });
   }
 </script>
 

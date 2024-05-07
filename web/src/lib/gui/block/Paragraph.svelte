@@ -21,6 +21,8 @@
   }
 
   async function applyUpdate() {
+    if (block_data?._id === "") return;
+
     await fetch(`http://${location.hostname}:8080/blocks/${block_data?._id}`, {
       method: "PATCH",
       mode: "cors",
@@ -29,6 +31,36 @@
       body: JSON.stringify({
         data: { text: own.innerText },
       }),
+    });
+  }
+
+  async function onCreate() {
+    if (block_data?._id !== "") return;
+    if (own.innerText === "") return;
+
+    const res = await fetch(`http://${location.hostname}:8080/blocks`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        page_id: page_id,
+        next_of:
+          $block_list.length < 2
+            ? null
+            : $block_list[$block_list.length - 2]._id,
+        type: "paragraph",
+        data: { text: "" },
+      }),
+    });
+    $block_list[$block_list.length - 1] = {
+      _id: await res.text(),
+      type: "paragraph",
+      data: { text: own.innerText },
+    };
+    $block_list.push({
+      _id: "",
+      type: "paragraph",
+      data: { text: "" },
     });
   }
 
@@ -47,6 +79,11 @@
     on:keydown={(event) => {
       if (!timeout) {
         timeout = setInterval(timeoutHandler, 1000);
+      }
+
+      if (block_data?._id === "") {
+        onCreate();
+        return;
       }
 
       if (event.key === "Enter") {
