@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flvFetch } from "$lib/flv_fetch";
   import TextInput from "$lib/gui/common/TextInput.svelte";
 
   export let page_id: string;
@@ -10,9 +11,7 @@
   }[];
 
   async function getRdbProperties(): Promise<{ id: string; name: string }[]> {
-    const res = await fetch(`http://${location.hostname}:8080/rdbs/${rdb_id}`, {
-      credentials: "include",
-    });
+    const res = await flvFetch(`rdbs/${rdb_id}`);
     return (await res.json()).properties;
   }
 </script>
@@ -24,15 +23,10 @@
         style={{ outline: false }}
         value={rdb_property.name}
         onChange={async (event) => {
-          await fetch(
-            `http://${location.hostname}:8080/rdbs/${rdb_id}/property/${rdb_property.id}`,
-            {
-              method: "PATCH",
-              mode: "cors",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ name: event.currentTarget.value }),
-            }
+          await flvFetch(
+            `rdbs/${rdb_id}/property/${rdb_property.id}`,
+            "PATCH",
+            { name: event.currentTarget.value }
           );
         }}
       />
@@ -42,15 +36,10 @@
           ? properties.find((v) => v.id === rdb_property.id)?.value
           : ""}
         onChange={async (event) => {
-          await fetch(
-            `http://${location.hostname}:8080/pages/${page_id}/property/${rdb_property.id}`,
-            {
-              method: "PATCH",
-              mode: "cors",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ value: event.currentTarget.value }),
-            }
+          await flvFetch(
+            `pages/${page_id}/property/${rdb_property.id}`,
+            "PATCH",
+            { value: event.currentTarget.value }
           );
         }}
       />

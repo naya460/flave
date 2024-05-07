@@ -3,6 +3,7 @@
   import Cards from "$lib/gui/common/Cards.svelte";
   import CreateUser from "./CreateUser.svelte";
   import Popup from "$lib/gui/common/Popup.svelte";
+  import { flvFetch } from "$lib/flv_fetch";
 
   export let data: PageData;
 
@@ -10,10 +11,7 @@
   let popup_hidden = true;
 
   async function getUserWorkspaceList(user_id: string) {
-    const res = await fetch(
-      `http://${location.hostname}:8080/users/${user_id}/workspaces`,
-      { credentials: "include" }
-    );
+    const res = await flvFetch(`users/${user_id}/workspaces`);
     const json: { name: string }[] = await res.json();
     return json;
   }

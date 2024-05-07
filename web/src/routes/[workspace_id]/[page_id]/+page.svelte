@@ -5,6 +5,7 @@
   import { onMount } from "svelte";
   import BlockList from "./BlockList.svelte";
   import PropertyList from "./PropertyList.svelte";
+  import { flvFetch } from "$lib/flv_fetch";
 
   export let data: PageData;
 
@@ -17,12 +18,8 @@
   style={{ outline: false, fontSize: "1.5rem" }}
   value={data.page_data.title}
   onChange={async (event) => {
-    await fetch(`http://${location.hostname}:8080/pages/${data.page_id}`, {
-      method: "PATCH",
-      mode: "cors",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: event.currentTarget.value }),
+    await flvFetch(`pages/${data.page_id}`, "PATCH", {
+      title: event.currentTarget.value,
     });
   }}
   onKeyUp={(event) => {

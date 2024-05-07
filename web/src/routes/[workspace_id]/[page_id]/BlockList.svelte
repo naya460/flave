@@ -3,16 +3,14 @@
   import type { PageData } from "./$types";
   import type { blockListStore } from "$lib/types/block_list";
   import { writable } from "svelte/store";
+  import { flvFetch } from "$lib/flv_fetch";
 
   let blocks: blockListStore = writable([]);
 
   export let data: PageData;
 
   async function getBlocks() {
-    const res = await fetch(
-      `http://${location.hostname}:8080/pages/${data.page_id}/blocks`,
-      { credentials: "include" }
-    );
+    const res = await flvFetch(`pages/${data.page_id}/blocks`);
     let list: {
       _id: string;
       type: "paragraph";
@@ -69,14 +67,7 @@
           if (block_id === block._id) return;
 
           // create new block
-          await fetch(`http://${location.hostname}:8080/blocks/${block_id}`, {
-            method: "PATCH",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              next_of: block._id,
-            }),
-          });
+          await flvFetch(`blocks/${block_id}`, "PATCH", { next_of: block._id });
 
           const block_list = $blocks;
           const target_index = block_list.findIndex((v) => v._id === block_id);

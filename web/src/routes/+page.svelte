@@ -1,14 +1,12 @@
 <script lang="ts">
+  import { flvFetch } from "$lib/flv_fetch";
   import Button from "$lib/gui/common/Button.svelte";
   import Cards from "$lib/gui/common/Cards.svelte";
   import type { PageData } from "./$types";
   export let data: PageData;
 
   const handleSignOut = async () => {
-    const res = await fetch(`http://${location.hostname}:8080/sessions/`, {
-      method: "delete",
-      credentials: "include",
-    });
+    const res = await flvFetch(`sessions`, "DELETE");
     if (res.ok) {
       location.assign("/signin");
     }

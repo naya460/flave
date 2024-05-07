@@ -4,6 +4,7 @@
   import Popup from "$lib/gui/common/Popup.svelte";
   import TextInput from "$lib/gui/common/TextInput.svelte";
   import type { PageData } from "./$types";
+  import { flvFetch } from "$lib/flv_fetch";
 
   export let data: PageData;
 
@@ -16,12 +17,7 @@
     const data = JSON.stringify({
       name: form_data.get("name"),
     });
-    await fetch(`http://${location.hostname}:8080/workspaces`, {
-      method: "post",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: data,
-    });
+    await flvFetch(`workspaces`, "POST", data);
     location.reload();
   };
 </script>

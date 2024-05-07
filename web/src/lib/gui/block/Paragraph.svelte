@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flvFetch } from "$lib/flv_fetch";
   import type { blockListStore } from "$lib/types/block_list";
   import { onDestroy } from "svelte";
 
@@ -23,14 +24,8 @@
   async function applyUpdate() {
     if (block_data?._id === "") return;
 
-    await fetch(`http://${location.hostname}:8080/blocks/${block_data?._id}`, {
-      method: "PATCH",
-      mode: "cors",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: { text: own.innerText },
-      }),
+    await flvFetch(`blocks/${block_data?._id}`, "PATCH", {
+      data: { text: own.innerText },
     });
   }
 
@@ -38,19 +33,12 @@
     if (block_data?._id !== "") return;
     if (own.innerText === "") return;
 
-    const res = await fetch(`http://${location.hostname}:8080/blocks`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        page_id: page_id,
-        next_of:
-          $block_list.length < 2
-            ? null
-            : $block_list[$block_list.length - 2]._id,
-        type: "paragraph",
-        data: { text: "" },
-      }),
+    const res = await flvFetch(`blocks`, "POST", {
+      page_id: page_id,
+      next_of:
+        $block_list.length < 2 ? null : $block_list[$block_list.length - 2]._id,
+      type: "paragraph",
+      data: { text: "" },
     });
     $block_list[$block_list.length - 1] = {
       _id: await res.text(),
@@ -87,16 +75,11 @@
       }
 
       if (event.key === "Enter") {
-        const res = fetch(`http://${location.hostname}:8080/blocks`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            page_id: page_id,
-            next_of: block_data._id,
-            type: "paragraph",
-            data: { text: "" },
-          }),
+        const res = flvFetch(`blocks`, "POST", {
+          page_id: page_id,
+          next_of: block_data._id,
+          type: "paragraph",
+          data: { text: "" },
         });
 
         res.then((v) => {
@@ -117,14 +100,7 @@
         event.preventDefault();
       } else if (event.key === "Backspace") {
         if (own.innerText.length === 0) {
-          const res = fetch(
-            `http://${location.hostname}:8080/blocks/${block_data._id}`,
-            {
-              method: "DELETE",
-              mode: "cors",
-              credentials: "include",
-            }
-          );
+          const res = flvFetch(`blocks/${block_data._id}`, "DELETE");
 
           res.then((v) => {
             if (v.ok === false) return;

@@ -5,6 +5,7 @@
   import { page_path_store } from "$lib/store/page_path";
   import { get } from "svelte/store";
   import RdbList from "./RdbList.svelte";
+  import { flvFetch } from "$lib/flv_fetch";
 
   export let data: LayoutData;
 
@@ -14,10 +15,7 @@
       title: string;
     }[]
   > {
-    const res = await fetch(
-      `http://${location.hostname}:8080/workspaces/${data.workspace_id}/pages`,
-      { credentials: "include" }
-    );
+    const res = await flvFetch(`workspaces/${data.workspace_id}/pages`);
     return await res.json();
   }
 
@@ -27,10 +25,7 @@
       title: string;
     }[]
   > {
-    const res = await fetch(
-      `http://${location.hostname}:8080/workspaces/${data.workspace_id}/rdbs`,
-      { credentials: "include" }
-    );
+    const res = await flvFetch(`workspaces/${data.workspace_id}/rdbs`);
     return await res.json();
   }
 </script>
@@ -42,14 +37,7 @@
     buttonStyle: "text",
   }}
   on:click={async () => {
-    await fetch(`http://${location.hostname}:8080/pages`, {
-      method: "post",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        workspace_id: data.workspace_id,
-      }),
-    });
+    await flvFetch(`pages`, "POST", { workspace_id: data.workspace_id });
   }}
 >
   Create Page
@@ -64,14 +52,7 @@
     buttonStyle: "text",
   }}
   on:click={async () => {
-    await fetch(`http://${location.hostname}:8080/rdbs`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        workspace: data.workspace_id,
-      }),
-    });
+    await flvFetch(`rdbs`, "POST", { workspace: data.workspace_id });
   }}
 >
   Create Relational Database

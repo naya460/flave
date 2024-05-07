@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flvFetch } from "$lib/flv_fetch";
   import Button from "$lib/gui/common/Button.svelte";
   import Popup from "$lib/gui/common/Popup.svelte";
   import TextInput from "$lib/gui/common/TextInput.svelte";
@@ -14,11 +15,7 @@
       password: form_data.get("password"),
       confirm_password: form_data.get("confirm_password"),
     });
-    await fetch(`http://${location.hostname}:8080/users`, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: data,
-    });
+    await flvFetch(`users`, "POST", data);
     location.reload();
   };
 </script>

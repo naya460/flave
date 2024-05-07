@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flvFetch } from "$lib/flv_fetch";
   import Button from "$lib/gui/common/Button.svelte";
   import TextInput from "$lib/gui/common/TextInput.svelte";
 
@@ -7,15 +8,9 @@
   ) => {
     event.preventDefault();
     const form_data = new FormData(event.currentTarget);
-    const data = JSON.stringify({
+    const result = await flvFetch(`sessions`, "POST", {
       auth_id: form_data.get("auth_id"),
       password: form_data.get("password"),
-    });
-    const result = await fetch(`http://${location.hostname}:8080/sessions`, {
-      method: "post",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: data,
     });
 
     if (result.ok === true) {

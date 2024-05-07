@@ -5,6 +5,7 @@
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
   import { page_title_store } from "$lib/store/page_title";
+  import { flvFetch } from "$lib/flv_fetch";
 
   type PageData = {
     _id: string;
@@ -61,14 +62,9 @@
         buttonStyle: "text",
       }}
       on:click={async () => {
-        await fetch(`http://${location.hostname}:8080/pages`, {
-          method: "post",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            workspace_id: data.workspace_id,
-            parent: page._id,
-          }),
+        await flvFetch(`pages`, "POST", {
+          workspace_id: data.workspace_id,
+          parent: page._id,
         });
       }}
     >
