@@ -2,14 +2,9 @@ import type { blockListStore } from "$lib/types/block_list";
 import { get } from "svelte/store";
 
 let block_list: blockListStore;
-let block_list_node: Node;
 
 export function setBlockList(list: blockListStore) {
 	block_list = list;
-}
-
-export function setBlockListNode(node: Node) {
-	block_list_node = node;
 }
 
 export function moveCaretUp(current_block_id: string) {
@@ -20,10 +15,8 @@ export function moveCaretUp(current_block_id: string) {
 	if (pos < 1) return;
 
 	if (selection.isCollapsed) {
-		const node =
-			block_list_node.childNodes[pos - 1].childNodes[2].childNodes[0]
-				.childNodes[0];
-		if (node.nodeValue === null) return;
+		const node = get(block_list)[pos - 1].dom_node?.childNodes[0];
+		if (node === undefined || node.nodeValue === null) return;
 		const offset =
 			selection.anchorOffset > node.nodeValue.length
 				? node.nodeValue.length
@@ -40,10 +33,8 @@ export function moveCaretDown(current_block_id: string) {
 	if (pos < 0 || pos > get(block_list).length - 1) return;
 
 	if (selection.isCollapsed) {
-		const node =
-			block_list_node.childNodes[pos + 1].childNodes[2].childNodes[0]
-				.childNodes[0];
-		if (node.nodeValue === null) return;
+		const node = get(block_list)[pos + 1].dom_node?.childNodes[0];
+		if (node === undefined || node.nodeValue === null) return;
 		const offset =
 			selection.anchorOffset > node.nodeValue.length
 				? node.nodeValue.length

@@ -4,10 +4,7 @@
   import type { blockListStore } from "$lib/types/block_list";
   import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
-  import {
-    setBlockList,
-    setBlockListNode,
-  } from "$lib/gui/block/block_list_manager";
+  import { setBlockList } from "$lib/gui/block/block_list_manager";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
@@ -42,7 +39,6 @@
   }
 
   setBlockList(blocks);
-  $: setBlockListNode(node);
 </script>
 
 {#await getBlocks()}
