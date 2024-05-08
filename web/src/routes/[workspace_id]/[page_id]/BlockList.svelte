@@ -4,8 +4,13 @@
   import type { blockListStore } from "$lib/types/block_list";
   import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
+  import {
+    setBlockList,
+    setBlockListNode,
+  } from "$lib/gui/block/block_list_manager";
 
   let blocks: blockListStore = writable([]);
+  let node: Node;
 
   export let data: PageData;
 
@@ -35,52 +40,61 @@
 
     $blocks.push({ _id: "", type: "paragraph", data: { text: "" } });
   }
+
+  setBlockList(blocks);
+  $: setBlockListNode(node);
 </script>
 
 {#await getBlocks()}
   <div>Loading...</div>
 {:then}
-  {#each $blocks as block}
-    <div class="block">
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div
-        draggable="true"
-        on:dragstart={(event) => {
-          event.dataTransfer?.setData("application/flv-blk-id", block._id);
-        }}
-      >
-        ::
-      </div>
-      <Block {block} page_id={data.page_id} block_list={blocks} />
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div
-        on:dragover={(event) => {
-          if (event.dataTransfer?.types.includes("application/flv-blk-id")) {
-            event.dataTransfer.dropEffect = "move";
+  <div bind:this={node}>
+    {#each $blocks as block}
+      <div class="block">
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div
+          draggable="true"
+          on:dragstart={(event) => {
+            event.dataTransfer?.setData("application/flv-blk-id", block._id);
+          }}
+        >
+          ::
+        </div>
+        <Block {block} page_id={data.page_id} block_list={blocks} />
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div
+          on:dragover={(event) => {
+            if (event.dataTransfer?.types.includes("application/flv-blk-id")) {
+              event.dataTransfer.dropEffect = "move";
+              event.preventDefault();
+            }
+          }}
+          on:drop={async (event) => {
+            const block_id = event.dataTransfer?.getData(
+              "application/flv-blk-id"
+            );
+            if (block_id === block._id) return;
+
+            // create new block
+            await flvFetch(`blocks/${block_id}`, "PATCH", {
+              next_of: block._id,
+            });
+
+            const block_list = $blocks;
+            const target_index = block_list.findIndex(
+              (v) => v._id === block_id
+            );
+            const [target] = block_list.splice(target_index, 1);
+            const this_index = block_list.findIndex((v) => v._id === block._id);
+            block_list.splice(this_index + 1, 0, target);
+            $blocks = block_list;
+
             event.preventDefault();
-          }
-        }}
-        on:drop={async (event) => {
-          const block_id = event.dataTransfer?.getData(
-            "application/flv-blk-id"
-          );
-          if (block_id === block._id) return;
-
-          // create new block
-          await flvFetch(`blocks/${block_id}`, "PATCH", { next_of: block._id });
-
-          const block_list = $blocks;
-          const target_index = block_list.findIndex((v) => v._id === block_id);
-          const [target] = block_list.splice(target_index, 1);
-          const this_index = block_list.findIndex((v) => v._id === block._id);
-          block_list.splice(this_index + 1, 0, target);
-          $blocks = block_list;
-
-          event.preventDefault();
-        }}
-      />
-    </div>
-  {/each}
+          }}
+        />
+      </div>
+    {/each}
+  </div>
 {:catch}
   <div>Failed loading</div>
 {/await}

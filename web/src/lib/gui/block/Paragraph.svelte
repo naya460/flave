@@ -2,6 +2,7 @@
   import { flvFetch } from "$lib/flv_fetch";
   import type { blockListStore } from "$lib/types/block_list";
   import { onDestroy } from "svelte";
+  import { moveCaretDown, moveCaretUp } from "./block_list_manager";
 
   export let page_id: string;
 
@@ -70,8 +71,10 @@
       }
 
       if (block_data?._id === "") {
-        onCreate();
-        return;
+        if (event.key !== "ArrowUp") {
+          onCreate();
+          return;
+        }
       }
 
       if (event.key === "Enter") {
@@ -114,6 +117,12 @@
 
           event.preventDefault();
         }
+      } else if (event.key === "ArrowUp") {
+        moveCaretUp(block_data._id);
+        event.preventDefault();
+      } else if (event.key === "ArrowDown") {
+        moveCaretDown(block_data._id);
+        event.preventDefault();
       }
     }}
   >
