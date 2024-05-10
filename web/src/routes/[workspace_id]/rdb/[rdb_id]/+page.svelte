@@ -33,108 +33,132 @@
   }}
 />
 
-<Button
-  style={{
-    buttonStyle: "text",
-  }}
-  on:click={async () => {
-    await flvFetch(`rdbs/${data.rdb_id}/property`, "POST", {
-      type: "text",
-      name: "new property",
-    });
-  }}
->
-  Create New Property
-</Button>
-
-<div class="table">
-  <div class="row">
-    <div style:padding="0.2rem 0.5rem">page</div>
-    {#if data.rdb_data.properties !== undefined}
-      {#each data.rdb_data.properties as property}
-        <TextInput
-          style={{ outline: false }}
-          value={property.name}
-          onChange={async (event) => {
-            await flvFetch(
-              `rdbs/${data.rdb_id}/property/${property.id}`,
-              "PATCH",
-              { name: event.currentTarget.value }
-            );
-          }}
-        />
-      {/each}
-    {/if}
-  </div>
-  {#each page_list as page}
+<div class="top">
+  <div class="table">
     <div class="row">
+      <div
+        class="item"
+        style:padding="0.2rem 0.5rem"
+        style:box-sizing="border-box"
+      >
+        page
+      </div>
+      {#if data.rdb_data.properties !== undefined}
+        {#each data.rdb_data.properties as property}
+          <div class="item">
+            <TextInput
+              style={{ outline: false }}
+              value={property.name}
+              onChange={async (event) => {
+                await flvFetch(
+                  `rdbs/${data.rdb_id}/property/${property.id}`,
+                  "PATCH",
+                  { name: event.currentTarget.value }
+                );
+              }}
+            />
+          </div>
+        {/each}
+      {/if}
       <div>
         <Button
           style={{
             buttonStyle: "text",
-            textAlign: "left",
-            width: "100%",
           }}
-          on:click={() => {
-            location.assign(`/${data.workspace_id}/${page._id}`);
+          on:click={async () => {
+            await flvFetch(`rdbs/${data.rdb_id}/property`, "POST", {
+              type: "text",
+              name: "new property",
+            });
           }}
         >
-          {page.title}
+          +
         </Button>
       </div>
-      {#if data.rdb_data.properties !== undefined}
-        {#each data.rdb_data.properties as property}
-          <TextInput
-            style={{ outline: false }}
-            value={page.properties !== undefined
-              ? page.properties.find((v) => v.id === property.id)?.value
-              : ""}
-            onChange={async (event) => {
-              await flvFetch(
-                `pages/${page._id}/property/${property.id}`,
-                "PATCH",
-                { value: event.currentTarget.value }
-              );
-            }}
-          />
-        {/each}
-      {/if}
     </div>
-  {/each}
+    {#each page_list as page}
+      <div class="row">
+        <div class="item">
+          <Button
+            style={{
+              buttonStyle: "text",
+              textAlign: "left",
+              width: "100%",
+            }}
+            on:click={() => {
+              location.assign(`/${data.workspace_id}/${page._id}`);
+            }}
+          >
+            {page.title}
+          </Button>
+        </div>
+        {#if data.rdb_data.properties !== undefined}
+          {#each data.rdb_data.properties as property}
+            <div class="item">
+              <TextInput
+                style={{ outline: false }}
+                value={page.properties !== undefined
+                  ? page.properties.find((v) => v.id === property.id)?.value
+                  : ""}
+                onChange={async (event) => {
+                  await flvFetch(
+                    `pages/${page._id}/property/${property.id}`,
+                    "PATCH",
+                    { value: event.currentTarget.value }
+                  );
+                }}
+              />
+            </div>
+          {/each}
+        {/if}
+      </div>
+    {/each}
+    <div style:width="100%">
+      <Button
+        style={{
+          buttonStyle: "text",
+          textAlign: "left",
+          width: "100%",
+        }}
+        on:click={async () => {
+          await flvFetch(`pages`, "POST", {
+            workspace_id: data.workspace_id,
+            rdb_id: data.rdb_id,
+          });
+        }}
+      >
+        + Create New Page
+      </Button>
+    </div>
+  </div>
 </div>
 
-<Button
-  style={{
-    buttonStyle: "text",
-  }}
-  on:click={async () => {
-    await flvFetch(`pages`, "POST", {
-      workspace_id: data.workspace_id,
-      rdb_id: data.rdb_id,
-    });
-  }}
->
-  Create New Page
-</Button>
-
 <style>
+  .top {
+    position: relative;
+    width: 100%;
+    height: fit-content;
+  }
+
   .table {
-    display: grid;
-    background-color: #dddddd;
-    border: 1px solid #dddddd;
-    gap: 1px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-x: scroll;
   }
 
   .row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 15rem);
-    background-color: #dddddd;
-    gap: 1px;
+    display: flex;
+    width: fit-content;
+    border-bottom: 1px solid #dddddd;
   }
 
-  .row * {
-    background-color: #ffffff;
-    width: 100%;
+  .item {
+    width: 20rem;
+    flex-shrink: 0;
+    border: 0 solid #dddddd;
+    border-right-width: 1px;
     box-sizing: border-box;
   }
 </style>
