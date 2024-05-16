@@ -9,19 +9,21 @@
   <div class="menu">
     <Menu {data} />
   </div>
-  <div>
+  <div class="contents">
     <slot />
   </div>
 </div>
 
 <style>
   .top {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: flex;
   }
 
   .menu {
-    min-width: 10rem;
-    max-width: 20rem;
+    width: 15rem;
+  }
+
+  .contents {
+    width: calc(100% - 15rem);
   }
 </style>

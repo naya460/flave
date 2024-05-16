@@ -5,9 +5,12 @@
   import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
   import { setBlockList } from "$lib/gui/block/block_list_manager";
+  import Button from "$lib/gui/common/Button.svelte";
+  import Popup from "$lib/gui/common/Popup.svelte";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
+  let popup_hidden = true;
 
   export let data: PageData;
 
@@ -15,7 +18,7 @@
     const res = await flvFetch(`pages/${data.page_id}/blocks`);
     let list: {
       _id: string;
-      type: "paragraph";
+      type: "paragraph" | "rdb_view";
       next_of: string | null;
       data: unknown;
     }[] = await res.json();
@@ -94,6 +97,53 @@
 {:catch}
   <div>Failed loading</div>
 {/await}
+
+<Button
+  on:click={() => {
+    popup_hidden = false;
+  }}
+>
+  Insert RDB View
+</Button>
+
+<Popup bind:hidden={popup_hidden}>
+  {#await flvFetch(`workspaces/${data.workspace_id}/rdbs`) then res}
+    {#await res.json() then value}
+      <div>Insert RDB View</div>
+      {#each value as rdb}
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "100%",
+            height: "2rem",
+          }}
+          on:click={() => {
+            const res = flvFetch(`blocks`, "POST", {
+              page_id: data.page_id,
+              next_of: $blocks[$blocks.length - 2]._id,
+              type: "rdb_view",
+              data: { rdb_id: rdb._id },
+            });
+
+            res.then((v) => {
+              v.text().then((w) => {
+                if (typeof w !== "string") return;
+                $blocks.push({
+                  _id: w,
+                  type: "rdb_view",
+                  data: { rdb_id: rdb._id },
+                });
+                $blocks = $blocks;
+              });
+            });
+          }}
+        >
+          {rdb.title}
+        </Button>
+      {/each}
+    {/await}
+  {/await}
+</Popup>
 
 <style>
   .block {

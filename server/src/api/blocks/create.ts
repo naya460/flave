@@ -24,7 +24,7 @@ export const flvCreateBlockHandler: apiHandler<{
   const auth = await checkAuth({ page: req.body.page_id }, req, res);
   if (auth === null) return;
 
-  if (req.body.type !== "paragraph") {
+  if (req.body.type !== "paragraph" && req.body.type !== "rdb_view") {
     res.status(400);
     return;
   }

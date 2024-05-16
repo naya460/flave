@@ -1,12 +1,13 @@
 <script lang="ts">
   import Paragraph from "$lib/gui/block/Paragraph.svelte";
   import type { blockListStore } from "$lib/types/block_list";
+  import RdbView from "./RdbView.svelte";
 
   export let page_id: string;
 
   export let block: {
     _id: string;
-    type: "paragraph";
+    type: "paragraph" | "rdb_view";
     data: unknown;
   };
 
@@ -25,6 +26,17 @@
         _id: block._id,
         text: block.data.text,
       };
+    } else if (
+      block.type === "rdb_view" &&
+      typeof block.data === "object" &&
+      block.data !== null &&
+      "rdb_id" in block.data &&
+      typeof block.data.rdb_id === "string"
+    ) {
+      return {
+        _id: block.data.rdb_id,
+        text: "",
+      };
     }
     return null;
   })();
@@ -33,5 +45,7 @@
 <div>
   {#if block.type === "paragraph"}
     <Paragraph {block_data} {page_id} {block_list} />
+  {:else if block.type === "rdb_view"}
+    <RdbView rdb_id={block_data?._id} />
   {/if}
 </div>

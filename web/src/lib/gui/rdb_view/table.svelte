@@ -64,22 +64,19 @@
 
 <style>
   .top {
-    position: relative;
-    width: 100%;
-    height: fit-content;
-  }
-
-  .table {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
     width: 100%;
     overflow-x: scroll;
   }
 
+  .table {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+  }
+
   .row {
     display: flex;
-    width: fit-content;
+    width: 100%;
     border-bottom: 1px solid #dddddd;
   }
 </style>

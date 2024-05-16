@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 type flvBlockType = {
   page: ObjectId;
   next_of: ObjectId | null;
-  type: "paragraph";
+  type: string;
   data: unknown;
   created_at: Date;
   created_by: ObjectId;

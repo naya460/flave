@@ -4,16 +4,17 @@ import { ObjectId } from "mongodb";
 export async function createBlock(
   page: string,
   next_of: string | null,
-  type: "paragraph",
+  type: string,
   data: unknown,
   user_id: ObjectId
 ) {
   const date = new Date();
+  console.log(page, next_of, type, data, user_id);
 
   const doc: {
     page: ObjectId;
     next_of: ObjectId | null;
-    type: "paragraph";
+    type: string;
     data: unknown;
     created_at: Date;
     created_by: ObjectId;
@@ -29,6 +30,7 @@ export async function createBlock(
     updated_at: date,
     updated_by: user_id,
   };
+  console.log("ok2", doc);
 
   const result = await flvBlockCollection.insertOne(doc);
 
