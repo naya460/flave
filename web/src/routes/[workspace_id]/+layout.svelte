@@ -3,13 +3,52 @@
   import Menu from "./Menu.svelte";
 
   export let data: LayoutData;
+
+  let width = 300;
+  let dragging = false;
+
+  let top_dom: HTMLDivElement;
+
+  window.addEventListener("resize", () => {
+    if (width >= top_dom.clientWidth / 2 && top_dom.clientWidth >= 400) {
+      width = top_dom.clientWidth / 2;
+    }
+  });
 </script>
 
-<div class="top">
-  <div class="menu">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  class="top"
+  bind:this={top_dom}
+  on:mouseup={() => {
+    dragging = false;
+  }}
+  on:mouseleave={() => {
+    dragging = false;
+  }}
+  on:mousemove={(event) => {
+    if (dragging === false) return;
+    if (200 < event.pageX && event.pageX < top_dom.clientWidth / 2) {
+      width = event.pageX;
+    }
+    event.preventDefault();
+  }}
+  on:resize={() => {
+    console.log("ok");
+  }}
+>
+  <div class="menu" style:width={`${width}px`}>
     <Menu {data} />
   </div>
-  <div class="contents">
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div
+    class="split"
+    style:left={`calc(${width}px - 0.2rem)`}
+    on:mousedown={() => {
+      dragging = true;
+    }}
+  />
+  <div class="contents" style:width={`calc(100% - ${width}px)`}>
     <slot />
   </div>
 </div>
@@ -17,13 +56,33 @@
 <style>
   .top {
     display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 
   .menu {
-    width: 15rem;
+    background-color: #f8f8f8;
+    padding: 0.5rem;
+    box-sizing: content-box;
+  }
+
+  .split {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.4rem;
+    transition: background-color 0.1s ease-in-out;
+    cursor: col-resize;
+  }
+
+  .split:hover {
+    background-color: #c0ddd0c0;
   }
 
   .contents {
-    width: calc(100% - 15rem);
+    box-sizing: border-box;
   }
 </style>
