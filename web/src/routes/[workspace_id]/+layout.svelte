@@ -41,21 +41,18 @@
     }
     event.preventDefault();
   }}
-  on:resize={() => {
-    console.log("ok");
-  }}
 >
   <div class="menu" style:width={`${width}px`}>
     <Menu {data} />
   </div>
   <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div
-    class="split"
-    style:left={`calc(${width}px - 0.2rem)`}
-    on:mousedown={() => {
-      dragging = true;
-    }}
-  />
+  <div class="split">
+    <div
+      on:mousedown={() => {
+        dragging = true;
+      }}
+    />
+  </div>
   <div class="contents" style:width={`calc(100% - ${width}px)`}>
     <slot />
   </div>
@@ -74,19 +71,26 @@
   .menu {
     background-color: #f8f8f8;
     padding: 0.5rem;
-    box-sizing: content-box;
+    box-sizing: border-box;
   }
 
   .split {
+    position: relative;
+    width: 0;
+    height: 100%;
+  }
+
+  .split div {
     position: absolute;
     top: 0;
     bottom: 0;
+    left: -0.2rem;
     width: 0.4rem;
     transition: background-color 0.1s ease-in-out;
     cursor: col-resize;
   }
 
-  .split:hover {
+  .split div:hover {
     background-color: #c0ddd0c0;
   }
 
