@@ -4,7 +4,13 @@
 
   export let data: LayoutData;
 
-  let width = 300;
+  let width = (() => {
+    const item = localStorage.getItem("menu_width");
+    if (item === null) return 300;
+    const num = parseInt(item);
+    if (200 < num) return num;
+    return 300;
+  })();
   let dragging = false;
 
   let top_dom: HTMLDivElement;
@@ -22,9 +28,11 @@
   bind:this={top_dom}
   on:mouseup={() => {
     dragging = false;
+    localStorage.setItem("menu_width", width.toString());
   }}
   on:mouseleave={() => {
     dragging = false;
+    localStorage.setItem("menu_width", width.toString());
   }}
   on:mousemove={(event) => {
     if (dragging === false) return;
