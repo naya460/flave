@@ -12,6 +12,9 @@
   let node: Node;
   let popup_hidden = true;
 
+  let context_hidden = true;
+  let context_id = "";
+
   export let data: PageData;
 
   async function getBlocks() {
@@ -56,6 +59,11 @@
           on:dragstart={(event) => {
             event.dataTransfer?.setData("application/flv-blk-id", block._id);
           }}
+          on:contextmenu={(event) => {
+            context_id = block._id;
+            context_hidden = false;
+            event.preventDefault();
+          }}
         >
           ::
         </div>
@@ -98,13 +106,74 @@
   <div>Failed loading</div>
 {/await}
 
-<Button
-  on:click={() => {
-    popup_hidden = false;
-  }}
->
-  Insert RDB View
-</Button>
+<Popup bind:hidden={context_hidden}>
+  <Button
+    style={{
+      buttonStyle: "text",
+      width: "100%",
+      height: "2rem",
+      textAlign: "left",
+    }}
+    on:click={() => {
+      const res = flvFetch(`blocks`, "POST", {
+        page_id: data.page_id,
+        next_of: context_id,
+        type: "paragraph",
+        data: { text: "" },
+      });
+
+      res.then((v) => {
+        v.text().then((w) => {
+          if (typeof w !== "string") return;
+          const index = $blocks.findIndex((v) => v._id === context_id);
+          $blocks.splice(index + 1, 0, {
+            _id: w,
+            type: "paragraph",
+            data: { text: "" },
+          });
+          $blocks = $blocks;
+        });
+      });
+
+      context_hidden = true;
+    }}
+  >
+    Insert Paragraph
+  </Button>
+  <Button
+    style={{
+      buttonStyle: "text",
+      width: "100%",
+      height: "2rem",
+      textAlign: "left",
+    }}
+    on:click={() => {
+      popup_hidden = false;
+      context_hidden = true;
+    }}
+  >
+    Insert RDB View
+  </Button>
+  <Button
+    style={{
+      buttonStyle: "text",
+      width: "100%",
+      height: "2rem",
+      textAlign: "left",
+    }}
+    on:click={() => {
+      const res = flvFetch(`blocks/${context_id}`, "DELETE");
+      res.then(() => {
+        const index = $blocks.findIndex((block) => block._id === context_id);
+        $blocks.splice(index, 1);
+        $blocks = $blocks;
+      });
+      context_hidden = true;
+    }}
+  >
+    Delete Block
+  </Button>
+</Popup>
 
 <Popup bind:hidden={popup_hidden}>
   {#await flvFetch(`workspaces/${data.workspace_id}/rdbs`) then res}
@@ -120,7 +189,7 @@
           on:click={() => {
             const res = flvFetch(`blocks`, "POST", {
               page_id: data.page_id,
-              next_of: $blocks[$blocks.length - 2]._id,
+              next_of: context_id,
               type: "rdb_view",
               data: { rdb_id: rdb._id },
             });
@@ -128,7 +197,10 @@
             res.then((v) => {
               v.text().then((w) => {
                 if (typeof w !== "string") return;
-                $blocks.push({
+                const index = $blocks.findIndex(
+                  (block) => block._id === context_id
+                );
+                $blocks.splice(index + 1, 0, {
                   _id: w,
                   type: "rdb_view",
                   data: { rdb_id: rdb._id },
@@ -136,6 +208,7 @@
                 $blocks = $blocks;
               });
             });
+            popup_hidden = true;
           }}
         >
           {rdb.title}
