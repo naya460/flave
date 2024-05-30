@@ -1,13 +1,14 @@
 <script lang="ts">
   import Paragraph from "$lib/gui/block/Paragraph.svelte";
   import type { blockListStore } from "$lib/types/block_list";
+  import Heading from "./Heading.svelte";
   import RdbView from "./RdbView.svelte";
 
   export let page_id: string;
 
   export let block: {
     _id: string;
-    type: "paragraph" | "rdb_view";
+    type: string;
     data: unknown;
   };
 
@@ -16,7 +17,7 @@
   let block_data: { _id: string; text: string } | null;
   $: block_data = (() => {
     if (
-      block.type === "paragraph" &&
+      (block.type === "paragraph" || block.type === "heading") &&
       typeof block.data === "object" &&
       block.data !== null &&
       "text" in block.data &&
@@ -47,5 +48,9 @@
     <Paragraph {block_data} {page_id} {block_list} />
   {:else if block.type === "rdb_view"}
     <RdbView rdb_id={block_data?._id} />
+  {:else if block.type === "heading"}
+    <Heading {block_data} {page_id} {block_list} />
+  {:else}
+    <div>Undefined Block Type</div>
   {/if}
 </div>

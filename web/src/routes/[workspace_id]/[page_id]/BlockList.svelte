@@ -148,6 +148,39 @@
       textAlign: "left",
     }}
     on:click={() => {
+      const res = flvFetch("blocks", "POST", {
+        page_id: data.page_id,
+        next_of: context_id,
+        type: "heading",
+        data: { text: "", level: 1 },
+      });
+
+      res.then((v) => {
+        v.text().then((w) => {
+          if (typeof w !== "string") return;
+          const index = $blocks.findIndex((v) => v._id === context_id);
+          $blocks.splice(index + 1, 0, {
+            _id: w,
+            type: "heading",
+            data: { text: "", level: 1 },
+          });
+          $blocks = $blocks;
+        });
+      });
+
+      context_hidden = true;
+    }}
+  >
+    Insert Heading
+  </Button>
+  <Button
+    style={{
+      buttonStyle: "text",
+      width: "100%",
+      height: "2rem",
+      textAlign: "left",
+    }}
+    on:click={() => {
       popup_hidden = false;
       context_hidden = true;
     }}

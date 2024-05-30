@@ -13,6 +13,12 @@
 
   export let block_list: blockListStore;
 
+  export let style: {
+    fontSize?: `${number}${"px" | "rem"}`;
+  } = {
+    fontSize: "1rem",
+  };
+
   let own: HTMLDivElement;
   let timeout: number | undefined = undefined;
 
@@ -76,6 +82,7 @@
     contenteditable={true}
     role="textbox"
     tabindex={0}
+    style:font-size={style.fontSize}
     bind:this={own}
     on:keydown={(event) => {
       if (!timeout) {

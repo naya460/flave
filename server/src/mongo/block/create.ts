@@ -9,7 +9,6 @@ export async function createBlock(
   user_id: ObjectId
 ) {
   const date = new Date();
-  console.log(page, next_of, type, data, user_id);
 
   const doc: {
     page: ObjectId;
@@ -30,7 +29,6 @@ export async function createBlock(
     updated_at: date,
     updated_by: user_id,
   };
-  console.log("ok2", doc);
 
   const result = await flvBlockCollection.insertOne(doc);
 
