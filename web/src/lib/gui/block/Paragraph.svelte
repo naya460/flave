@@ -9,7 +9,7 @@
   export let block_data: {
     _id: string;
     text: string;
-  } | null;
+  };
 
   export let block_list: blockListStore;
 
@@ -19,25 +19,26 @@
     fontSize: "1rem",
   };
 
+  export let updateHandler = async (id: string, text: string) => {
+    await flvFetch(`blocks/${id}`, "PATCH", {
+      data: { text },
+    });
+  };
+
   let own: HTMLDivElement;
   let timeout: number | undefined = undefined;
 
   async function timeoutHandler() {
-    await applyUpdate();
+    if (block_data !== null && block_data?._id !== "") {
+      await updateHandler(block_data._id, own.innerText);
+    }
     clearTimeout(timeout);
     timeout = undefined;
   }
 
-  async function applyUpdate() {
-    if (block_data?._id === "") return;
-
-    await flvFetch(`blocks/${block_data?._id}`, "PATCH", {
-      data: { text: own.innerText },
-    });
-  }
-
+  /*
   async function onCreate() {
-    if (block_data?._id !== "") return;
+    if (block_data._id !== "") return;
     if (own.innerText === "") return;
 
     const res = await flvFetch(`blocks`, "POST", {
@@ -58,6 +59,7 @@
       data: { text: "" },
     });
   }
+  */
 
   onDestroy(() => {
     clearTimeout(timeout);
@@ -89,12 +91,14 @@
         timeout = setInterval(timeoutHandler, 1000);
       }
 
-      if (block_data?._id === "") {
+      /*
+      if (block_data._id === "") {
         if (event.key !== "ArrowUp") {
           onCreate();
           return;
         }
       }
+      */
 
       if (event.key === "Enter") {
         const res = flvFetch(`blocks`, "POST", {

@@ -14,10 +14,9 @@
 
   export let block_list: blockListStore;
 
-  let block_data: { _id: string; text: string } | null;
-  $: block_data = (() => {
+  function checkParagraph() {
     if (
-      (block.type === "paragraph" || block.type === "heading") &&
+      block.type === "paragraph" &&
       typeof block.data === "object" &&
       block.data !== null &&
       "text" in block.data &&
@@ -27,7 +26,13 @@
         _id: block._id,
         text: block.data.text,
       };
-    } else if (
+    } else {
+      return null;
+    }
+  }
+
+  function checkRdbView() {
+    if (
       block.type === "rdb_view" &&
       typeof block.data === "object" &&
       block.data !== null &&
@@ -38,18 +43,54 @@
         _id: block.data.rdb_id,
         text: "",
       };
+    } else {
+      return null;
     }
-    return null;
-  })();
+  }
+
+  function checkHeading() {
+    if (
+      block.type === "heading" &&
+      typeof block.data === "object" &&
+      block.data !== null &&
+      "text" in block.data &&
+      typeof block.data.text === "string" &&
+      "level" in block.data &&
+      typeof block.data.level === "number"
+    ) {
+      return {
+        _id: block._id,
+        text: block.data.text,
+        level: block.data.level,
+      };
+    } else {
+      return null;
+    }
+  }
 </script>
 
 <div>
   {#if block.type === "paragraph"}
-    <Paragraph {block_data} {page_id} {block_list} />
+    {@const block_data = checkParagraph()}
+    {#if block_data !== null}
+      <Paragraph {block_data} {page_id} {block_list} />
+    {:else}
+      <div>Error: Paragraph</div>
+    {/if}
   {:else if block.type === "rdb_view"}
-    <RdbView rdb_id={block_data?._id} />
+    {@const block_data = checkRdbView()}
+    {#if block_data !== null}
+      <RdbView rdb_id={block_data._id} />
+    {:else}
+      <div>Error: Rdb View</div>
+    {/if}
   {:else if block.type === "heading"}
-    <Heading {block_data} {page_id} {block_list} />
+    {@const block_data = checkHeading()}
+    {#if block_data !== null}
+      <Heading {block_data} {page_id} {block_list} />
+    {:else}
+      <div>Error: Heading</div>
+    {/if}
   {:else}
     <div>Undefined Block Type</div>
   {/if}
