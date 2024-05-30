@@ -51,7 +51,7 @@
   <div>Loading...</div>
 {:then}
   <div bind:this={node}>
-    {#each $blocks as block}
+    {#each $blocks as block (block._id)}
       <div class="block">
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div

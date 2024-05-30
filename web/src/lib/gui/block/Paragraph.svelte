@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import type { blockListStore } from "$lib/types/block_list";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { moveCaretDown, moveCaretUp } from "./block_list_manager";
 
   export let page_id: string;
@@ -66,12 +66,6 @@
   });
 
   onMount(() => {
-    const index = $block_list.findIndex((v) => v._id === block_data?._id);
-    $block_list[index].dom_node = own;
-    $block_list = $block_list;
-  });
-
-  afterUpdate(() => {
     const index = $block_list.findIndex((v) => v._id === block_data?._id);
     $block_list[index].dom_node = own;
     $block_list = $block_list;
