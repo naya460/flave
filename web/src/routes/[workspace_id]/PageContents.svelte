@@ -4,7 +4,7 @@
   import { afterUpdate, onMount } from "svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
-  import { page_title_store } from "$lib/store/page_title";
+  import { page_title_store } from "$lib/store/page";
   import { flvFetch } from "$lib/flv_fetch";
 
   type PageData = {

@@ -5,6 +5,7 @@
   import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
   import BlockHandle from "./BlockHandle.svelte";
+  import { selecting_block_store } from "$lib/store/page";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
@@ -154,11 +155,17 @@
     }}
   >
     {#each $blocks as block (block._id)}
-      <div class="block" contenteditable="false">
-        <BlockHandle block_id={block._id} {blocks} {data} />
+      <div
+        class="block"
+        contenteditable="false"
+        on:mouseenter={() => {
+          $selecting_block_store = block._id;
+        }}
+      >
         <Block {block} page_id={data.page_id} block_list={blocks} />
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
+          style:height={"0.5rem"}
           contenteditable="false"
           on:dragover={(event) => {
             if (event.dataTransfer?.types.includes("application/flv-blk-id")) {
@@ -195,6 +202,8 @@
 {:catch}
   <div>Failed loading</div>
 {/await}
+
+<BlockHandle {blocks} {data} />
 
 <style>
   .block {

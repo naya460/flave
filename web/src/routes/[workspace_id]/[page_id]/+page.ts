@@ -1,4 +1,4 @@
-import { page_path_store } from "$lib/store/page_path";
+import { page_path_store } from "$lib/store/page";
 import type { PageLoad } from "./$types";
 export const ssr = false;
 

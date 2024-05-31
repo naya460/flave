@@ -1,7 +1,7 @@
 <script lang="ts">
   import TextInput from "$lib/gui/common/TextInput.svelte";
   import type { PageData } from "./$types";
-  import { page_title_store } from "$lib/store/page_title";
+  import { page_title_store, selecting_block_store } from "$lib/store/page";
   import { onMount } from "svelte";
   import BlockList from "./BlockList.svelte";
   import PropertyList from "./PropertyList.svelte";
@@ -35,4 +35,11 @@
   />
 {/if}
 
-<BlockList {data} />
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  on:mouseleave={() => {
+    $selecting_block_store = undefined;
+  }}
+>
+  <BlockList {data} />
+</div>

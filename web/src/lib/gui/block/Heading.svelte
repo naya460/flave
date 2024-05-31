@@ -12,12 +12,15 @@
   };
 
   export let block_list: blockListStore;
+
+  export let own: HTMLDivElement;
 </script>
 
 <Paragraph
   {page_id}
   {block_data}
   {block_list}
+  bind:own
   updateHandler={async (id, text) => {
     await flvFetch(`blocks/${id}`, "PATCH", {
       data: { text, level: block_data.level },

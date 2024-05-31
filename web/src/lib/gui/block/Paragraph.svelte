@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import type { blockListStore } from "$lib/types/block_list";
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy } from "svelte";
 
   export let page_id: string;
 
@@ -24,7 +24,7 @@
     });
   };
 
-  let own: HTMLDivElement;
+  export let own: HTMLDivElement;
   let timeout: number | undefined = undefined;
 
   async function timeoutHandler() {
@@ -62,12 +62,6 @@
 
   onDestroy(() => {
     clearTimeout(timeout);
-  });
-
-  onMount(() => {
-    const index = $block_list.findIndex((v) => v._id === block_data?._id);
-    $block_list[index].dom_node = own;
-    $block_list = $block_list;
   });
 </script>
 

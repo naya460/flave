@@ -1,6 +1,7 @@
 <script lang="ts">
   import Paragraph from "$lib/gui/block/Paragraph.svelte";
   import type { blockListStore } from "$lib/types/block_list";
+  import { onMount } from "svelte";
   import Heading from "./Heading.svelte";
   import RdbView from "./RdbView.svelte";
 
@@ -67,27 +68,35 @@
       return null;
     }
   }
+
+  let own: HTMLDivElement;
+
+  onMount(() => {
+    const index = $block_list.findIndex((v) => v._id === block._id);
+    $block_list[index].dom_node = own;
+    $block_list = $block_list;
+  });
 </script>
 
-<div style:min-height={"2rem"}>
+<div style:min-height={"1.5rem"}>
   {#if block.type === "paragraph"}
     {@const block_data = checkParagraph()}
     {#if block_data !== null}
-      <Paragraph {block_data} {page_id} {block_list} />
+      <Paragraph {block_data} {page_id} {block_list} bind:own />
     {:else}
       <div>Error: Paragraph</div>
     {/if}
   {:else if block.type === "rdb_view"}
     {@const block_data = checkRdbView()}
     {#if block_data !== null}
-      <RdbView rdb_id={block_data._id} />
+      <RdbView rdb_id={block_data._id} bind:own />
     {:else}
       <div>Error: Rdb View</div>
     {/if}
   {:else if block.type === "heading"}
     {@const block_data = checkHeading()}
     {#if block_data !== null}
-      <Heading {block_data} {page_id} {block_list} />
+      <Heading {block_data} {page_id} {block_list} bind:own />
     {:else}
       <div>Error: Heading</div>
     {/if}

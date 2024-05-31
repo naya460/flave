@@ -2,7 +2,7 @@
   import Button from "$lib/gui/common/Button.svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
-  import { page_path_store } from "$lib/store/page_path";
+  import { page_path_store } from "$lib/store/page";
   import { get } from "svelte/store";
   import RdbList from "./RdbList.svelte";
   import { flvFetch } from "$lib/flv_fetch";

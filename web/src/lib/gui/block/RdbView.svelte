@@ -14,6 +14,8 @@
     }[];
   };
 
+  export let own: HTMLDivElement;
+
   $: {
     flvFetch(`rdbs/${rdb_id}`).then((res) => {
       res.json().then((value) => {
@@ -23,7 +25,7 @@
   }
 </script>
 
-<div contenteditable="false">
+<div contenteditable="false" bind:this={own}>
   {#if rdb_data !== undefined && rdb_data.properties !== undefined}
     <Table
       {rdb_id}

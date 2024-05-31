@@ -2,13 +2,14 @@
   import { flvFetch } from "$lib/flv_fetch";
   import Button from "$lib/gui/common/Button.svelte";
   import Popup from "$lib/gui/common/Popup.svelte";
+  import { selecting_block_store } from "$lib/store/page";
   import type { blockListStore } from "$lib/types/block_list";
   import type { PageData } from "./$types";
 
-  export let block_id: string;
-
   export let data: PageData;
   export let blocks: blockListStore;
+
+  let block_id: string;
 
   let popup_hidden = true;
   let context_hidden = true;
@@ -23,24 +24,57 @@
       node?.showPopover();
     }
   }
+
+  let enable = false;
+  let position_x = 0;
+  let position_y = 0;
+
+  $: {
+    if ($selecting_block_store === undefined || $selecting_block_store === "") {
+      enable = false;
+    } else {
+      block_id = $selecting_block_store;
+
+      const block = $blocks.find((w) => w._id === $selecting_block_store);
+
+      const rect = block?.dom_node?.parentElement?.getBoundingClientRect();
+
+      if (rect !== undefined) {
+        position_x = rect.x;
+        position_y = rect.y;
+        enable = true;
+      } else {
+        enable = false;
+      }
+    }
+  }
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  class="top"
-  draggable="true"
-  contenteditable="false"
-  on:dragstart={(event) => {
-    event.dataTransfer?.setData("application/flv-blk-id", block_id);
-  }}
-  on:contextmenu={(event) => {
-    context_id = block_id;
-    context_hidden = false;
-    event.preventDefault();
-  }}
->
-  ::
-</div>
+{#if enable === true}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div
+    class="handle"
+    style:left={`${position_x}px`}
+    style:top={`${position_y}px`}
+  >
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div
+      class="top"
+      draggable="true"
+      contenteditable="false"
+      on:dragstart={(event) => {
+        event.dataTransfer?.setData("application/flv-blk-id", block_id);
+      }}
+      on:contextmenu={(event) => {
+        context_id = block_id;
+        context_hidden = false;
+        event.preventDefault();
+      }}
+    >
+      ::
+    </div>
+  </div>
+{/if}
 
 <div popover="manual" bind:this={node}>
   <Popup bind:hidden={context_hidden}>
@@ -194,5 +228,9 @@
     position: absolute;
     left: -2rem;
     cursor: grab;
+  }
+
+  .handle {
+    position: fixed;
   }
 </style>
