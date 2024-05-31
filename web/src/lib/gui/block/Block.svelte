@@ -69,7 +69,7 @@
   }
 </script>
 
-<div>
+<div style:min-height={"2rem"}>
   {#if block.type === "paragraph"}
     {@const block_data = checkParagraph()}
     {#if block_data !== null}
