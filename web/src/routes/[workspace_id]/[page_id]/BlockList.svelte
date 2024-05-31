@@ -4,7 +4,6 @@
   import type { blockListStore } from "$lib/types/block_list";
   import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
-  import { setBlockList } from "$lib/gui/block/block_list_manager";
   import Button from "$lib/gui/common/Button.svelte";
   import Popup from "$lib/gui/common/Popup.svelte";
 
@@ -43,19 +42,128 @@
 
     $blocks.push({ _id: "", type: "paragraph", data: { text: "" } });
   }
-
-  setBlockList(blocks);
 </script>
 
 {#await getBlocks()}
   <div>Loading...</div>
 {:then}
-  <div bind:this={node}>
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div
+    bind:this={node}
+    contenteditable="true"
+    style:outline="none"
+    on:mousedown={(event) => {
+      const exists = $blocks.some((v) => v.dom_node === event.target);
+      if (exists === false) {
+        event.preventDefault();
+      }
+    }}
+    on:keydown={(event) => {
+      if (event.key === "ArrowRight") {
+        const selection = window.getSelection();
+        if (selection === null) return;
+        const focus_node = selection.focusNode;
+        if (focus_node === null) return;
+
+        if (selection.focusOffset === focus_node.nodeValue?.length) {
+          event.preventDefault();
+        }
+      }
+
+      if (event.key === "ArrowLeft") {
+        const selection = window.getSelection();
+        if (selection === null) return;
+        const focus_node = selection.focusNode;
+        if (focus_node === null) return;
+
+        if (selection.focusOffset === 0) {
+          event.preventDefault();
+        }
+      }
+
+      if (event.key === "ArrowDown") {
+        const selection = window.getSelection();
+        if (selection === null) return;
+        const focus_node = selection.focusNode;
+        if (focus_node === null) return;
+
+        const index = $blocks.findIndex(
+          (v) => v.dom_node?.childNodes[0] === focus_node
+        );
+        if (index < 0) return;
+
+        if (index === $blocks.length - 2) {
+          event.preventDefault();
+        } else if (
+          $blocks[index + 1].dom_node?.childNodes[0].nodeValue?.length === 0 &&
+          event.shiftKey === false
+        ) {
+          const node = $blocks[index + 1]?.dom_node;
+          if (node !== undefined) {
+            selection.setPosition(node);
+          }
+          event.preventDefault();
+        }
+      }
+
+      if (event.key === "ArrowUp") {
+        const selection = window.getSelection();
+        if (selection === null) return;
+        const focus_node = selection.focusNode;
+        if (focus_node === null) return;
+
+        const index = $blocks.findIndex(
+          (v) => v.dom_node?.childNodes[0] === focus_node
+        );
+        if (index < 1) return;
+
+        if (
+          $blocks[index - 1].dom_node?.childNodes[0].nodeValue?.length === 0 &&
+          event.shiftKey === false
+        ) {
+          const node = $blocks[index - 1]?.dom_node;
+          if (node !== undefined) {
+            selection.setPosition(node);
+          }
+          event.preventDefault();
+        }
+      }
+    }}
+    on:beforeinput={(event) => {
+      const selection = window.getSelection();
+      if (selection === null) return;
+      if (selection.anchorNode !== selection.focusNode) {
+        event.preventDefault();
+      }
+      if (
+        event.inputType === "deleteContentBackward" &&
+        selection.anchorOffset === 0
+      ) {
+        event.preventDefault();
+      }
+    }}
+    on:input={(event) => {
+      const selection = window.getSelection();
+      if (selection === null) return;
+      const focus_node = selection.focusNode;
+      if (focus_node === null) return;
+
+      const index = $blocks.findIndex(
+        (v) => v.dom_node?.childNodes[0] === focus_node
+      );
+
+      const send_event = new InputEvent("input");
+
+      $blocks[index].dom_node?.dispatchEvent(send_event);
+      event.preventDefault();
+    }}
+  >
     {#each $blocks as block (block._id)}
-      <div class="block">
+      <div class="block" contenteditable="false">
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
           draggable="true"
+          contenteditable="false"
           on:dragstart={(event) => {
             event.dataTransfer?.setData("application/flv-blk-id", block._id);
           }}
@@ -70,6 +178,7 @@
         <Block {block} page_id={data.page_id} block_list={blocks} />
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
+          contenteditable="false"
           on:dragover={(event) => {
             if (event.dataTransfer?.types.includes("application/flv-blk-id")) {
               event.dataTransfer.dropEffect = "move";

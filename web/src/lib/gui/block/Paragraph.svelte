@@ -2,7 +2,6 @@
   import { flvFetch } from "$lib/flv_fetch";
   import type { blockListStore } from "$lib/types/block_list";
   import { onDestroy, onMount } from "svelte";
-  import { moveCaretDown, moveCaretUp } from "./block_list_manager";
 
   export let page_id: string;
 
@@ -75,11 +74,17 @@
 {#if block_data !== null}
   <div
     class="top"
-    contenteditable={true}
+    contenteditable="true"
+    unselectable="off"
     role="textbox"
     tabindex={0}
     style:font-size={style.fontSize}
     bind:this={own}
+    on:input={() => {
+      if (!timeout) {
+        timeout = setInterval(timeoutHandler, 1000);
+      }
+    }}
     on:keydown={(event) => {
       if (!timeout) {
         timeout = setInterval(timeoutHandler, 1000);
@@ -134,12 +139,6 @@
 
           event.preventDefault();
         }
-      } else if (event.key === "ArrowUp") {
-        moveCaretUp(block_data._id);
-        event.preventDefault();
-      } else if (event.key === "ArrowDown") {
-        moveCaretDown(block_data._id);
-        event.preventDefault();
       }
     }}
   >
@@ -150,5 +149,6 @@
 <style>
   .top {
     outline: none;
+    min-height: 1rem;
   }
 </style>

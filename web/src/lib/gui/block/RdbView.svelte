@@ -23,10 +23,12 @@
   }
 </script>
 
-{#if rdb_data !== undefined && rdb_data.properties !== undefined}
-  <Table
-    {rdb_id}
-    workspace_id={$workspace_id_store}
-    properties={rdb_data.properties}
-  />
-{/if}
+<div contenteditable="false">
+  {#if rdb_data !== undefined && rdb_data.properties !== undefined}
+    <Table
+      {rdb_id}
+      workspace_id={$workspace_id_store}
+      properties={rdb_data.properties}
+    />
+  {/if}
+</div>
