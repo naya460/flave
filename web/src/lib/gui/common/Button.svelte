@@ -12,6 +12,8 @@
 
 <button
   on:click
+  on:mouseenter
+  on:mouseleave
   class="main"
   class:filled={style.buttonStyle === "filled"}
   class:outline={style.buttonStyle === "outline"}

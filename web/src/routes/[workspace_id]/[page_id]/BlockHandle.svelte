@@ -1,9 +1,9 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import Button from "$lib/gui/common/Button.svelte";
-  import Popup from "$lib/gui/common/Popup.svelte";
+  import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import { selecting_block_store } from "$lib/store/page";
   import type { blockListStore } from "$lib/types/block_list";
+  import { onMount } from "svelte";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -11,19 +11,8 @@
 
   let block_id: string;
 
-  let popup_hidden = true;
   let context_hidden = true;
   let context_id = "";
-
-  let node: HTMLDivElement;
-
-  $: {
-    if (popup_hidden === true && context_hidden === true) {
-      node?.hidePopover();
-    } else {
-      node?.showPopover();
-    }
-  }
 
   let enable = false;
   let position_x = 0;
@@ -48,6 +37,16 @@
       }
     }
   }
+
+  let rdb_list: {
+    _id: string;
+    title: string;
+  }[] = [];
+
+  onMount(async () => {
+    const res = await flvFetch(`workspaces/${data.workspace_id}/rdbs`);
+    rdb_list = await res.json();
+  });
 </script>
 
 {#if enable === true}
@@ -76,151 +75,115 @@
   </div>
 {/if}
 
-<div popover="manual" bind:this={node}>
-  <Popup bind:hidden={context_hidden}>
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        height: "2rem",
-        textAlign: "left",
-      }}
-      on:click={() => {
-        const res = flvFetch(`blocks`, "POST", {
-          page_id: data.page_id,
-          next_of: context_id,
-          type: "paragraph",
-          data: { text: "" },
-        });
-
-        res.then((v) => {
-          v.text().then((w) => {
-            if (typeof w !== "string") return;
-            const index = $blocks.findIndex((v) => v._id === context_id);
-            $blocks.splice(index + 1, 0, {
-              _id: w,
-              type: "paragraph",
-              data: { text: "" },
-            });
-            $blocks = $blocks;
+<div
+  style:left={`${position_x}px`}
+  style:top={`${position_y}px`}
+  style:position={"fixed"}
+>
+  <ContextMenu
+    bind:hidden={context_hidden}
+    contents={[
+      {
+        name: "Insert Paragraph",
+        onClick: () => {
+          const res = flvFetch(`blocks`, "POST", {
+            page_id: data.page_id,
+            next_of: context_id,
+            type: "paragraph",
+            data: { text: "" },
           });
-        });
 
-        context_hidden = true;
-      }}
-    >
-      Insert Paragraph
-    </Button>
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        height: "2rem",
-        textAlign: "left",
-      }}
-      on:click={() => {
-        const res = flvFetch("blocks", "POST", {
-          page_id: data.page_id,
-          next_of: context_id,
-          type: "heading",
-          data: { text: "", level: 1 },
-        });
-
-        res.then((v) => {
-          v.text().then((w) => {
-            if (typeof w !== "string") return;
-            const index = $blocks.findIndex((v) => v._id === context_id);
-            $blocks.splice(index + 1, 0, {
-              _id: w,
-              type: "heading",
-              data: { text: "", level: 1 },
-            });
-            $blocks = $blocks;
-          });
-        });
-
-        context_hidden = true;
-      }}
-    >
-      Insert Heading
-    </Button>
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        height: "2rem",
-        textAlign: "left",
-      }}
-      on:click={() => {
-        popup_hidden = false;
-        context_hidden = true;
-      }}
-    >
-      Insert RDB View
-    </Button>
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        height: "2rem",
-        textAlign: "left",
-      }}
-      on:click={() => {
-        const res = flvFetch(`blocks/${context_id}`, "DELETE");
-        res.then(() => {
-          const index = $blocks.findIndex((block) => block._id === context_id);
-          $blocks.splice(index, 1);
-          $blocks = $blocks;
-        });
-        context_hidden = true;
-      }}
-    >
-      Delete Block
-    </Button>
-  </Popup>
-
-  <Popup bind:hidden={popup_hidden}>
-    {#await flvFetch(`workspaces/${data.workspace_id}/rdbs`) then res}
-      {#await res.json() then value}
-        <div>Insert RDB View</div>
-        {#each value as rdb}
-          <Button
-            style={{
-              buttonStyle: "text",
-              width: "100%",
-              height: "2rem",
-            }}
-            on:click={() => {
-              const res = flvFetch(`blocks`, "POST", {
-                page_id: data.page_id,
-                next_of: context_id,
-                type: "rdb_view",
-                data: { rdb_id: rdb._id },
+          res.then((v) => {
+            v.text().then((w) => {
+              if (typeof w !== "string") return;
+              const index = $blocks.findIndex((v) => v._id === context_id);
+              $blocks.splice(index + 1, 0, {
+                _id: w,
+                type: "paragraph",
+                data: { text: "" },
               });
+              $blocks = $blocks;
+            });
+          });
 
-              res.then((v) => {
-                v.text().then((w) => {
-                  if (typeof w !== "string") return;
-                  const index = $blocks.findIndex(
-                    (block) => block._id === context_id
-                  );
-                  $blocks.splice(index + 1, 0, {
-                    _id: w,
-                    type: "rdb_view",
-                    data: { rdb_id: rdb._id },
-                  });
-                  $blocks = $blocks;
+          context_hidden = true;
+        },
+      },
+      {
+        name: "Insert Heading",
+        onClick: () => {
+          const res = flvFetch("blocks", "POST", {
+            page_id: data.page_id,
+            next_of: context_id,
+            type: "heading",
+            data: { text: "", level: 1 },
+          });
+
+          res.then((v) => {
+            v.text().then((w) => {
+              if (typeof w !== "string") return;
+              const index = $blocks.findIndex((v) => v._id === context_id);
+              $blocks.splice(index + 1, 0, {
+                _id: w,
+                type: "heading",
+                data: { text: "", level: 1 },
+              });
+              $blocks = $blocks;
+            });
+          });
+
+          context_hidden = true;
+        },
+      },
+      {
+        name: "Insert RDB View",
+        contents: (() => {
+          return rdb_list.map((rdb) => {
+            return {
+              name: rdb.title,
+              onClick: () => {
+                const res = flvFetch(`blocks`, "POST", {
+                  page_id: data.page_id,
+                  next_of: context_id,
+                  type: "rdb_view",
+                  data: { rdb_id: rdb._id },
                 });
-              });
-              popup_hidden = true;
-            }}
-          >
-            {rdb.title}
-          </Button>
-        {/each}
-      {/await}
-    {/await}
-  </Popup>
+
+                res.then((v) => {
+                  v.text().then((w) => {
+                    if (typeof w !== "string") return;
+                    const index = $blocks.findIndex(
+                      (block) => block._id === context_id
+                    );
+                    $blocks.splice(index + 1, 0, {
+                      _id: w,
+                      type: "rdb_view",
+                      data: { rdb_id: rdb._id },
+                    });
+                    $blocks = $blocks;
+                  });
+                });
+              },
+            };
+          });
+        })(),
+      },
+      {
+        name: "Delete Block",
+        onClick: () => {
+          const res = flvFetch(`blocks/${context_id}`, "DELETE");
+          res.then(() => {
+            const index = $blocks.findIndex(
+              (block) => block._id === context_id
+            );
+            $blocks.splice(index, 1);
+            $blocks = $blocks;
+          });
+          context_hidden = true;
+        },
+      },
+    ]}
+  />
 </div>
 
 <style>
