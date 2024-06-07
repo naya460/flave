@@ -27,8 +27,18 @@
     });
   }}
   style={(() => {
-    return {
-      fontSize: "1.5rem",
-    };
+    if (block_data.level === 1) {
+      return {
+        fontSize: "1.6rem",
+      };
+    } else if (block_data.level === 2) {
+      return {
+        fontSize: "1.4rem",
+      };
+    } else {
+      return {
+        fontSize: "1.2rem",
+      };
+    }
   })()}
 />

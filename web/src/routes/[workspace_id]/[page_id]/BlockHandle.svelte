@@ -111,29 +111,40 @@
       },
       {
         name: "Insert Heading",
-        onClick: () => {
-          const res = flvFetch("blocks", "POST", {
-            page_id: data.page_id,
-            next_of: context_id,
-            type: "heading",
-            data: { text: "", level: 1 },
-          });
+        contents: (() => {
+          let list = [];
+          for (let i = 0; i < 3; i++) {
+            list.push({
+              name: `Heading ${i + 1}`,
+              onClick: () => {
+                const res = flvFetch("blocks", "POST", {
+                  page_id: data.page_id,
+                  next_of: context_id,
+                  type: "heading",
+                  data: { text: "", level: 1 },
+                });
 
-          res.then((v) => {
-            v.text().then((w) => {
-              if (typeof w !== "string") return;
-              const index = $blocks.findIndex((v) => v._id === context_id);
-              $blocks.splice(index + 1, 0, {
-                _id: w,
-                type: "heading",
-                data: { text: "", level: 1 },
-              });
-              $blocks = $blocks;
+                res.then((v) => {
+                  v.text().then((w) => {
+                    if (typeof w !== "string") return;
+                    const index = $blocks.findIndex(
+                      (v) => v._id === context_id
+                    );
+                    $blocks.splice(index + 1, 0, {
+                      _id: w,
+                      type: "heading",
+                      data: { text: "", level: i + 1 },
+                    });
+                    $blocks = $blocks;
+                  });
+                });
+
+                context_hidden = true;
+              },
             });
-          });
-
-          context_hidden = true;
-        },
+          }
+          return list;
+        })(),
       },
       {
         name: "Insert RDB View",
