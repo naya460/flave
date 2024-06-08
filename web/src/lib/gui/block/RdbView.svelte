@@ -26,11 +26,9 @@
 </script>
 
 <div contenteditable="false" bind:this={own}>
-  {#if rdb_data !== undefined && rdb_data.properties !== undefined}
-    <Table
-      {rdb_id}
-      workspace_id={$workspace_id_store}
-      properties={rdb_data.properties}
-    />
+  {#if rdb_data !== undefined}
+    {@const properties =
+      rdb_data.properties === undefined ? [] : rdb_data.properties}
+    <Table {rdb_id} workspace_id={$workspace_id_store} {properties} />
   {/if}
 </div>

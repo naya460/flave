@@ -17,10 +17,8 @@
   }}
 />
 
-{#if data.rdb_data.properties !== undefined}
-  <Table
-    rdb_id={data.rdb_id}
-    workspace_id={data.workspace_id}
-    properties={data.rdb_data.properties}
-  />
+{#if data.rdb_data !== undefined}
+  {@const properties =
+    data.rdb_data.properties === undefined ? [] : data.rdb_data.properties}
+  <Table rdb_id={data.rdb_id} workspace_id={data.workspace_id} {properties} />
 {/if}
