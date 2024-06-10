@@ -25,7 +25,14 @@
   }
 </script>
 
-<div contenteditable="false" bind:this={own}>
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  contenteditable="false"
+  bind:this={own}
+  on:mousedown={(event) => {
+    event.stopPropagation();
+  }}
+>
   {#if rdb_data !== undefined}
     {@const properties =
       rdb_data.properties === undefined ? [] : rdb_data.properties}
