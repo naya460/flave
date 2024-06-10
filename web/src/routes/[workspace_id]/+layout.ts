@@ -3,7 +3,7 @@ import type { LayoutLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 export const ssr = false;
 
-export const load: LayoutLoad = async ({ params, fetch, url, route }) => {
+export const load: LayoutLoad = async ({ params, fetch, url }) => {
 	const res = await fetch(
 		`http://${url.hostname}:8080/workspaces/${params.workspace_id}`,
 		{ credentials: "include" }
@@ -18,7 +18,10 @@ export const load: LayoutLoad = async ({ params, fetch, url, route }) => {
 
 		if (ok === false) {
 			const redirect_url = new URL("/signin", url);
-			redirect_url.searchParams.append("next", `${params.workspace_id}/${params.page_id}`);
+			redirect_url.searchParams.append(
+				"next",
+				`${params.workspace_id}/${params.page_id}`
+			);
 			redirect(302, redirect_url);
 		}
 	}

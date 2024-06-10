@@ -53,7 +53,7 @@
       }}
     />
   </div>
-  <div class="contents" style:width={`calc(100% - ${width}px)`}>
+  <div class="contents thin-scrollbar" style:width={`calc(100% - ${width}px)`}>
     <slot />
   </div>
 </div>
@@ -72,6 +72,7 @@
     background-color: #f8f8f8;
     padding: 0.5rem;
     box-sizing: border-box;
+    overflow-y: auto;
   }
 
   .split {
@@ -96,5 +97,6 @@
 
   .contents {
     box-sizing: border-box;
+    overflow-y: scroll;
   }
 </style>
