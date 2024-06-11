@@ -31,6 +31,12 @@
   on:mousedown={(event) => {
     event.stopPropagation();
   }}
+  on:beforeinput={(event) => {
+    event.stopImmediatePropagation();
+  }}
+  on:input={(event) => {
+    event.stopPropagation();
+  }}
 >
   {#if rdb_data !== undefined}
     {@const properties =
