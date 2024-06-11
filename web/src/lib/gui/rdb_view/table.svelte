@@ -4,9 +4,9 @@
   import TableRow from "$lib/gui/rdb_view/table_row.svelte";
   import TableHeader from "$lib/gui/rdb_view/table_header.svelte";
   import { onMount } from "svelte";
+  import { workspace_id_store } from "$lib/store/workspace";
 
   export let rdb_id: string;
-  export let workspace_id: string;
 
   export let properties: {
     id: string;
@@ -38,7 +38,7 @@
     {#each page_list as page}
       <div class="row">
         {#if properties !== undefined}
-          <TableRow {properties} {workspace_id} {page} />
+          <TableRow {properties} {page} />
         {/if}
       </div>
     {/each}
@@ -50,10 +50,20 @@
           width: "100%",
         }}
         on:click={async () => {
-          await flvFetch(`pages`, "POST", {
-            workspace_id: workspace_id,
+          const res = await flvFetch(`pages`, "POST", {
+            workspace_id: $workspace_id_store,
             rdb_id: rdb_id,
           });
+          if (res.ok === true) {
+            const id = await res.text();
+            console.log(id);
+            page_list.push({
+              _id: id,
+              title: "New Page",
+              properties: [],
+            });
+            page_list = page_list;
+          }
         }}
       >
         + Create New Page

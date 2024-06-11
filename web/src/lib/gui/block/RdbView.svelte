@@ -1,9 +1,8 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import { workspace_id_store } from "$lib/store/workspace";
   import Table from "../rdb_view/table.svelte";
 
-  export let rdb_id;
+  export let rdb_id: string;
 
   let rdb_data: {
     title: string;
@@ -36,6 +35,6 @@
   {#if rdb_data !== undefined}
     {@const properties =
       rdb_data.properties === undefined ? [] : rdb_data.properties}
-    <Table {rdb_id} workspace_id={$workspace_id_store} {properties} />
+    <Table {rdb_id} {properties} />
   {/if}
 </div>

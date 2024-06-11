@@ -36,7 +36,7 @@ export const createPage = async (data: {
   const result = await flvPageCollection.insertOne(doc);
 
   if (result.acknowledged) {
-    return result.insertedId;
+    return result.insertedId.toString();
   } else {
     return null;
   }

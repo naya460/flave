@@ -1,7 +1,6 @@
 <script lang="ts">
   import Item from "$lib/gui/rdb_view/table_item.svelte";
-
-  export let workspace_id: string;
+  import { workspace_id_store } from "$lib/store/workspace";
 
   export let properties: {
     id: string;
@@ -25,7 +24,7 @@
     id: "",
     type: "page",
     value: {
-      workspace_id: workspace_id,
+      workspace_id: $workspace_id_store,
       title: page.title,
     },
   }}
