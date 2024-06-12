@@ -40,48 +40,52 @@
     {/if}
     <!-- <div on:click={setHidden} class="background" /> -->
     <div class="contents">
-      {#each contents as item, i}
-        {#if "contents" in item}
-          <Button
-            on:click={() => (selecting_submenu = i)}
-            style={{
-              buttonStyle: "text",
-              width: "100%",
-              height: "2rem",
-              textAlign: "left",
-            }}
-          >
-            {item.name}
-            {">"}
-          </Button>
-          <div style:position="absolute">
-            <svelte:self
-              contents={item.contents}
-              hidden={selecting_submenu !== i}
-              submenu={true}
-              hide_parent={setHidden}
-            />
-          </div>
-        {:else if "onClick" in item}
-          <Button
-            on:click={() => {
-              item.onClick();
-              setHidden();
-            }}
-            on:mouseenter={() => (selecting_submenu = null)}
-            style={{
-              buttonStyle: "text",
-              width: "100%",
-              height: "2rem",
-              textAlign: "left",
-            }}
-          >
-            {item.name}
-          </Button>
-        {:else}
-          <div>ERROR</div>
-        {/if}
-      {/each}
+      {#if $$slots.default === true}
+        <slot />
+      {:else}
+        {#each contents as item, i}
+          {#if "contents" in item}
+            <Button
+              on:click={() => (selecting_submenu = i)}
+              style={{
+                buttonStyle: "text",
+                width: "100%",
+                height: "2rem",
+                textAlign: "left",
+              }}
+            >
+              {item.name}
+              {">"}
+            </Button>
+            <div style:position="absolute">
+              <svelte:self
+                contents={item.contents}
+                hidden={selecting_submenu !== i}
+                submenu={true}
+                hide_parent={setHidden}
+              />
+            </div>
+          {:else if "onClick" in item}
+            <Button
+              on:click={() => {
+                item.onClick();
+                setHidden();
+              }}
+              on:mouseenter={() => (selecting_submenu = null)}
+              style={{
+                buttonStyle: "text",
+                width: "100%",
+                height: "2rem",
+                textAlign: "left",
+              }}
+            >
+              {item.name}
+            </Button>
+          {:else}
+            <div>ERROR</div>
+          {/if}
+        {/each}
+      {/if}
     </div>
   </div>
 {/if}
@@ -92,8 +96,8 @@
     display: flex;
     left: 0;
     top: 0;
-    width: 10rem;
-    height: 10rem;
+    width: 0;
+    height: 0;
     align-items: center;
     justify-content: center;
   }
