@@ -4,6 +4,7 @@
   import ContextMenu from "../common/ContextMenu.svelte";
   import TextInput from "../common/TextInput.svelte";
 
+  export let block_id: string;
   export let rdb_id: string;
 
   export let properties: {
@@ -11,6 +12,8 @@
     type: string;
     name: string;
   }[];
+
+  export let display: string[];
 
   let popup_hidden = true;
 </script>
@@ -21,17 +24,19 @@
 
 {#if properties !== undefined}
   {#each properties as property}
-    <div class="item">
-      <TextInput
-        style={{ outline: false }}
-        value={property.name}
-        onChange={async (event) => {
-          await flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
-            name: event.currentTarget.value,
-          });
-        }}
-      />
-    </div>
+    {#if display.includes(property.id) === true}
+      <div class="item">
+        <TextInput
+          style={{ outline: false }}
+          value={property.name}
+          onChange={async (event) => {
+            await flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
+              name: event.currentTarget.value,
+            });
+          }}
+        />
+      </div>
+    {/if}
   {/each}
 {/if}
 
@@ -62,7 +67,29 @@
   <div style:position="absolute" style:z-index={100} style:right="20rem">
     <ContextMenu bind:hidden={popup_hidden}>
       {#each properties as property}
-        <div>{property.name}</div>
+        <div style:display="flex" style:flex-direction="row">
+          <div style:flex-grow={1}>{property.name}</div>
+          <Button
+            style={{
+              buttonStyle: "text",
+              width: "2rem",
+            }}
+            on:click={async () => {
+              if (display.includes(property.id) === true) {
+                const index = display.findIndex((v) => v === property.id);
+                display.splice(index, 1);
+              } else {
+                display.push(property.id);
+              }
+              display = display;
+              await flvFetch(`blocks/${block_id}`, "PATCH", {
+                data: { rdb_id, display },
+              });
+            }}
+          >
+            {display.includes(property.id) ? "-" : "+"}
+          </Button>
+        </div>
       {/each}
     </ContextMenu>
   </div>

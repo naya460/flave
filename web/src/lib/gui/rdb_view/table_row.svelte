@@ -16,6 +16,8 @@
       value: string;
     }[];
   };
+
+  export let display: string[];
 </script>
 
 <Item
@@ -30,16 +32,20 @@
   }}
 />
 {#each properties as property}
-  <Item
-    page_id={page._id}
-    property={{
-      id: property.id,
-      type: property.type,
-      value: (() => {
-        const value = page.properties?.find((v) => v.id === property.id)?.value;
-        if (value === undefined) return "";
-        return value;
-      })(),
-    }}
-  />
+  {#if display.includes(property.id)}
+    <Item
+      page_id={page._id}
+      property={{
+        id: property.id,
+        type: property.type,
+        value: (() => {
+          const value = page.properties?.find(
+            (v) => v.id === property.id
+          )?.value;
+          if (value === undefined) return "";
+          return value;
+        })(),
+      }}
+    />
+  {/if}
 {/each}

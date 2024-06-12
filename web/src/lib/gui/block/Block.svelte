@@ -40,9 +40,23 @@
       "rdb_id" in block.data &&
       typeof block.data.rdb_id === "string"
     ) {
+      const display = (() => {
+        if (
+          typeof block.data === "object" &&
+          block.data !== null &&
+          "display" in block.data &&
+          Array.isArray(block.data.display) &&
+          block.data.display.every((v) => typeof v === "string") === true
+        ) {
+          return block.data.display;
+        } else {
+          return [];
+        }
+      })();
+
       return {
         _id: block.data.rdb_id,
-        text: "",
+        display: display,
       };
     } else {
       return null;
@@ -89,7 +103,12 @@
   {:else if block.type === "rdb_view"}
     {@const block_data = checkRdbView()}
     {#if block_data !== null}
-      <RdbView rdb_id={block_data._id} bind:own />
+      <RdbView
+        rdb_id={block_data._id}
+        block_id={block._id}
+        display={block_data.display}
+        bind:own
+      />
     {:else}
       <div>Error: Rdb View</div>
     {/if}

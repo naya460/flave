@@ -2,7 +2,9 @@
   import { flvFetch } from "$lib/flv_fetch";
   import Table from "../rdb_view/table.svelte";
 
+  export let block_id: string;
   export let rdb_id: string;
+  export let display: string[];
 
   let rdb_data: {
     title: string;
@@ -41,6 +43,6 @@
   {#if rdb_data !== undefined}
     {@const properties =
       rdb_data.properties === undefined ? [] : rdb_data.properties}
-    <Table {rdb_id} {properties} />
+    <Table {rdb_id} {properties} {block_id} {display} />
   {/if}
 </div>
