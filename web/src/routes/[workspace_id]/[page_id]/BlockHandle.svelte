@@ -5,9 +5,13 @@
   import type { blockListStore } from "$lib/types/block_list";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
+  import { workspace_contents_scroll_store } from "$lib/store/workspace";
+  import { get } from "svelte/store";
 
   export let data: PageData;
   export let blocks: blockListStore;
+  export let offset_x: number;
+  export let offset_y: number;
 
   let block_id: string;
 
@@ -29,8 +33,8 @@
       const rect = block?.dom_node?.parentElement?.getBoundingClientRect();
 
       if (rect !== undefined) {
-        position_x = rect.x;
-        position_y = rect.y;
+        position_x = rect.x - offset_x;
+        position_y = rect.y - offset_y + get(workspace_contents_scroll_store);
         enable = true;
       } else {
         enable = false;
@@ -78,7 +82,7 @@
 <div
   style:left={`${position_x}px`}
   style:top={`${position_y}px`}
-  style:position={"fixed"}
+  style:position={"absolute"}
 >
   <ContextMenu
     bind:hidden={context_hidden}
@@ -205,6 +209,6 @@
   }
 
   .handle {
-    position: fixed;
+    position: absolute;
   }
 </style>

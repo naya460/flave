@@ -203,7 +203,10 @@
   <div>Failed loading</div>
 {/await}
 
-<BlockHandle {blocks} {data} />
+{#if node?.parentElement?.getBoundingClientRect !== undefined}
+  {@const rect = node.parentElement.getBoundingClientRect()}
+  <BlockHandle {blocks} {data} offset_x={rect.x} offset_y={rect.y} />
+{/if}
 
 <style>
   .block {

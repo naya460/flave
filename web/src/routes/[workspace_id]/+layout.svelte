@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { LayoutData } from "./$types";
   import Menu from "./Menu.svelte";
+  import { workspace_contents_scroll_store } from "$lib/store/workspace";
 
   export let data: LayoutData;
 
@@ -14,11 +16,18 @@
   let dragging = false;
 
   let top_dom: HTMLDivElement;
+  let content_dom: HTMLDivElement;
 
   window.addEventListener("resize", () => {
     if (width >= top_dom.clientWidth / 2 && top_dom.clientWidth >= 400) {
       width = top_dom.clientWidth / 2;
     }
+  });
+
+  onMount(() => {
+    content_dom.addEventListener("scroll", () => {
+      $workspace_contents_scroll_store = content_dom.scrollTop;
+    });
   });
 </script>
 
@@ -53,7 +62,11 @@
       }}
     />
   </div>
-  <div class="contents thin-scrollbar" style:width={`calc(100% - ${width}px)`}>
+  <div
+    bind:this={content_dom}
+    class="contents"
+    style:width={`calc(100% - ${width}px)`}
+  >
     <slot />
   </div>
 </div>

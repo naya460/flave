@@ -40,6 +40,7 @@
   on:mouseleave={() => {
     $selecting_block_store = undefined;
   }}
+  style:position={"relative"}
 >
   <BlockList {data} />
 </div>
