@@ -31,8 +31,9 @@
     },
   }}
 />
-{#each properties as property}
-  {#if display.includes(property.id)}
+{#each display as display_id (display_id)}
+  {@const property = properties.find((v) => v.id === display_id)}
+  {#if property !== undefined}
     <Item
       page_id={page._id}
       property={{

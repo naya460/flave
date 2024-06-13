@@ -23,8 +23,9 @@
 </div>
 
 {#if properties !== undefined}
-  {#each properties as property}
-    {#if display.includes(property.id) === true}
+  {#each display as display_id}
+    {@const property = properties.find((v) => v.id === display_id)}
+    {#if property !== undefined}
       <div class="item">
         <TextInput
           style={{ outline: false }}
@@ -66,30 +67,89 @@
   </Button>
   <div style:position="absolute" style:z-index={100} style:right="20rem">
     <ContextMenu bind:hidden={popup_hidden}>
-      {#each properties as property}
-        <div style:display="flex" style:flex-direction="row">
-          <div style:flex-grow={1}>{property.name}</div>
-          <Button
-            style={{
-              buttonStyle: "text",
-              width: "2rem",
-            }}
-            on:click={async () => {
-              if (display.includes(property.id) === true) {
+      {#each display as display_id, i (display_id)}
+        {@const property = properties.find((v) => v.id === display_id)}
+        {#if property !== undefined}
+          <div style:display="flex" style:flex-direction="row">
+            <div style:flex-grow={1}>{property.name}</div>
+            <Button
+              style={{
+                buttonStyle: "text",
+                width: "2rem",
+              }}
+              on:click={async () => {
+                if (i !== 0) {
+                  const p = display[i];
+                  display.splice(i, 1);
+                  display.splice(i - 1, 0, p);
+                  display = display;
+                  await flvFetch(`blocks/${block_id}`, "PATCH", {
+                    data: { rdb_id, display },
+                  });
+                }
+              }}
+            >
+              ↑
+            </Button>
+            <Button
+              style={{
+                buttonStyle: "text",
+                width: "2rem",
+              }}
+              on:click={async () => {
+                if (i !== display.length - 1) {
+                  const p = display[i];
+                  display.splice(i, 1);
+                  display.splice(i + 1, 0, p);
+                  display = display;
+                  await flvFetch(`blocks/${block_id}`, "PATCH", {
+                    data: { rdb_id, display },
+                  });
+                }
+              }}
+            >
+              ↓
+            </Button>
+            <Button
+              style={{
+                buttonStyle: "text",
+                width: "2rem",
+              }}
+              on:click={async () => {
                 const index = display.findIndex((v) => v === property.id);
                 display.splice(index, 1);
-              } else {
+                display = display;
+                await flvFetch(`blocks/${block_id}`, "PATCH", {
+                  data: { rdb_id, display },
+                });
+              }}
+            >
+              -
+            </Button>
+          </div>
+        {/if}
+      {/each}
+      {#each properties as property (property.id)}
+        {#if display.includes(property.id) === false}
+          <div style:display="flex" style:flex-direction="row">
+            <div style:flex-grow={1}>{property.name}</div>
+            <Button
+              style={{
+                buttonStyle: "text",
+                width: "2rem",
+              }}
+              on:click={async () => {
                 display.push(property.id);
-              }
-              display = display;
-              await flvFetch(`blocks/${block_id}`, "PATCH", {
-                data: { rdb_id, display },
-              });
-            }}
-          >
-            {display.includes(property.id) ? "-" : "+"}
-          </Button>
-        </div>
+                display = display;
+                await flvFetch(`blocks/${block_id}`, "PATCH", {
+                  data: { rdb_id, display },
+                });
+              }}
+            >
+              +
+            </Button>
+          </div>
+        {/if}
       {/each}
     </ContextMenu>
   </div>
