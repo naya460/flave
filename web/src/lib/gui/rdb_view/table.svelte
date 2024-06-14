@@ -6,7 +6,6 @@
   import { onMount } from "svelte";
   import { workspace_id_store } from "$lib/store/workspace";
 
-  export let block_id: string;
   export let rdb_id: string;
 
   export let properties: {
@@ -26,6 +25,8 @@
 
   export let display: string[];
 
+  export let property_menu_hidden: boolean;
+
   onMount(async () => {
     const res = await flvFetch(`rdbs/${rdb_id}/pages`);
     if (res.ok === false) return;
@@ -36,7 +37,7 @@
 <div class="top">
   <div class="table">
     <div class="row">
-      <TableHeader {rdb_id} {properties} {block_id} bind:display />
+      <TableHeader {rdb_id} {properties} {display} bind:property_menu_hidden />
     </div>
     {#if display.length !== 0}
       {#each page_list as page}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import Table from "../rdb_view/table.svelte";
+  import View from "../rdb_view/view.svelte";
 
   export let block_id: string;
   export let rdb_id: string;
@@ -41,8 +41,6 @@
   }}
 >
   {#if rdb_data !== undefined}
-    {@const properties =
-      rdb_data.properties === undefined ? [] : rdb_data.properties}
-    <Table {rdb_id} {properties} {block_id} {display} />
+    <View {block_id} {rdb_id} {rdb_data} {display} />
   {/if}
 </div>
