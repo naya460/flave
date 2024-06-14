@@ -18,9 +18,11 @@
   let popup_hidden = true;
 </script>
 
-<div class="item" style:padding="0.2rem 0.5rem" style:box-sizing="border-box">
-  page
-</div>
+{#if display.includes("page") === true}
+  <div class="item" style:padding="0.2rem 0.5rem" style:box-sizing="border-box">
+    page
+  </div>
+{/if}
 
 {#if properties !== undefined}
   {#each display as display_id}
@@ -67,6 +69,29 @@
   </Button>
   <div style:position="absolute" style:z-index={100} style:right="20rem">
     <ContextMenu bind:hidden={popup_hidden}>
+      <div style:display="flex" style:flex-direction="row">
+        <div style:flex-grow={1}>page</div>
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "2rem",
+          }}
+          on:click={async () => {
+            if (display.includes("page")) {
+              const index = display.findIndex((v) => v === "page");
+              display.splice(index, 1);
+            } else {
+              display.push("page");
+            }
+            display = display;
+            await flvFetch(`blocks/${block_id}`, "PATCH", {
+              data: { rdb_id, display },
+            });
+          }}
+        >
+          {display.includes("page") ? "-" : "+"}
+        </Button>
+      </div>
       {#each display as display_id, i (display_id)}
         {@const property = properties.find((v) => v.id === display_id)}
         {#if property !== undefined}

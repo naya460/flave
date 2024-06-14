@@ -38,13 +38,15 @@
     <div class="row">
       <TableHeader {rdb_id} {properties} {block_id} bind:display />
     </div>
-    {#each page_list as page}
-      <div class="row">
-        {#if properties !== undefined}
-          <TableRow {properties} {page} {display} />
-        {/if}
-      </div>
-    {/each}
+    {#if display.length !== 0}
+      {#each page_list as page}
+        <div class="row">
+          {#if properties !== undefined}
+            <TableRow {properties} {page} {display} />
+          {/if}
+        </div>
+      {/each}
+    {/if}
     <div style:width="100%">
       <Button
         style={{

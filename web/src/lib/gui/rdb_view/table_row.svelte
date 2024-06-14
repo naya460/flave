@@ -20,17 +20,20 @@
   export let display: string[];
 </script>
 
-<Item
-  page_id={page._id}
-  property={{
-    id: "",
-    type: "page",
-    value: {
-      workspace_id: $workspace_id_store,
-      title: page.title,
-    },
-  }}
-/>
+{#if display.includes("page") === true}
+  <Item
+    page_id={page._id}
+    property={{
+      id: "",
+      type: "page",
+      value: {
+        workspace_id: $workspace_id_store,
+        title: page.title,
+      },
+    }}
+  />
+{/if}
+
 {#each display as display_id (display_id)}
   {@const property = properties.find((v) => v.id === display_id)}
   {#if property !== undefined}
