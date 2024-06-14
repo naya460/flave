@@ -5,12 +5,17 @@
   import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
   import BlockHandle from "./BlockHandle.svelte";
-  import { selecting_block_store } from "$lib/store/page";
+  import {
+    page_block_moving_store,
+    selecting_block_store,
+  } from "$lib/store/page";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
 
   export let data: PageData;
+
+  let over_block: string | undefined = undefined;
 
   async function getBlocks() {
     const res = await flvFetch(`pages/${data.page_id}/blocks`);
@@ -38,6 +43,12 @@
 
     $blocks.push({ _id: "", type: "paragraph", data: { text: "" } });
   }
+
+  page_block_moving_store.subscribe((v) => {
+    if (v === undefined) {
+      over_block = undefined;
+    }
+  });
 </script>
 
 {#await getBlocks()}
@@ -48,6 +59,7 @@
     bind:this={node}
     contenteditable="true"
     style:outline="none"
+    style:cursor={over_block === undefined ? "initial" : "grab"}
     on:mousedown={(event) => {
       const exists = $blocks.some((v) => v.dom_node === event.target);
       if (exists === false) {
@@ -159,42 +171,47 @@
         class="block"
         contenteditable="false"
         on:mouseenter={() => {
-          $selecting_block_store = block._id;
+          if ($page_block_moving_store === undefined) {
+            $selecting_block_store = block._id;
+          } else {
+            over_block = block._id;
+          }
+        }}
+        on:mouseleave={() => {
+          if ($page_block_moving_store !== undefined) {
+            over_block = undefined;
+          }
+        }}
+        on:mouseup={async (event) => {
+          if (over_block === undefined) return;
+          if ($page_block_moving_store === undefined) return;
+          if ($page_block_moving_store === block._id) return;
+
+          const block_id = $page_block_moving_store;
+
+          await flvFetch(`blocks/${block_id}`, "PATCH", {
+            next_of: block._id,
+          });
+
+          const block_list = $blocks;
+          const target_index = block_list.findIndex((v) => v._id === block_id);
+          const [target] = block_list.splice(target_index, 1);
+          const this_index = block_list.findIndex((v) => v._id === block._id);
+          block_list.splice(this_index + 1, 0, target);
+          $blocks = block_list;
+
+          event.preventDefault();
         }}
       >
         <Block {block} page_id={data.page_id} block_list={blocks} />
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
-          style:height={"0.5rem"}
+          style:margin-top={"0.1rem"}
+          style:height={"0.2rem"}
+          style:margin-bottom={"0.1rem"}
+          style:background-color={over_block === block._id
+            ? "#c0ddd0c0"
+            : "initial"}
           contenteditable="false"
-          on:dragover={(event) => {
-            if (event.dataTransfer?.types.includes("application/flv-blk-id")) {
-              event.dataTransfer.dropEffect = "move";
-              event.preventDefault();
-            }
-          }}
-          on:drop={async (event) => {
-            const block_id = event.dataTransfer?.getData(
-              "application/flv-blk-id"
-            );
-            if (block_id === block._id) return;
-
-            // create new block
-            await flvFetch(`blocks/${block_id}`, "PATCH", {
-              next_of: block._id,
-            });
-
-            const block_list = $blocks;
-            const target_index = block_list.findIndex(
-              (v) => v._id === block_id
-            );
-            const [target] = block_list.splice(target_index, 1);
-            const this_index = block_list.findIndex((v) => v._id === block._id);
-            block_list.splice(this_index + 1, 0, target);
-            $blocks = block_list;
-
-            event.preventDefault();
-          }}
         />
       </div>
     {/each}

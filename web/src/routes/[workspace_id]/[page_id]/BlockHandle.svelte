@@ -1,7 +1,10 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
-  import { selecting_block_store } from "$lib/store/page";
+  import {
+    page_block_moving_store,
+    selecting_block_store,
+  } from "$lib/store/page";
   import type { blockListStore } from "$lib/types/block_list";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
@@ -51,6 +54,15 @@
     const res = await flvFetch(`workspaces/${data.workspace_id}/rdbs`);
     rdb_list = await res.json();
   });
+
+  window.addEventListener("mouseup", () => {
+    $page_block_moving_store = undefined;
+  });
+  window.addEventListener("keydown", (event) => {
+    if ($page_block_moving_store !== undefined && event.key === "Escape") {
+      $page_block_moving_store = undefined;
+    }
+  });
 </script>
 
 {#if enable === true}
@@ -59,14 +71,15 @@
     class="handle"
     style:left={`${position_x}px`}
     style:top={`${position_y}px`}
+    unselectable="on"
+    contenteditable="false"
   >
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="top"
-      draggable="true"
-      contenteditable="false"
-      on:dragstart={(event) => {
-        event.dataTransfer?.setData("application/flv-blk-id", block_id);
+      on:mousedown={(event) => {
+        $page_block_moving_store = block_id;
+        event.preventDefault();
       }}
       on:contextmenu={(event) => {
         context_id = block_id;
