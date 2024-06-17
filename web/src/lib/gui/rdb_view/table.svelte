@@ -26,6 +26,7 @@
   export let display: string[];
 
   export let property_menu_hidden: boolean;
+  export let add_property_menu_hidden: boolean;
 
   onMount(async () => {
     const res = await flvFetch(`rdbs/${rdb_id}/pages`);
@@ -37,7 +38,13 @@
 <div class="top">
   <div class="table">
     <div class="row">
-      <TableHeader {rdb_id} {properties} {display} bind:property_menu_hidden />
+      <TableHeader
+        {rdb_id}
+        {properties}
+        {display}
+        bind:property_menu_hidden
+        bind:add_property_menu_hidden
+      />
     </div>
     {#if display.length !== 0}
       {#each page_list as page}

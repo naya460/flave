@@ -14,6 +14,7 @@
   export let display: string[];
 
   export let property_menu_hidden: boolean;
+  export let add_property_menu_hidden: boolean;
 </script>
 
 {#if display.includes("page") === true}
@@ -46,11 +47,8 @@
     style={{
       buttonStyle: "text",
     }}
-    on:click={async () => {
-      await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-        type: "text",
-        name: "new property",
-      });
+    on:click={() => {
+      add_property_menu_hidden = false;
     }}
   >
     +

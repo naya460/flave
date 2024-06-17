@@ -34,5 +34,5 @@ export async function createRdbProperty(
   if (result.acknowledged === false) {
     return null;
   }
-  return uuid_v4;
+  return property_id;
 }
