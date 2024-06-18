@@ -16,28 +16,24 @@ export async function updateRdbProperty(
     $set: {
       updated_at: Date;
       updated_by: ObjectId;
-      "properties.$": {
-        id: string;
-        type?: string;
-        name?: string;
-      };
+      "properties.$.id": string;
+      "properties.$.type"?: string;
+      "properties.$.name"?: string;
     };
   } = {
     $set: {
       updated_at: new Date(),
       updated_by: user_id,
-      "properties.$": {
-        id: data.property.id,
-      },
+      "properties.$.id": data.property.id,
     },
   };
 
   if (data.property.type !== undefined) {
-    doc.$set["properties.$"].type = data.property.type;
+    doc.$set["properties.$.type"] = data.property.type;
   }
 
   if (data.property.name !== undefined) {
-    doc.$set["properties.$"].name = data.property.name;
+    doc.$set["properties.$.name"] = data.property.name;
   }
 
   const result = await flvRdbCollection.updateOne(
