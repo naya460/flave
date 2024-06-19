@@ -22,12 +22,27 @@
         onClick: async () => {
           const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
             type: "text",
-            name: "new property",
+            name: "new text property",
           });
           properties.push({
             id: await res.text(),
             type: "text",
-            name: "new property",
+            name: "new text property",
+          });
+          properties = properties;
+        },
+      },
+      {
+        name: "checkbox",
+        onClick: async () => {
+          const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
+            type: "checkbox",
+            name: "new checkbox property",
+          });
+          properties.push({
+            id: await res.text(),
+            type: "checkbox",
+            name: "new checkbox property",
           });
           properties = properties;
         },

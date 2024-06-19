@@ -13,7 +13,7 @@
     title: string;
     properties?: {
       id: string;
-      value: string;
+      value: unknown;
     }[];
   };
 

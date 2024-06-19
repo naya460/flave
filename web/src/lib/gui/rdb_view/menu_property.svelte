@@ -9,7 +9,7 @@
   export let properties: {
     id: string;
     type: string;
-    name: string;
+    name: unknown;
   }[];
 
   export let display: string[];
