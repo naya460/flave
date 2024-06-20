@@ -6,6 +6,7 @@
     id: string;
     type: string;
     name: string;
+    option: unknown;
   }[];
 
   export let page: {
@@ -42,6 +43,7 @@
       property={{
         id: property.id,
         type: property.type,
+        option: property.option,
         value: (() => {
           const value = page.properties?.find(
             (v) => v.id === property.id

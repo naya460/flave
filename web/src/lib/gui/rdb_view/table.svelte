@@ -12,6 +12,7 @@
     id: string;
     type: string;
     name: string;
+    option: unknown;
   }[];
 
   let page_list: {

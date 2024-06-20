@@ -16,7 +16,7 @@ const paramsSchema = {
 const bodySchema = {
   type: "object",
   properties: {
-    value: { type: ["string", "boolean"] },
+    value: { type: ["string", "boolean", "object"] },
   },
   required: ["value"],
 } as const;

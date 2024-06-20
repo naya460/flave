@@ -13,6 +13,7 @@
       id: string;
       type: string;
       name: string;
+      option: unknown;
     }[];
   };
 

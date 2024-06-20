@@ -1,6 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import ContextMenu from "../common/ContextMenu.svelte";
+  import { workspace_id_store } from "$lib/store/workspace";
 
   export let rdb_id: string;
 
@@ -10,7 +11,16 @@
     id: string;
     type: string;
     name: string;
+    option?: unknown;
   }[];
+
+  let rdb_list: { _id: string; title: string }[] = [];
+
+  flvFetch(`workspaces/${$workspace_id_store}/rdbs`).then((res) => {
+    res.json().then((value) => {
+      rdb_list = value;
+    });
+  });
 </script>
 
 <div class="top">
@@ -46,6 +56,32 @@
           });
           properties = properties;
         },
+      },
+      {
+        name: "relation",
+        contents: rdb_list.map((v) => {
+          return {
+            name: v.title,
+            onClick: async () => {
+              const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
+                type: "relation",
+                name: "new relation property",
+                option: {
+                  rdb: v._id,
+                },
+              });
+              properties.push({
+                id: await res.text(),
+                type: "relation",
+                name: "new relation property",
+                option: {
+                  rdb: v._id,
+                },
+              });
+              properties = properties;
+            },
+          };
+        }),
       },
     ]}
   />

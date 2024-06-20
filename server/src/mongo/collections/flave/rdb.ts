@@ -8,6 +8,7 @@ type flvRdbType = {
     id: string;
     type: string;
     name: string;
+    option?: unknown;
   }[];
   created_at: Date;
   created_by: ObjectId;

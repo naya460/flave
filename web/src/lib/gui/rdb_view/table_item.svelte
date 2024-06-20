@@ -4,6 +4,7 @@
   export let property: {
     id: string;
     type: string;
+    option?: unknown;
     value: unknown;
   };
 
