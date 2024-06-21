@@ -4,7 +4,6 @@
   import { flvFetch } from "$lib/flv_fetch";
 
   export let block_id: string;
-  export let rdb_id: string;
 
   export let properties: {
     id: string;
@@ -35,7 +34,7 @@
           }
           display = display;
           await flvFetch(`blocks/${block_id}`, "PATCH", {
-            data: { rdb_id, display },
+            data: { display },
           });
         }}
       >
@@ -59,7 +58,7 @@
                 display.splice(i - 1, 0, p);
                 display = display;
                 await flvFetch(`blocks/${block_id}`, "PATCH", {
-                  data: { rdb_id, display },
+                  data: { display },
                 });
               }
             }}
@@ -78,7 +77,7 @@
                 display.splice(i + 1, 0, p);
                 display = display;
                 await flvFetch(`blocks/${block_id}`, "PATCH", {
-                  data: { rdb_id, display },
+                  data: { display },
                 });
               }
             }}
@@ -95,7 +94,7 @@
               display.splice(index, 1);
               display = display;
               await flvFetch(`blocks/${block_id}`, "PATCH", {
-                data: { rdb_id, display },
+                data: { display },
               });
             }}
           >
@@ -117,7 +116,7 @@
               display.push(property.id);
               display = display;
               await flvFetch(`blocks/${block_id}`, "PATCH", {
-                data: { rdb_id, display },
+                data: { display },
               });
             }}
           >

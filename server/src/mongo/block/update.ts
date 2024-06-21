@@ -6,7 +6,7 @@ export async function updateBlock(
   user_id: ObjectId,
   data: {
     next_of?: ObjectId | null;
-    data?: unknown;
+    data?: object;
   }
 ) {
   const target = await flvBlockCollection.findOneAndUpdate(

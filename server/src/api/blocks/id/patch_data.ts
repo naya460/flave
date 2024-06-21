@@ -33,13 +33,18 @@ export const flvPatchBlockDataHandler: apiHandler<{
 
   const doc: {
     next_of?: ObjectId | null;
-    data?: unknown;
+  } & {
+    [key in `data.${string}`]: unknown;
   } = {};
   if (req.body.next_of !== undefined) {
     doc.next_of =
       req.body.next_of === null ? null : new ObjectId(req.body.next_of);
   }
-  if (req.body.data !== undefined) doc.data = req.body.data;
+  if (req.body.data !== undefined) {
+    for (const [key, value] of Object.entries(req.body.data)) {
+      doc[`data.${key}`] = value;
+    }
+  }
 
   await updateBlock(req.params.block_id, auth, doc);
 };

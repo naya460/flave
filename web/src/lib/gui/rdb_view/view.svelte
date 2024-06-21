@@ -33,7 +33,6 @@
   />
   <MenuProperty
     {block_id}
-    {rdb_id}
     {properties}
     bind:display
     bind:popup_hidden={property_menu_hidden}

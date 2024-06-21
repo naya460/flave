@@ -23,7 +23,7 @@
   bind:own
   updateHandler={async (id, text) => {
     await flvFetch(`blocks/${id}`, "PATCH", {
-      data: { text, level: block_data.level },
+      data: { text },
     });
   }}
   style={(() => {
