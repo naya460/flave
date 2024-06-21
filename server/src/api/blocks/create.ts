@@ -1,4 +1,5 @@
 import { checkAuth } from "api/common/check_auth";
+import { validate_block } from "flave_types/block_type";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
 import { createBlock } from "mongo/block/create";
@@ -24,11 +25,7 @@ export const flvCreateBlockHandler: apiHandler<{
   const auth = await checkAuth({ page: req.body.page_id }, req, res);
   if (auth === null) return;
 
-  if (
-    req.body.type !== "paragraph" &&
-    req.body.type !== "rdb_view" &&
-    req.body.type !== "heading"
-  ) {
+  if (validate_block(req.body.type, req.body.data) === false) {
     res.status(400);
     return;
   }

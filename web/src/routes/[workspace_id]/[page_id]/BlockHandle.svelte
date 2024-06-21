@@ -174,7 +174,7 @@
                   page_id: data.page_id,
                   next_of: context_id,
                   type: "rdb_view",
-                  data: { rdb_id: rdb._id },
+                  data: { rdb_id: rdb._id, display: ["page"] },
                 });
 
                 res.then((v) => {
@@ -186,7 +186,7 @@
                     $blocks.splice(index + 1, 0, {
                       _id: w,
                       type: "rdb_view",
-                      data: { rdb_id: rdb._id },
+                      data: { rdb_id: rdb._id, display: ["page"] },
                     });
                     $blocks = $blocks;
                   });
