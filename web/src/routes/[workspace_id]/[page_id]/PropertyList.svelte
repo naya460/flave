@@ -1,16 +1,19 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import TextInput from "$lib/gui/common/TextInput.svelte";
+  import Item from "$lib/gui/rdb_view/item.svelte";
 
   export let page_id: string;
   export let rdb_id: string;
 
   export let properties: {
     id: string;
-    value: string;
+    value: unknown;
   }[];
 
-  async function getRdbProperties(): Promise<{ id: string; name: string }[]> {
+  async function getRdbProperties(): Promise<
+    { id: string; type: string; name: string; option?: unknown }[]
+  > {
     const res = await flvFetch(`rdbs/${rdb_id}`);
     return (await res.json()).properties;
   }
@@ -30,18 +33,12 @@
           );
         }}
       />
-      <TextInput
-        style={{ outline: false }}
-        value={properties.some((v) => v.id === rdb_property.id)
-          ? properties.find((v) => v.id === rdb_property.id)?.value
-          : ""}
-        onChange={async (event) => {
-          await flvFetch(
-            `pages/${page_id}/property/${rdb_property.id}`,
-            "PATCH",
-            { value: event.currentTarget.value }
-          );
+      <Item
+        property={{
+          ...rdb_property,
+          value: properties.find((v) => v.id === rdb_property.id),
         }}
+        {page_id}
       />
     </div>
   {/each}
