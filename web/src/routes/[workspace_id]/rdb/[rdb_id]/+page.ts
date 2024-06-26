@@ -11,6 +11,7 @@ export const load: PageLoad = async ({ fetch, url, params }) => {
 			id: string;
 			type: string;
 			name: string;
+			option: unknown;
 		}[];
 	} = await res.json();
 

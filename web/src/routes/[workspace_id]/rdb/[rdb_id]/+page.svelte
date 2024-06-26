@@ -2,7 +2,7 @@
   import TextInput from "$lib/gui/common/TextInput.svelte";
   import type { PageData } from "./$types";
   import { flvFetch } from "$lib/flv_fetch";
-  import Table from "$lib/gui/rdb_view/table.svelte";
+  import View from "$lib/gui/rdb_view/view.svelte";
 
   export let data: PageData;
 </script>
@@ -20,5 +20,10 @@
 {#if data.rdb_data !== undefined}
   {@const properties =
     data.rdb_data.properties === undefined ? [] : data.rdb_data.properties}
-  <Table rdb_id={data.rdb_id} workspace_id={data.workspace_id} {properties} />
+  <View
+    block_id=""
+    rdb_id={data.rdb_id}
+    display={properties.map((v) => v.id)}
+    rdb_data={data.rdb_data}
+  />
 {/if}
