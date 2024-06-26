@@ -227,7 +227,7 @@
 
 <style>
   .block {
-    margin: 0 4rem;
+    margin: 0 0.2rem;
     position: relative;
   }
 </style>

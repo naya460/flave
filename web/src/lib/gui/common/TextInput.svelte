@@ -3,9 +3,13 @@
   export let style: {
     outline?: boolean;
     fontSize?: string;
+    padding?:
+      | `${number}${"px" | "%" | "rem"}`
+      | `${`${number}${"px" | "%" | "rem"} ${number}${"px" | "%" | "rem"}`}`;
   } = {
     outline: true,
     fontSize: "1rem",
+    padding: "0.25rem 0.5rem",
   };
   export let id: string | undefined = undefined;
   export let name: string | undefined = undefined;
@@ -29,6 +33,7 @@
   {autocomplete}
   {value}
   style:font-size={style.fontSize}
+  style:padding={style.padding}
   class="input"
   class:outline={style.outline}
   on:change={onChange}
@@ -41,7 +46,6 @@
     outline: none;
     border: none;
     font-size: 1rem;
-    padding: 0.25rem 0.5rem;
     border-radius: 0.2rem;
     width: 100%;
     box-sizing: border-box;
