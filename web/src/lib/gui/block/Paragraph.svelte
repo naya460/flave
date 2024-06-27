@@ -28,37 +28,12 @@
   let timeout: number | undefined = undefined;
 
   async function timeoutHandler() {
-    if (block_data !== null && block_data?._id !== "") {
+    if (block_data !== null) {
       await updateHandler(block_data._id, own.innerText);
     }
     clearTimeout(timeout);
     timeout = undefined;
   }
-
-  /*
-  async function onCreate() {
-    if (block_data._id !== "") return;
-    if (own.innerText === "") return;
-
-    const res = await flvFetch(`blocks`, "POST", {
-      page_id: page_id,
-      next_of:
-        $block_list.length < 2 ? null : $block_list[$block_list.length - 2]._id,
-      type: "paragraph",
-      data: { text: "" },
-    });
-    $block_list[$block_list.length - 1] = {
-      _id: await res.text(),
-      type: "paragraph",
-      data: { text: own.innerText },
-    };
-    $block_list.push({
-      _id: "",
-      type: "paragraph",
-      data: { text: "" },
-    });
-  }
-  */
 
   onDestroy(() => {
     clearTimeout(timeout);
@@ -83,15 +58,6 @@
       if (!timeout) {
         timeout = setInterval(timeoutHandler, 1000);
       }
-
-      /*
-      if (block_data._id === "") {
-        if (event.key !== "ArrowUp") {
-          onCreate();
-          return;
-        }
-      }
-      */
 
       if (event.key === "Enter") {
         const res = flvFetch(`blocks`, "POST", {

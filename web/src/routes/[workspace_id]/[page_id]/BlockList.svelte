@@ -41,7 +41,7 @@
       list = list.filter((v) => v.next_of !== last_id);
     }
 
-    $blocks.push({ _id: "", type: "paragraph", data: { text: "" } });
+    pushEmpty();
   }
 
   page_block_moving_store.subscribe((v) => {
@@ -49,6 +49,41 @@
       over_block = undefined;
     }
   });
+
+  function pushEmpty() {
+    const tmp = $blocks[$blocks.length - 1];
+
+    if (
+      $blocks.length === 0 ||
+      tmp.type !== "paragraph" ||
+      (tmp.type === "paragraph" &&
+        typeof tmp.data === "object" &&
+        tmp.data !== null &&
+        "text" in tmp.data &&
+        tmp.data.text !== "")
+    ) {
+      const next_of = $blocks.length === 0 ? null : tmp._id;
+
+      const res = flvFetch(`blocks`, "POST", {
+        page_id: data.page_id,
+        next_of: next_of,
+        type: "paragraph",
+        data: { text: "" },
+      });
+
+      res.then((v) => {
+        v.text().then((w) => {
+          if (typeof w !== "string") return;
+          $blocks.push({
+            _id: w,
+            type: "paragraph",
+            data: { text: "" },
+          });
+          $blocks = $blocks;
+        });
+      });
+    }
+  }
 </script>
 
 {#await getBlocks()}
@@ -100,7 +135,7 @@
         );
         if (index < 0) return;
 
-        if (index === $blocks.length - 2) {
+        if (index === $blocks.length - 1) {
           event.preventDefault();
         } else if (
           $blocks[index + 1].dom_node?.childNodes[0].nodeValue?.length === 0 &&
