@@ -14,7 +14,13 @@
   });
 </script>
 
-<div class="top">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  class="top"
+  on:mouseleave={() => {
+    $selecting_block_store = undefined;
+  }}
+>
   <div class="title">
     <TextInput
       style={{ outline: false, fontSize: "1.5rem", padding: "0px" }}
@@ -38,13 +44,7 @@
     />
   {/if}
 
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div
-    on:mouseleave={() => {
-      $selecting_block_store = undefined;
-    }}
-    style:position={"relative"}
-  >
+  <div style:position={"relative"}>
     <BlockList {data} />
   </div>
 </div>
