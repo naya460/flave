@@ -48,5 +48,7 @@
   .property {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    height: 1.5rem;
+    margin: 0.5rem 0;
   }
 </style>
