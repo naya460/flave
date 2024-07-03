@@ -10,11 +10,11 @@
     event: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
   ) => {
     const form_data = new FormData(event.currentTarget);
-    const data = JSON.stringify({
+    const data = {
       auth_id: form_data.get("auth_id"),
       password: form_data.get("password"),
       confirm_password: form_data.get("confirm_password"),
-    });
+    };
     await flvFetch(`users`, "POST", data);
     location.reload();
   };
