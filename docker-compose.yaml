@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: node:20-alpine
+    image: node:20
     ports:
       - 3000:5173
     volumes:
@@ -12,7 +12,7 @@ services:
       - server
 
   server:
-    image: node:20-alpine
+    image: node:20
     ports:
       - 8080:8080
     volumes:
