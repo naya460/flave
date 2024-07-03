@@ -14,9 +14,9 @@
     event: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
   ) => {
     const form_data = new FormData(event.currentTarget);
-    const data = JSON.stringify({
+    const data = {
       name: form_data.get("name"),
-    });
+    };
     await flvFetch(`workspaces`, "POST", data);
     location.reload();
   };
