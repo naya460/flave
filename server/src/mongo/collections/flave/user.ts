@@ -1,6 +1,4 @@
 import { mongoClient } from "lib/mongo";
-import { createUser } from "mongo/user/create";
-import bcrypt from "bcrypt";
 
 type flvUserType = {
   name: string;
@@ -12,11 +10,3 @@ type flvUserType = {
 export const flvUserCollection = mongoClient
   .db("flave")
   .collection<flvUserType>("user");
-
-flvUserCollection.countDocuments().then((count) => {
-  if (count === 0) {
-    bcrypt.hash("pass", 10).then((hash) => {
-      createUser("admin", hash, true);
-    });
-  }
-});
