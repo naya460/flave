@@ -1,11 +1,10 @@
+import { validate_var, type flave_var_type } from "./var_type";
+
 // Map<type name, data type>
 export const flave_block_type = new Map<
   string,
   {
-    [key in string]:
-      | string
-      | string[]
-      | ((key: string, target: { [key in string]: unknown }) => boolean);
+    [key in string]: flave_var_type;
   }
 >();
 
@@ -18,17 +17,9 @@ export function validate_block(type: string, data: object): boolean {
   if (Object.keys(block_data_type).length !== Object.keys(target).length)
     return false;
 
-  for (const [key, value] of Object.entries(block_data_type)) {
+  for (const [key, var_type] of Object.entries(block_data_type)) {
     if (key in target === false) return false;
-
-    if (typeof value === "string") {
-      if (typeof target[key] !== value) return false;
-    } else if (typeof value === "function") {
-      const judgement = value(key, target);
-      if (judgement === false) return false;
-    } else {
-      if (value.some((v) => typeof target[key] === v) === false) return false;
-    }
+    if (validate_var(var_type, target[key]) === false) return false;
   }
 
   return true;
@@ -42,10 +33,9 @@ flave_block_type.set("paragraph", {
 // rdb_view
 flave_block_type.set("rdb_view", {
   rdb_id: "string",
-  display: (key, target) => {
-    if (typeof target[key] !== "object") return false;
-    if (Array.isArray(target[key]) === false) return false;
-    return true;
+  display: {
+    type: "array",
+    children: "string",
   },
 });
 
