@@ -1,6 +1,8 @@
 import { checkAuth } from "api/common/check_auth";
+import { validate_block } from "flave_types/block_type";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
+import { getBlockData } from "mongo/block/get_data";
 import { updateBlock } from "mongo/block/update";
 import { ObjectId } from "mongodb";
 
@@ -29,7 +31,18 @@ export const flvPatchBlockDataHandler: apiHandler<{
   Body: FromSchema<typeof bodySchema>;
 }> = async (req, res) => {
   const auth = await checkAuth({ block: req.params.block_id }, req, res);
-  if (auth === null) return null;
+  if (auth === null) return;
+
+  if (req.body.data !== undefined) {
+    const data_type = (await getBlockData(req.params.block_id))?.type;
+    if (
+      data_type !== undefined &&
+      validate_block(data_type, req.body.data, false) === false
+    ) {
+      res.status(400);
+      return;
+    }
+  }
 
   const doc: {
     next_of?: ObjectId | null;
