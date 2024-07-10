@@ -49,6 +49,58 @@
   }
 </script>
 
+<ContextMenu bind:hidden={context_hidden}>
+  {#if page_list.length !== 0}
+    <div>linked:</div>
+  {/if}
+  {#each page_list as page}
+    <Button
+      style={{
+        buttonStyle: "text",
+        width: "100%",
+        height: "2rem",
+        textAlign: "left",
+      }}
+      on:click={async () => {
+        page_list = page_list.filter((v) => v !== page);
+        await flvFetch(`pages/${page_id}/property/${property_id}`, "PATCH", {
+          value: {
+            page_list,
+          },
+        });
+      }}
+    >
+      {rdb_page_list.find((v) => v._id === page)?.title}
+    </Button>
+  {/each}
+  {#if page_list.length !== rdb_page_list.length}
+    <div>link:</div>
+  {/if}
+  {#each rdb_page_list as page}
+    {#if page_list.includes(page._id) === false}
+      <Button
+        style={{
+          buttonStyle: "text",
+          width: "100%",
+          height: "2rem",
+          textAlign: "left",
+        }}
+        on:click={async () => {
+          page_list.push(page._id);
+          page_list = page_list;
+          await flvFetch(`pages/${page_id}/property/${property_id}`, "PATCH", {
+            value: {
+              page_list,
+            },
+          });
+        }}
+      >
+        {page.title}
+      </Button>
+    {/if}
+  {/each}
+</ContextMenu>
+
 <Button
   style={{
     buttonStyle: "text",
@@ -68,70 +120,3 @@
     {/await}
   {/each}
 </Button>
-
-<div class="top">
-  <ContextMenu bind:hidden={context_hidden}>
-    {#if page_list.length !== 0}
-      <div>linked:</div>
-    {/if}
-    {#each page_list as page}
-      <Button
-        style={{
-          buttonStyle: "text",
-          width: "100%",
-          height: "2rem",
-          textAlign: "left",
-        }}
-        on:click={async () => {
-          page_list = page_list.filter((v) => v !== page);
-          await flvFetch(`pages/${page_id}/property/${property_id}`, "PATCH", {
-            value: {
-              page_list,
-            },
-          });
-        }}
-      >
-        {rdb_page_list.find((v) => v._id === page)?.title}
-      </Button>
-    {/each}
-    {#if page_list.length !== rdb_page_list.length}
-      <div>link:</div>
-    {/if}
-    {#each rdb_page_list as page}
-      {#if page_list.includes(page._id) === false}
-        <Button
-          style={{
-            buttonStyle: "text",
-            width: "100%",
-            height: "2rem",
-            textAlign: "left",
-          }}
-          on:click={async () => {
-            page_list.push(page._id);
-            page_list = page_list;
-            await flvFetch(
-              `pages/${page_id}/property/${property_id}`,
-              "PATCH",
-              {
-                value: {
-                  page_list,
-                },
-              }
-            );
-          }}
-        >
-          {page.title}
-        </Button>
-      {/if}
-    {/each}
-  </ContextMenu>
-</div>
-
-<style>
-  .top {
-    position: absolute;
-    top: 0;
-    right: 20rem;
-    z-index: 1;
-  }
-</style>
