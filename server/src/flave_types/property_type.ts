@@ -35,6 +35,10 @@ export function validate_property(
   return true;
 }
 
+export function exists_property(type: string): boolean {
+  return flave_property_type.has(type);
+}
+
 // text
 flave_property_type.set("text", "string");
 

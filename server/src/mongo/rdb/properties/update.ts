@@ -7,7 +7,6 @@ export async function updateRdbProperty(
   data: {
     property: {
       id: string;
-      type?: string;
       name?: string;
     };
   }
@@ -17,7 +16,6 @@ export async function updateRdbProperty(
       updated_at: Date;
       updated_by: ObjectId;
       "properties.$.id": string;
-      "properties.$.type"?: string;
       "properties.$.name"?: string;
     };
   } = {
@@ -27,10 +25,6 @@ export async function updateRdbProperty(
       "properties.$.id": data.property.id,
     },
   };
-
-  if (data.property.type !== undefined) {
-    doc.$set["properties.$.type"] = data.property.type;
-  }
 
   if (data.property.name !== undefined) {
     doc.$set["properties.$.name"] = data.property.name;

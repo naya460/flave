@@ -16,7 +16,6 @@ const paramsSchema = {
 const bodySchema = {
   type: "object",
   properties: {
-    type: { type: "string" },
     name: { type: "string" },
   },
   required: [],
@@ -36,15 +35,10 @@ export const flvPatchRdbPropertyHandler: apiHandler<{
 
   const data: {
     id: string;
-    type?: string;
     name?: string;
   } = {
     id: req.params.property_id,
   };
-
-  if (req.body.type !== undefined) {
-    data.type = req.body.type;
-  }
 
   if (req.body.name !== undefined) {
     data.name = req.body.name;
