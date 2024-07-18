@@ -1,6 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import Button from "../common/Button.svelte";
+  import ContextMenu from "../common/ContextMenu.svelte";
   import TextInput from "../common/TextInput.svelte";
 
   export let rdb_id: string;
@@ -15,6 +16,8 @@
 
   export let property_menu_hidden: boolean;
   export let add_property_menu_hidden: boolean;
+
+  let context_id: string | null = null;
 </script>
 
 {#if display.includes("page") === true}
@@ -28,15 +31,47 @@
     {@const property = properties.find((v) => v.id === display_id)}
     {#if property !== undefined}
       <div class="item">
-        <TextInput
-          style={{ outline: false }}
-          value={property.name}
-          onChange={async (event) => {
-            await flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
-              name: event.currentTarget.value,
-            });
+        <ContextMenu
+          hidden={property.id !== context_id}
+          hide_parent={() => {
+            context_id = null;
           }}
-        />
+        >
+          <TextInput
+            style={{ outline: false }}
+            value={property.name}
+            onChange={async (event) => {
+              const value = event.currentTarget.value;
+              await flvFetch(
+                `rdbs/${rdb_id}/property/${property.id}`,
+                "PATCH",
+                {
+                  name: value,
+                }
+              );
+              const target_property = properties.find(
+                (v) => v.id === property.id
+              );
+              if (target_property !== undefined) {
+                target_property.name = value;
+              }
+              properties = properties;
+              context_id = null;
+            }}
+          />
+        </ContextMenu>
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "100%",
+            textAlign: "left",
+          }}
+          on:click={() => {
+            context_id = property.id;
+          }}
+        >
+          {property.name}
+        </Button>
       </div>
     {/if}
   {/each}
