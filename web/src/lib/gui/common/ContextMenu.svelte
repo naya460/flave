@@ -136,8 +136,8 @@
     position: fixed;
     background-color: rgb(255, 255, 255);
     width: 20rem;
-    height: 20rem;
-    padding: 1rem;
+    height: fit-content;
+    padding: 0.5rem 1rem;
     box-sizing: border-box;
     border-radius: 0.5rem;
     box-shadow: 0 0 6px -2px rgba(0, 0, 0, 128);
