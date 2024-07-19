@@ -1,27 +1,38 @@
+import { validate_property } from "flave_types/property_type";
 import { flvPageCollection } from "mongo/collections/flave/page";
 import { ObjectId } from "mongodb";
 
 export async function updatePageProperty(
   page_id: ObjectId,
   user_id: ObjectId,
-  data: {
-    property: {
-      id: string;
-      value: unknown;
-    };
+  property: {
+    id: string;
+    value: object | string | boolean;
   }
 ) {
+  if (
+    (await validate_property(
+      page_id.toString(),
+      property.id,
+      property.value
+    )) === false
+  ) {
+    return false;
+  }
+
+  // update property
   const result = await flvPageCollection.updateOne(
-    { _id: page_id, "properties.id": data.property.id },
+    { _id: page_id, "properties.id": property.id },
     {
       $set: {
         updated_at: new Date(),
         updated_by: user_id,
-        "properties.$.value": data.property.value,
+        "properties.$.value": property.value,
       },
     }
   );
 
+  // when this property does not exist
   if (result.modifiedCount === 0) {
     const result = await flvPageCollection.updateOne(
       { _id: page_id },
@@ -32,8 +43,8 @@ export async function updatePageProperty(
         },
         $push: {
           properties: {
-            id: data.property.id,
-            value: data.property.value,
+            id: property.id,
+            value: property.value,
           },
         },
       }
