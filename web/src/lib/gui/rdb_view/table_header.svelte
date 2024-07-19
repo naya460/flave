@@ -99,6 +99,16 @@
                       });
                     }
                     properties = [...properties];
+
+                    flvFetch(
+                      `rdbs/${rdb_id}/property/${property.id}`,
+                      "PATCH",
+                      {
+                        option: {
+                          only: event.currentTarget.checked,
+                        },
+                      }
+                    );
                   }
                 }}
               />

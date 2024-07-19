@@ -18,6 +18,7 @@ const bodySchema = {
   properties: {
     type: { type: "string" },
     name: { type: "string" },
+    option: { type: "object" },
   },
   required: ["type", "name"],
 } as const;
@@ -39,14 +40,24 @@ export const flvCreateRdbPropertyHandler: apiHandler<{
     return null;
   }
 
+  const doc: {
+    type: string;
+    name: string;
+    option?: object;
+  } = {
+    type: req.body.type,
+    name: req.body.name,
+  };
+
+  if (req.body.option !== undefined) {
+    doc.option = req.body.option;
+  }
+
   const result = await createRdbProperty(
     new ObjectId(req.params.rdb_id),
     auth,
     {
-      property: {
-        type: req.body.type,
-        name: req.body.name,
-      },
+      property: doc,
     }
   );
 

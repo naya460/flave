@@ -9,6 +9,7 @@ export async function createRdbProperty(
     property: {
       type: string;
       name: string;
+      option?: object;
     };
   }
 ) {
@@ -24,8 +25,7 @@ export async function createRdbProperty(
       $push: {
         properties: {
           id: property_id,
-          type: data.property.type,
-          name: data.property.name,
+          ...data.property,
         },
       },
     }
