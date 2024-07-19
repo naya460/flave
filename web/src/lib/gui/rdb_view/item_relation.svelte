@@ -60,32 +60,8 @@
 <ContextMenu bind:hidden={context_hidden}>
   {#if page_list.length !== 0}
     <div>linked:</div>
-  {/if}
-  {#each page_list as page}
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        height: "2rem",
-        textAlign: "left",
-      }}
-      on:click={async () => {
-        page_list = page_list.filter((v) => v !== page);
-        await flvFetch(`pages/${page_id}/property/${property_id}`, "PATCH", {
-          value: {
-            page_list,
-          },
-        });
-      }}
-    >
-      {rdb_page_list.find((v) => v._id === page)?.title}
-    </Button>
-  {/each}
-  {#if page_list.length !== rdb_page_list.length}
-    <div>link:</div>
-  {/if}
-  {#each rdb_page_list as page}
-    {#if page_list.includes(page._id) === false}
+    {@const local_page_list = only === true ? [page_list[0]] : page_list}
+    {#each local_page_list as page}
       <Button
         style={{
           buttonStyle: "text",
@@ -94,8 +70,11 @@
           textAlign: "left",
         }}
         on:click={async () => {
-          page_list.push(page._id);
-          page_list = page_list;
+          if (only === true) {
+            page_list = [];
+          } else {
+            page_list = page_list.filter((v) => v !== page);
+          }
           await flvFetch(`pages/${page_id}/property/${property_id}`, "PATCH", {
             value: {
               page_list,
@@ -103,10 +82,45 @@
           });
         }}
       >
-        {page.title}
+        {rdb_page_list.find((v) => v._id === page)?.title}
       </Button>
-    {/if}
-  {/each}
+    {/each}
+  {/if}
+  {#if page_list.length !== rdb_page_list.length}
+    <div>link:</div>
+    {@const local_page_list = only === true ? [page_list[0]] : page_list}
+    {#each rdb_page_list as page}
+      {#if local_page_list.includes(page._id) === false}
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "100%",
+            height: "2rem",
+            textAlign: "left",
+          }}
+          on:click={async () => {
+            if (only === true) {
+              page_list = [page._id];
+            } else {
+              page_list.push(page._id);
+              page_list = page_list;
+            }
+            await flvFetch(
+              `pages/${page_id}/property/${property_id}`,
+              "PATCH",
+              {
+                value: {
+                  page_list,
+                },
+              }
+            );
+          }}
+        >
+          {page.title}
+        </Button>
+      {/if}
+    {/each}
+  {/if}
 </ContextMenu>
 
 <Button
@@ -123,19 +137,11 @@
   {#if only === true}
     {@const page_id = page_list.length !== 0 ? page_list[0] : undefined}
     {#if page_id !== undefined}
-      {#await flvFetch(`pages/${page_id}`, "GET") then res}
-        {#await res.json() then data}
-          <div>{data.title}</div>
-        {/await}
-      {/await}
+      <div>{rdb_page_list.find((v) => v._id === page_id)?.title}</div>
     {/if}
   {:else}
     {#each page_list as page_id}
-      {#await flvFetch(`pages/${page_id}`, "GET") then res}
-        {#await res.json() then data}
-          <div>{data.title}</div>
-        {/await}
-      {/await}
+      <div>{rdb_page_list.find((v) => v._id === page_id)?.title}</div>
     {/each}
   {/if}
 </Button>
