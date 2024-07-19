@@ -41,7 +41,7 @@
     <div class="row">
       <TableHeader
         {rdb_id}
-        {properties}
+        bind:properties
         {display}
         bind:property_menu_hidden
         bind:add_property_menu_hidden

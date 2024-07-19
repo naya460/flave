@@ -1,5 +1,6 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
+  import { beforeUpdate } from "svelte";
   import Button from "../common/Button.svelte";
   import ContextMenu from "../common/ContextMenu.svelte";
 
@@ -14,6 +15,10 @@
     | unknown;
 
   let page_list: string[] = [];
+  let rdb_page_list: { _id: string; title: string }[] = [];
+
+  let rdb: string | null = null;
+  let only: boolean | null = null;
 
   if (
     typeof value === "object" &&
@@ -25,20 +30,21 @@
     page_list = value.page_list;
   }
 
-  let rdb: string | null = null;
+  beforeUpdate(() => {
+    if (typeof option === "object" && option !== null) {
+      if ("only" in option && typeof option.only === "boolean") {
+        if (only !== option.only) {
+          only = option.only;
+        }
+      }
+    }
+  });
 
-  if (
-    typeof option === "object" &&
-    option !== null &&
-    "rdb" in option &&
-    typeof option.rdb === "string"
-  ) {
-    rdb = option.rdb;
+  if (typeof option === "object" && option !== null) {
+    if ("rdb" in option && typeof option.rdb === "string") {
+      rdb = option.rdb;
+    }
   }
-
-  let context_hidden = true;
-
-  let rdb_page_list: { _id: string; title: string }[] = [];
 
   if (rdb !== null) {
     flvFetch(`rdbs/${rdb}/pages`, "GET").then((res) => {
@@ -47,6 +53,8 @@
       });
     });
   }
+
+  let context_hidden = true;
 </script>
 
 <ContextMenu bind:hidden={context_hidden}>
@@ -112,11 +120,22 @@
     context_hidden = false;
   }}
 >
-  {#each page_list as page_id}
-    {#await flvFetch(`pages/${page_id}`, "GET") then res}
-      {#await res.json() then data}
-        <div>{data.title}</div>
+  {#if only === true}
+    {@const page_id = page_list.length !== 0 ? page_list[0] : undefined}
+    {#if page_id !== undefined}
+      {#await flvFetch(`pages/${page_id}`, "GET") then res}
+        {#await res.json() then data}
+          <div>{data.title}</div>
+        {/await}
       {/await}
-    {/await}
-  {/each}
+    {/if}
+  {:else}
+    {#each page_list as page_id}
+      {#await flvFetch(`pages/${page_id}`, "GET") then res}
+        {#await res.json() then data}
+          <div>{data.title}</div>
+        {/await}
+      {/await}
+    {/each}
+  {/if}
 </Button>

@@ -8,6 +8,7 @@ export async function updateRdbProperty(
     property: {
       id: string;
       name?: string;
+      option?: object;
     };
   }
 ) {
@@ -17,6 +18,10 @@ export async function updateRdbProperty(
       updated_by: ObjectId;
       "properties.$.id": string;
       "properties.$.name"?: string;
+    };
+  } & {
+    $set: {
+      [key in `properties.$.option.${string}`]?: unknown;
     };
   } = {
     $set: {
@@ -28,6 +33,12 @@ export async function updateRdbProperty(
 
   if (data.property.name !== undefined) {
     doc.$set["properties.$.name"] = data.property.name;
+  }
+
+  if (data.property.option !== undefined) {
+    for (const [key, value] of Object.entries(data.property.option)) {
+      doc.$set[`properties.$.option.${key}`] = value;
+    }
   }
 
   const result = await flvRdbCollection.updateOne(

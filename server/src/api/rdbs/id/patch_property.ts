@@ -17,6 +17,7 @@ const bodySchema = {
   type: "object",
   properties: {
     name: { type: "string" },
+    option: { type: "object" },
   },
   required: [],
 } as const;
@@ -36,12 +37,17 @@ export const flvPatchRdbPropertyHandler: apiHandler<{
   const data: {
     id: string;
     name?: string;
+    option?: object;
   } = {
     id: req.params.property_id,
   };
 
   if (req.body.name !== undefined) {
     data.name = req.body.name;
+  }
+
+  if (req.body.option !== undefined) {
+    data.option = req.body.option;
   }
 
   const result = await updateRdbProperty(

@@ -10,6 +10,7 @@
     id: string;
     type: string;
     name: string;
+    option?: unknown;
   }[];
 
   export let display: string[];
@@ -59,6 +60,49 @@
               context_id = null;
             }}
           />
+          <div style:display="flex" style:flex-direction="row">
+            <input
+              type="checkbox"
+              checked={(() => {
+                if (
+                  typeof property.option === "object" &&
+                  property.option !== null
+                ) {
+                  if (
+                    "only" in property.option &&
+                    typeof property.option.only === "boolean"
+                  ) {
+                    return property.option.only;
+                  }
+                }
+                return false;
+              })()}
+              on:change={(event) => {
+                let target_property = properties.find(
+                  (v) => v.id === property.id
+                );
+                if (target_property !== undefined) {
+                  if (
+                    target_property.option !== undefined &&
+                    target_property.option !== null &&
+                    typeof target_property.option === "object" &&
+                    "only" in target_property.option &&
+                    typeof target_property.option.only === "boolean"
+                  ) {
+                    target_property.option.only = event.currentTarget.checked;
+                  } else {
+                    Object.assign(target_property, {
+                      option: {
+                        only: event.currentTarget.checked,
+                      },
+                    });
+                  }
+                  properties = [...properties];
+                }
+              }}
+            />
+            <div>only</div>
+          </div>
         </ContextMenu>
         <Button
           style={{
