@@ -5,11 +5,18 @@ import { getRdbData } from "mongo/rdb/get_data";
 // Map<type_name, data_type>
 export const flave_property_type = new Map<
   string,
-  | {
-      [key in string]: flave_var_type;
-    }
-  | "string"
-  | "boolean"
+  {
+    type:
+      | {
+          [key in string]: flave_var_type;
+        }
+      | "string"
+      | "boolean";
+    validate_option?: (
+      option: unknown,
+      data: object | string | boolean
+    ) => Promise<boolean>;
+  }
 >();
 
 export async function validate_property(
@@ -31,12 +38,18 @@ export async function validate_property(
     return false;
   }
 
-  return validate_data(data_type, data);
+  return (
+    validate_data_type(data_type, data) &&
+    (await validate_option(data_type, property?.option, data))
+  );
 }
 
-function validate_data(type: string, data: object | string | boolean): boolean {
+function validate_data_type(
+  type: string,
+  data: object | string | boolean
+): boolean {
   if (typeof data === "object") {
-    const data_type = flave_property_type.get(type);
+    const data_type = flave_property_type.get(type)?.type;
     if (data_type === undefined) return false;
     if (typeof data_type !== "object") return false;
 
@@ -60,16 +73,74 @@ export function exists_property(type: string): boolean {
   return flave_property_type.has(type);
 }
 
+async function validate_option(
+  type: string,
+  option: unknown,
+  data: object | string | boolean
+): Promise<boolean> {
+  const option_validator = flave_property_type.get(type)?.validate_option;
+  if (option_validator === undefined) {
+    return true;
+  }
+
+  return await option_validator(option, data);
+}
+
 // text
-flave_property_type.set("text", "string");
+flave_property_type.set("text", {
+  type: "string",
+});
 
 // checkbox
-flave_property_type.set("checkbox", "boolean");
+flave_property_type.set("checkbox", {
+  type: "boolean",
+});
 
 // relation
 flave_property_type.set("relation", {
-  page_list: {
-    type: "array",
-    children: "string",
+  type: {
+    page_list: {
+      type: "array",
+      children: "string",
+    },
+  },
+  validate_option: async (option, data) => {
+    const rdb_option: {
+      only: boolean;
+    } | null = (() => {
+      if (
+        typeof option === "object" &&
+        option !== null &&
+        "only" in option &&
+        typeof option.only === "boolean"
+      ) {
+        return {
+          only: option.only,
+        };
+      } else {
+        return null;
+      }
+    })();
+
+    if (rdb_option === null) {
+      return false;
+    }
+
+    // only
+    if (rdb_option.only === true) {
+      if (
+        !(
+          typeof data === "object" &&
+          "page_list" in data &&
+          typeof data.page_list === "object" &&
+          Array.isArray(data.page_list) &&
+          data.page_list.length <= 1
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   },
 });
