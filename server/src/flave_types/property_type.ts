@@ -61,7 +61,7 @@ function validate_data_type(
       if (validate_var(var_type, target_data) === false) return false;
     }
   } else {
-    const data_type = flave_property_type.get(type);
+    const data_type = flave_property_type.get(type)?.type;
     if (data_type === undefined) return false;
     if (typeof data_type === "object") return false;
     if (typeof data !== data_type) return false;
