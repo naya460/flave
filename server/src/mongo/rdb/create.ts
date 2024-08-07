@@ -12,6 +12,7 @@ export const createRdb = async (
     title,
     workspace,
     properties: [],
+    constraints: [],
     created_at: date,
     created_by: user_id,
     updated_at: date,

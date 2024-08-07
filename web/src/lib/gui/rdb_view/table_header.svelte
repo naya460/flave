@@ -15,7 +15,7 @@
 
   export let display: string[];
 
-  export let property_menu_hidden: boolean;
+  export let top_menu_hidden: boolean;
   export let add_property_menu_hidden: boolean;
 
   let context_id: string | null = null;
@@ -149,7 +149,7 @@
       buttonStyle: "text",
     }}
     on:click={() => {
-      property_menu_hidden = false;
+      top_menu_hidden = false;
     }}
   >
     ...

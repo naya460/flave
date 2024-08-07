@@ -4,6 +4,13 @@ import { ObjectId } from "mongodb";
 export async function getRdbData(rdb_id: ObjectId) {
   return await flvRdbCollection.findOne(
     { _id: rdb_id },
-    { projection: { title: true, workspace: true, properties: true } }
+    {
+      projection: {
+        title: true,
+        workspace: true,
+        properties: true,
+        constraints: true,
+      },
+    }
   );
 }

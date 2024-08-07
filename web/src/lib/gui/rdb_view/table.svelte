@@ -26,7 +26,7 @@
 
   export let display: string[];
 
-  export let property_menu_hidden: boolean;
+  export let top_menu_hidden: boolean;
   export let add_property_menu_hidden: boolean;
 
   onMount(async () => {
@@ -43,7 +43,7 @@
         {rdb_id}
         bind:properties
         {display}
-        bind:property_menu_hidden
+        bind:top_menu_hidden
         bind:add_property_menu_hidden
       />
     </div>

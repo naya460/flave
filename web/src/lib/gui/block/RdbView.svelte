@@ -14,6 +14,11 @@
       name: string;
       option: unknown;
     }[];
+    constraints?: {
+      id: string;
+      type: string;
+      option: object;
+    }[];
   };
 
   export let own: HTMLDivElement;

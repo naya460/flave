@@ -13,6 +13,10 @@ import {
   flvPatchRdbPropertyHandler,
   flvPatchRdbPropertySchema,
 } from "./patch_property";
+import {
+  flvCreateRdbConstraintHandler,
+  flvCreateRdbConstraintSchema,
+} from "./create_constraint";
 
 export const flvRdbIdRoute: apiRoute = (server, opt, done) => {
   // get rdb data
@@ -44,6 +48,13 @@ export const flvRdbIdRoute: apiRoute = (server, opt, done) => {
     "/:rdb_id/property/:property_id",
     { schema: flvPatchRdbPropertySchema },
     flvPatchRdbPropertyHandler
+  );
+
+  // create constraint
+  server.post(
+    "/:rdb_id/constraint",
+    { schema: flvCreateRdbConstraintSchema },
+    flvCreateRdbConstraintHandler
   );
 
   done();

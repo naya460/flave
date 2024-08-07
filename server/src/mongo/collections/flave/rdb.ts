@@ -10,6 +10,11 @@ type flvRdbType = {
     name: string;
     option?: unknown;
   }[];
+  constraints: {
+    id: string;
+    type: "unique" | "not null" | "check";
+    option: object;
+  }[];
   created_at: Date;
   created_by: ObjectId;
   updated_at: Date;
