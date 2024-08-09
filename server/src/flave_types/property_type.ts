@@ -1,6 +1,8 @@
 import { getPageData } from "mongo/page/get_data";
 import { flave_var_type, validate_var } from "./var_type";
 import { getRdbData } from "mongo/rdb/get_data";
+import { ObjectId } from "mongodb";
+import { flvPageCollection } from "mongo/collections/flave/page";
 
 // Map<type_name, data_type>
 export const flave_property_type = new Map<
@@ -144,3 +146,47 @@ flave_property_type.set("relation", {
     return true;
   },
 });
+
+export async function validate_constraint(
+  rdb_id: string,
+  constraint_id: string,
+  data: object | string | boolean
+): Promise<boolean> {
+  const rdb_data = await getRdbData(new ObjectId(rdb_id));
+  if (rdb_data === null) return false;
+
+  const constraint = rdb_data.constraints?.find((v) => v.id === constraint_id);
+  if (constraint === undefined) return false;
+
+  switch (constraint.type) {
+    case "unique": {
+      if (
+        "target" in constraint.option &&
+        Array.isArray(constraint.option.target)
+      ) {
+        for (const property_id of constraint.option.target) {
+          if (typeof property_id !== "string") return false;
+          const count = await flvPageCollection.countDocuments({
+            $and: [
+              { rdb: new ObjectId(rdb_id) },
+              { "properties.id": property_id },
+              { "properties.value": data },
+            ],
+          });
+          if (count > 1) return false;
+        }
+        return true;
+      } else {
+        return false;
+      }
+    }
+    case "not null": {
+      return false;
+    }
+    case "check": {
+      return false;
+    }
+  }
+
+  return false;
+}

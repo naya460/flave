@@ -21,6 +21,8 @@
   let context_id: string | null = null;
 </script>
 
+<div class="item" style:width="4rem" />
+
 {#if display.includes("page") === true}
   <div class="item" style:padding="0.2rem 0.5rem" style:box-sizing="border-box">
     page

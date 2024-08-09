@@ -15,12 +15,22 @@
     option: unknown;
   }[];
 
+  export let constraints: {
+    id: string;
+    type: string;
+    option: object;
+  }[];
+
   let page_list: {
     _id: string;
     title: string;
     properties?: {
       id: string;
       value: unknown;
+    }[];
+    constraints?: {
+      id: string;
+      result: boolean;
     }[];
   }[] = [];
 
@@ -51,7 +61,7 @@
       {#each page_list as page}
         <div class="row">
           {#if properties !== undefined}
-            <TableRow {properties} {page} {display} />
+            <TableRow {properties} {constraints} {page} {display} />
           {/if}
         </div>
       {/each}

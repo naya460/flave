@@ -8,6 +8,7 @@ type Condition = {
     parent?: boolean;
     rdb?: boolean;
     properties?: boolean;
+    constraints?: boolean;
   };
 };
 
@@ -19,6 +20,7 @@ export async function getPageData(
       title: true,
       rdb: true,
       properties: true,
+      constraints: true,
     },
   }
 ) {

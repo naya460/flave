@@ -14,6 +14,10 @@ type flvPageType = {
     id: string;
     value: unknown;
   }[];
+  constraints?: {
+    id: string;
+    result: boolean;
+  }[];
 };
 
 export const flvPageCollection = mongoClient

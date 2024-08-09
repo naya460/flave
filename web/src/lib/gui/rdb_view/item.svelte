@@ -27,4 +27,16 @@
     option={property.option}
     value={property.value}
   />
+{:else if property.type === "validated"}
+  <div>
+    {#if typeof property.value === "object" && property.value !== null && "result" in property.value}
+      {#if property.value.result === null}
+        <div>?</div>
+      {:else if property.value.result === true}
+        <div>v</div>
+      {:else}
+        <div>x</div>
+      {/if}
+    {/if}
+  </div>
 {/if}

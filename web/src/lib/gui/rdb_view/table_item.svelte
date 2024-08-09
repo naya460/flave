@@ -9,9 +9,15 @@
   };
 
   export let page_id: string;
+
+  export let style: {
+    width: `${number}${"rem"}`;
+  } = {
+    width: "20rem",
+  };
 </script>
 
-<div class="item">
+<div class="item" style:width={style.width}>
   <Item {property} {page_id} />
 </div>
 

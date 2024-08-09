@@ -34,6 +34,7 @@
   <Table
     {rdb_id}
     {properties}
+    {constraints}
     {display}
     bind:top_menu_hidden
     bind:add_property_menu_hidden

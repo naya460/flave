@@ -1,7 +1,11 @@
 import { checkAuth } from "api/common/check_auth";
+import { validate_constraint } from "flave_types/property_type";
 import { FromSchema } from "json-schema-to-ts";
 import { apiHandler } from "lib/fastify";
+import { getPageData } from "mongo/page/get_data";
+import { updatePageConstraint } from "mongo/page/update_constraint";
 import { updatePageProperty } from "mongo/page/update_property";
+import { getRdbData } from "mongo/rdb/get_data";
 import { ObjectId } from "mongodb";
 
 const paramsSchema = {
@@ -45,6 +49,24 @@ export const flvPatchPagePropertyHandler: apiHandler<{
   if (result === false) {
     res.status(400);
     return;
+  }
+
+  const page_data = await getPageData(req.params.page_id);
+  if (page_data !== null && page_data.rdb !== undefined) {
+    const constraints = (await getRdbData(page_data.rdb))?.constraints;
+    if (constraints !== undefined) {
+      for (const constraint of constraints) {
+        const result = await validate_constraint(
+          page_data.rdb.toString(),
+          constraint.id,
+          req.body.value
+        );
+        updatePageConstraint(new ObjectId(req.params.page_id), auth, {
+          id: constraint.id,
+          result,
+        });
+      }
+    }
   }
 
   res.status(200);
