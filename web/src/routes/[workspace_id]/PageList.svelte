@@ -13,10 +13,6 @@
 
 <div class="top">
   {#each pages as page}
-    <PageContents
-      {data}
-      {page}
-      page_path={page_path[0] === page._id ? page_path : []}
-    />
+    <PageContents {data} {page} page_path={[...page_path, page._id]} />
   {/each}
 </div>

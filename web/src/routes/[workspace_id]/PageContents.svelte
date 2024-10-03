@@ -1,10 +1,15 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
-  import { afterUpdate, getContext, onMount } from "svelte";
+  import { afterUpdate, getContext } from "svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
-  import { page_title_id, type page_title_type } from "$lib/types/page";
+  import {
+    page_path_id,
+    page_title_id,
+    type page_path_type,
+    type page_title_type,
+  } from "$lib/types/page";
   import { flvFetch } from "$lib/flv_fetch";
   import type { Writable } from "svelte/store";
 
@@ -24,10 +29,12 @@
   let child_pages: PageData[] | null = null;
 
   let page_title_store = getContext<Writable<page_title_type>>(page_title_id);
+  let page_path_store = getContext<Writable<page_path_type>>(page_path_id);
 
-  onMount(() => {
-    if (page_path.length === 0) return;
-    expand = true;
+  page_path_store.subscribe((v) => {
+    if (v[page_path.length - 1] == page._id) {
+      expand = true;
+    }
   });
 
   afterUpdate(async () => {
@@ -77,11 +84,7 @@
   <!-- child pages -->
   <div slot="contents" class="contents">
     {#if child_pages !== null}
-      <PageList
-        {data}
-        pages={child_pages}
-        page_path={page_path.length !== 0 ? page_path.slice(1) : []}
-      />
+      <PageList {data} pages={child_pages} {page_path} />
     {/if}
   </div>
 </ToggleMenu>
