@@ -2,13 +2,16 @@
   import Block from "../../../lib/gui/block/Block.svelte";
   import type { PageData } from "./$types";
   import type { blockListStore } from "$lib/types/block_list";
-  import { writable } from "svelte/store";
+  import { writable, type Writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
   import BlockHandle from "./BlockHandle.svelte";
   import {
-    page_block_moving_store,
-    selecting_block_store,
-  } from "$lib/store/page";
+    page_block_moving_id,
+    type page_block_moving_type,
+    selecting_block_id,
+    type selecting_block_type,
+  } from "$lib/types/page";
+  import { getContext } from "svelte";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
@@ -44,11 +47,16 @@
     pushEmpty();
   }
 
+  let page_block_moving_store =
+    getContext<Writable<page_block_moving_type>>(page_block_moving_id);
   page_block_moving_store.subscribe((v) => {
     if (v === undefined) {
       over_block = undefined;
     }
   });
+
+  let selecting_block_store =
+    getContext<Writable<selecting_block_type>>(selecting_block_id);
 
   function pushEmpty() {
     const tmp = $blocks[$blocks.length - 1];

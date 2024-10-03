@@ -1,17 +1,33 @@
 <script lang="ts">
   import TextInput from "$lib/gui/common/TextInput.svelte";
   import type { PageData } from "./$types";
-  import { page_title_store, selecting_block_store } from "$lib/store/page";
-  import { onMount } from "svelte";
+  import {
+    page_block_moving_id,
+    type page_block_moving_type,
+    page_path_id,
+    type page_path_type,
+    page_title_id,
+    type page_title_type,
+    selecting_block_id,
+    type selecting_block_type,
+  } from "$lib/types/page";
+  import { getContext, setContext } from "svelte";
   import BlockList from "./BlockList.svelte";
   import PropertyList from "./PropertyList.svelte";
   import { flvFetch } from "$lib/flv_fetch";
+  import { writable, type Writable } from "svelte/store";
 
   export let data: PageData;
 
-  onMount(() => {
-    page_title_store.set(data.page_data.title);
-  });
+  let page_title_store = getContext<Writable<page_title_type>>(page_title_id);
+  let selecting_block_store = writable<selecting_block_type>(undefined);
+  let page_block_moving_store = writable<page_block_moving_type>(undefined);
+
+  setContext(selecting_block_id, selecting_block_store);
+  setContext(page_block_moving_id, page_block_moving_store);
+
+  getContext<Writable<page_path_type>>(page_path_id).set(data.page_path);
+  page_title_store.set(data.page_data.title);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

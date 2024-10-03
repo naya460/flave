@@ -2,14 +2,16 @@
   import { flvFetch } from "$lib/flv_fetch";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import {
-    page_block_moving_store,
-    selecting_block_store,
-  } from "$lib/store/page";
+    page_block_moving_id,
+    type page_block_moving_type,
+    selecting_block_id,
+    type selecting_block_type,
+  } from "$lib/types/page";
   import type { blockListStore } from "$lib/types/block_list";
-  import { onMount } from "svelte";
+  import { getContext, onMount } from "svelte";
   import type { PageData } from "./$types";
   import { workspace_contents_scroll_store } from "$lib/store/workspace";
-  import { get } from "svelte/store";
+  import { get, type Writable } from "svelte/store";
 
   export let data: PageData;
   export let blocks: blockListStore;
@@ -24,6 +26,12 @@
   let enable = false;
   let position_x = 0;
   let position_y = 0;
+
+  let selecting_block_store =
+    getContext<Writable<selecting_block_type>>(selecting_block_id);
+
+  let page_block_moving_store =
+    getContext<Writable<page_block_moving_type>>(page_block_moving_id);
 
   $: {
     if ($selecting_block_store === undefined || $selecting_block_store === "") {

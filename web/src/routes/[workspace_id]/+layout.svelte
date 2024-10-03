@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, setContext } from "svelte";
   import type { LayoutData } from "./$types";
   import Menu from "./Menu.svelte";
   import { workspace_contents_scroll_store } from "$lib/store/workspace";
+  import { page_path_id, page_title_id } from "$lib/types/page";
+  import { writable } from "svelte/store";
 
   export let data: LayoutData;
 
@@ -17,6 +19,9 @@
 
   let top_dom: HTMLDivElement;
   let content_dom: HTMLDivElement;
+
+  setContext(page_title_id, writable(""));
+  setContext(page_path_id, writable([]));
 
   window.addEventListener("resize", () => {
     if (width >= top_dom.clientWidth / 2 && top_dom.clientWidth >= 400) {

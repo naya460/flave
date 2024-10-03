@@ -1,4 +1,3 @@
-import { page_path_store } from "$lib/store/page";
 import type { PageLoad } from "./$types";
 export const ssr = false;
 
@@ -22,9 +21,8 @@ export const load: PageLoad = async ({ fetch, url, params }) => {
 	);
 	const path = await path_res.json();
 
-	page_path_store.set(path);
-
 	return {
+		page_path: path,
 		workspace_id: params.workspace_id,
 		page_id: params.page_id,
 		page_data,

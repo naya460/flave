@@ -1,11 +1,12 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
-  import { afterUpdate, onMount } from "svelte";
+  import { afterUpdate, getContext, onMount } from "svelte";
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
-  import { page_title_store } from "$lib/store/page";
+  import { page_title_id, type page_title_type } from "$lib/types/page";
   import { flvFetch } from "$lib/flv_fetch";
+  import type { Writable } from "svelte/store";
 
   type PageData = {
     _id: string;
@@ -21,6 +22,8 @@
   let expand = false;
 
   let child_pages: PageData[] | null = null;
+
+  let page_title_store = getContext<Writable<page_title_type>>(page_title_id);
 
   onMount(() => {
     if (page_path.length === 0) return;
