@@ -7,6 +7,8 @@
 
   export let data: LayoutData;
 
+  let first = true;
+
   async function getPageList(): Promise<
     {
       _id: string;
@@ -42,7 +44,7 @@
 </Button>
 
 {#await getPageList() then pages}
-  <PageList {data} {pages} page_path={[]} />
+  <PageList {data} {pages} page_path={[]} bind:first />
 {/await}
 
 <Button

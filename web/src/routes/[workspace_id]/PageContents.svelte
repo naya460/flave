@@ -24,6 +24,8 @@
 
   export let page_path: string[] = [];
 
+  export let first: boolean;
+
   let expand = false;
 
   let child_pages: PageData[] | null = null;
@@ -33,7 +35,10 @@
 
   page_path_store.subscribe((v) => {
     if (v[page_path.length - 1] == page._id) {
-      expand = true;
+      expand = first;
+      if (v.length === page_path.length) {
+        first = false;
+      }
     }
   });
 
@@ -84,7 +89,7 @@
   <!-- child pages -->
   <div slot="contents" class="contents">
     {#if child_pages !== null}
-      <PageList {data} pages={child_pages} {page_path} />
+      <PageList {data} pages={child_pages} {page_path} bind:first />
     {/if}
   </div>
 </ToggleMenu>

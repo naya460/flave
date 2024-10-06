@@ -9,10 +9,17 @@
     _id: string;
     title: string;
   }[];
+
+  export let first: boolean;
 </script>
 
 <div class="top">
   {#each pages as page}
-    <PageContents {data} {page} page_path={[...page_path, page._id]} />
+    <PageContents
+      {data}
+      {page}
+      page_path={[...page_path, page._id]}
+      bind:first
+    />
   {/each}
 </div>
