@@ -1,9 +1,18 @@
+<script lang="ts" context="module">
+  import { type Writable } from "svelte/store";
+
+  export const main_page_path_id = "page_path";
+  export type main_page_path_type = Writable<string[]>;
+
+  export const main_page_title_id = "page_title";
+  export type main_page_title_type = Writable<string>;
+</script>
+
 <script lang="ts">
   import { onMount, setContext } from "svelte";
   import type { LayoutData } from "./$types";
   import Menu from "./Menu.svelte";
   import { workspace_contents_scroll_store } from "$lib/store/workspace";
-  import { page_path_id, page_title_id } from "$lib/types/page";
   import { writable } from "svelte/store";
 
   export let data: LayoutData;
@@ -20,8 +29,8 @@
   let top_dom: HTMLDivElement;
   let content_dom: HTMLDivElement;
 
-  setContext(page_title_id, writable(""));
-  setContext(page_path_id, writable([]));
+  setContext(main_page_title_id, writable(""));
+  setContext(main_page_path_id, writable([]));
 
   window.addEventListener("resize", () => {
     if (width >= top_dom.clientWidth / 2 && top_dom.clientWidth >= 400) {

@@ -6,14 +6,15 @@
     type page_block_moving_type,
     selecting_block_id,
     type selecting_block_type,
-  } from "$lib/types/page";
+  } from "./FlavePage.svelte";
   import type { blockListStore } from "$lib/types/block_list";
   import { getContext, onMount } from "svelte";
-  import type { PageData } from "./$types";
   import { workspace_contents_scroll_store } from "$lib/store/workspace";
-  import { get, type Writable } from "svelte/store";
+  import { get } from "svelte/store";
 
-  export let data: PageData;
+  export let workspace_id: string;
+  export let page_id: string;
+
   export let blocks: blockListStore;
   export let offset_x: number;
   export let offset_y: number;
@@ -28,10 +29,10 @@
   let position_y = 0;
 
   let selecting_block_store =
-    getContext<Writable<selecting_block_type>>(selecting_block_id);
+    getContext<selecting_block_type>(selecting_block_id);
 
   let page_block_moving_store =
-    getContext<Writable<page_block_moving_type>>(page_block_moving_id);
+    getContext<page_block_moving_type>(page_block_moving_id);
 
   $: {
     if ($selecting_block_store === undefined || $selecting_block_store === "") {
@@ -59,7 +60,7 @@
   }[] = [];
 
   onMount(async () => {
-    const res = await flvFetch(`workspaces/${data.workspace_id}/rdbs`);
+    const res = await flvFetch(`workspaces/${workspace_id}/rdbs`);
     rdb_list = await res.json();
   });
 
@@ -112,7 +113,7 @@
         name: "Insert Paragraph",
         onClick: () => {
           const res = flvFetch(`blocks`, "POST", {
-            page_id: data.page_id,
+            page_id: page_id,
             next_of: context_id,
             type: "paragraph",
             data: { text: "" },
@@ -143,7 +144,7 @@
               name: `Heading ${i + 1}`,
               onClick: () => {
                 const res = flvFetch("blocks", "POST", {
-                  page_id: data.page_id,
+                  page_id: page_id,
                   next_of: context_id,
                   type: "heading",
                   data: { text: "", level: 1 },
@@ -179,7 +180,7 @@
               name: rdb.title,
               onClick: () => {
                 const res = flvFetch(`blocks`, "POST", {
-                  page_id: data.page_id,
+                  page_id: page_id,
                   next_of: context_id,
                   type: "rdb_view",
                   data: { rdb_id: rdb._id, display: ["page"] },

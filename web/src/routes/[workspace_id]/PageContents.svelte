@@ -5,13 +5,12 @@
   import type { LayoutData } from "./$types";
   import PageList from "./PageList.svelte";
   import {
-    page_path_id,
-    page_title_id,
-    type page_path_type,
-    type page_title_type,
-  } from "$lib/types/page";
+    main_page_path_id,
+    main_page_title_id,
+    type main_page_path_type,
+    type main_page_title_type,
+  } from "./+layout.svelte";
   import { flvFetch } from "$lib/flv_fetch";
-  import type { Writable } from "svelte/store";
 
   type PageData = {
     _id: string;
@@ -30,8 +29,8 @@
 
   let child_pages: PageData[] | null = null;
 
-  let page_title_store = getContext<Writable<page_title_type>>(page_title_id);
-  let page_path_store = getContext<Writable<page_path_type>>(page_path_id);
+  let page_title_store: main_page_title_type = getContext(main_page_title_id);
+  let page_path_store: main_page_path_type = getContext(main_page_path_id);
 
   page_path_store.subscribe((v) => {
     if (v[page_path.length - 1] == page._id) {

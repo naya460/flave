@@ -1,8 +1,7 @@
 <script lang="ts">
   import Block from "../../../lib/gui/block/Block.svelte";
-  import type { PageData } from "./$types";
   import type { blockListStore } from "$lib/types/block_list";
-  import { writable, type Writable } from "svelte/store";
+  import { writable } from "svelte/store";
   import { flvFetch } from "$lib/flv_fetch";
   import BlockHandle from "./BlockHandle.svelte";
   import {
@@ -10,18 +9,19 @@
     type page_block_moving_type,
     selecting_block_id,
     type selecting_block_type,
-  } from "$lib/types/page";
+  } from "./FlavePage.svelte";
   import { getContext } from "svelte";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
 
-  export let data: PageData;
+  export let workspace_id: string;
+  export let page_id: string;
 
   let over_block: string | undefined = undefined;
 
   async function getBlocks() {
-    const res = await flvFetch(`pages/${data.page_id}/blocks`);
+    const res = await flvFetch(`pages/${page_id}/blocks`);
     let list: {
       _id: string;
       type: "paragraph" | "rdb_view";
@@ -48,7 +48,7 @@
   }
 
   let page_block_moving_store =
-    getContext<Writable<page_block_moving_type>>(page_block_moving_id);
+    getContext<page_block_moving_type>(page_block_moving_id);
   page_block_moving_store.subscribe((v) => {
     if (v === undefined) {
       over_block = undefined;
@@ -56,7 +56,7 @@
   });
 
   let selecting_block_store =
-    getContext<Writable<selecting_block_type>>(selecting_block_id);
+    getContext<selecting_block_type>(selecting_block_id);
 
   function pushEmpty() {
     const tmp = $blocks[$blocks.length - 1];
@@ -73,7 +73,7 @@
       const next_of = $blocks.length === 0 ? null : tmp._id;
 
       const res = flvFetch(`blocks`, "POST", {
-        page_id: data.page_id,
+        page_id: page_id,
         next_of: next_of,
         type: "paragraph",
         data: { text: "" },
@@ -246,7 +246,7 @@
           event.preventDefault();
         }}
       >
-        <Block {block} page_id={data.page_id} block_list={blocks} />
+        <Block {block} {page_id} block_list={blocks} />
         <div
           style:margin-top={"0.1rem"}
           style:height={"0.2rem"}
@@ -265,7 +265,13 @@
 
 {#if node?.parentElement?.getBoundingClientRect !== undefined}
   {@const rect = node.parentElement.getBoundingClientRect()}
-  <BlockHandle {blocks} {data} offset_x={rect.x} offset_y={rect.y} />
+  <BlockHandle
+    {blocks}
+    {workspace_id}
+    {page_id}
+    offset_x={rect.x}
+    offset_y={rect.y}
+  />
 {/if}
 
 <style>
