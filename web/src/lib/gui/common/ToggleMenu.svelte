@@ -17,7 +17,7 @@
   >
     {expand ? "v" : ">"}
   </Button>
-  <div style:height="100%">
+  <div class="summary">
     <slot name="summary" />
   </div>
 </div>
@@ -32,5 +32,10 @@
     display: grid;
     grid-template-columns: auto 1fr;
     height: "2rem";
+  }
+
+  .summary {
+    height: 100%;
+    overflow-wrap: anywhere;
   }
 </style>
