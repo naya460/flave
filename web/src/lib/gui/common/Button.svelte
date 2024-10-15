@@ -1,11 +1,13 @@
 <script lang="ts">
   export let style: {
     buttonStyle: "filled" | "outline" | "text";
+    buttonDarker?: boolean;
     textAlign?: "left" | "right" | "center";
     width?: "auto" | `${number}${"px" | "rem" | "%"}`;
     height?: "auto" | `${number}${"px" | "rem" | "%"}`;
     boxSizing?: "border-box" | "content-box";
   } = {
+    buttonDarker: false,
     buttonStyle: "filled",
   };
 </script>
@@ -14,7 +16,7 @@
   on:click
   on:mouseenter
   on:mouseleave
-  class="main"
+  class={`main ${style.buttonDarker ? "darker" : ""}`}
   class:filled={style.buttonStyle === "filled"}
   class:outline={style.buttonStyle === "outline"}
   class:text={style.buttonStyle === "text"}
@@ -59,7 +61,16 @@
     background-color: rgb(248, 248, 248);
   }
 
+  .text.darker:hover,
+  .text.darker.hover {
+    background-color: rgb(238, 238, 238);
+  }
+
   .text:active {
     background-color: rgb(238, 238, 238);
+  }
+
+  .text.darker:active {
+    background-color: rgb(228, 228, 228);
   }
 </style>

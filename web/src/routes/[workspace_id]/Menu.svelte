@@ -35,6 +35,7 @@
 <Button
   style={{
     buttonStyle: "text",
+    buttonDarker: true,
   }}
   on:click={async () => {
     await flvFetch(`pages`, "POST", { workspace_id: data.workspace_id });
@@ -50,6 +51,7 @@
 <Button
   style={{
     buttonStyle: "text",
+    buttonDarker: true,
   }}
   on:click={async () => {
     await flvFetch(`rdbs`, "POST", { workspace: data.workspace_id });

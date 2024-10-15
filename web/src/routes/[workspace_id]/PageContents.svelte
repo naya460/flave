@@ -51,13 +51,14 @@
   });
 </script>
 
-<ToggleMenu bind:expand>
+<ToggleMenu bind:expand style={{ darker: true }}>
   <!-- title and page creation button -->
   <div slot="summary" class="summary">
     <!-- page title-->
     <Button
       style={{
         buttonStyle: "text",
+        buttonDarker: true,
         textAlign: "left",
       }}
       on:click={() => {
@@ -74,6 +75,7 @@
     <Button
       style={{
         buttonStyle: "text",
+        buttonDarker: true,
       }}
       on:click={async () => {
         await flvFetch(`pages`, "POST", {

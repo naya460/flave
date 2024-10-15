@@ -2,12 +2,19 @@
   import Button from "./Button.svelte";
 
   export let expand = false;
+
+  export let style: {
+    darker?: boolean;
+  } = {
+    darker: false,
+  };
 </script>
 
 <div class="header">
   <Button
     style={{
       buttonStyle: "text",
+      buttonDarker: style.darker,
       width: "0.5rem",
       boxSizing: "content-box",
     }}
