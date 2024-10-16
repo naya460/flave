@@ -1,5 +1,7 @@
 <script lang="ts">
-  import MenuAddProperty from "./menu_add_property.svelte";
+  import { flvFetch } from "$lib/flv_fetch";
+  import Button from "../common/Button.svelte";
+  import TextInput from "../common/TextInput.svelte";
   import MenuTop from "./menu_top.svelte";
   import Table from "./table.svelte";
 
@@ -22,40 +24,65 @@
     }[];
   };
 
-  let top_menu_hidden: boolean = true;
-  let add_property_menu_hidden: boolean = true;
-
   let properties = rdb_data.properties === undefined ? [] : rdb_data.properties;
   let constraints =
     rdb_data.constraints === undefined ? [] : rdb_data.constraints;
+
+  let set_menu: (menu: { dir: string; title: string }[]) => void;
 </script>
 
 <div class="top">
-  <Table
-    {rdb_id}
-    {properties}
-    {constraints}
-    {display}
-    bind:top_menu_hidden
-    bind:add_property_menu_hidden
-  />
-  <MenuTop
-    {rdb_id}
-    {block_id}
-    {properties}
-    {constraints}
-    bind:display
-    bind:popup_hidden={top_menu_hidden}
-  />
-  <MenuAddProperty
-    {rdb_id}
-    bind:popup_hidden={add_property_menu_hidden}
-    bind:properties
-  />
+  <div class="header">
+    <TextInput
+      style={{ outline: false, fontSize: "1.5rem" }}
+      value={rdb_data.title}
+      onChange={async (event) => {
+        await flvFetch(`rdbs/${rdb_id}`, "PATCH", {
+          title: event.currentTarget.value,
+        });
+      }}
+    />
+    <Button
+      style={{
+        buttonStyle: "text",
+      }}
+      on:click={() => {
+        set_menu([]);
+      }}
+    >
+      ...
+    </Button>
+  </div>
+  <div class="contents">
+    <Table {rdb_id} {properties} {constraints} {display} {set_menu} />
+    <MenuTop
+      {rdb_id}
+      {block_id}
+      {properties}
+      {constraints}
+      bind:display
+      bind:set_menu
+    />
+  </div>
 </div>
 
 <style>
   .top {
     position: relative;
+  }
+
+  .header {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #dddddd;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+  }
+
+  .contents {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
   }
 </style>

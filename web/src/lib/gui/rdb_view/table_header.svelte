@@ -15,8 +15,7 @@
 
   export let display: string[];
 
-  export let top_menu_hidden: boolean;
-  export let add_property_menu_hidden: boolean;
+  export let set_menu: (menu: { dir: string; title: string }[]) => void;
 
   let context_id: string | null = null;
 </script>
@@ -141,7 +140,10 @@
       buttonStyle: "text",
     }}
     on:click={() => {
-      add_property_menu_hidden = false;
+      set_menu([
+        { dir: "properties", title: "properties" },
+        { dir: "add property", title: "add property" },
+      ]);
     }}
   >
     +
@@ -151,10 +153,10 @@
       buttonStyle: "text",
     }}
     on:click={() => {
-      top_menu_hidden = false;
+      set_menu([{ dir: "properties", title: "properties" }]);
     }}
   >
-    ...
+    …
   </Button>
 </div>
 

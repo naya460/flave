@@ -1,11 +1,9 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import ContextMenu from "../common/ContextMenu.svelte";
   import { workspace_id_store } from "$lib/store/workspace";
+  import Button from "../common/Button.svelte";
 
   export let rdb_id: string;
-
-  export let popup_hidden = true;
 
   export let properties: {
     id: string;
@@ -21,77 +19,95 @@
       rdb_list = value;
     });
   });
+  export let display_menu: { dir: string; title: string }[] = [];
+  export let menu_next: (dir: string, title: string) => void;
 </script>
 
-<div class="top">
-  <ContextMenu
-    bind:hidden={popup_hidden}
-    contents={[
-      {
-        name: "text",
-        onClick: async () => {
-          const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-            type: "text",
-            name: "new text property",
-          });
-          properties.push({
-            id: await res.text(),
-            type: "text",
-            name: "new text property",
-          });
-          properties = properties;
-        },
-      },
-      {
-        name: "checkbox",
-        onClick: async () => {
-          const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-            type: "checkbox",
-            name: "new checkbox property",
-          });
-          properties.push({
-            id: await res.text(),
-            type: "checkbox",
-            name: "new checkbox property",
-          });
-          properties = properties;
-        },
-      },
-      {
-        name: "relation",
-        contents: rdb_list.map((v) => {
-          return {
-            name: v.title,
-            onClick: async () => {
-              const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-                type: "relation",
-                name: "new relation property",
-                option: {
-                  rdb: v._id,
-                },
-              });
-              properties.push({
-                id: await res.text(),
-                type: "relation",
-                name: "new relation property",
-                option: {
-                  rdb: v._id,
-                },
-              });
-              properties = properties;
-            },
-          };
-        }),
-      },
-    ]}
-  />
-</div>
-
-<style>
-  .top {
-    position: absolute;
-    top: 0;
-    right: 20rem;
-    z-index: 1;
-  }
-</style>
+{#if display_menu.length === 0}
+  <div>
+    <Button
+      style={{
+        buttonStyle: "text",
+        width: "100%",
+        textAlign: "left",
+      }}
+      on:click={async () => {
+        const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
+          type: "text",
+          name: "new text property",
+        });
+        properties.push({
+          id: await res.text(),
+          type: "text",
+          name: "new text property",
+        });
+        properties = properties;
+      }}
+    >
+      text
+    </Button>
+    <Button
+      style={{
+        buttonStyle: "text",
+        width: "100%",
+        textAlign: "left",
+      }}
+      on:click={async () => {
+        const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
+          type: "checkbox",
+          name: "new checkbox property",
+        });
+        properties.push({
+          id: await res.text(),
+          type: "checkbox",
+          name: "new checkbox property",
+        });
+        properties = properties;
+      }}
+    >
+      checkbox
+    </Button>
+    <Button
+      style={{
+        buttonStyle: "text",
+        width: "100%",
+        textAlign: "left",
+      }}
+      on:click={() => {
+        menu_next("add relation", "add relation");
+      }}
+    >
+      relation
+    </Button>
+  </div>
+{:else if display_menu[0].dir === "add relation"}
+  {#each rdb_list as v}
+    <Button
+      style={{
+        buttonStyle: "text",
+        width: "100%",
+        textAlign: "left",
+      }}
+      on:click={async () => {
+        const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
+          type: "relation",
+          name: "new relation property",
+          option: {
+            rdb: v._id,
+          },
+        });
+        properties.push({
+          id: await res.text(),
+          type: "relation",
+          name: "new relation property",
+          option: {
+            rdb: v._id,
+          },
+        });
+        properties = properties;
+      }}
+    >
+      {v.title}
+    </Button>
+  {/each}
+{/if}

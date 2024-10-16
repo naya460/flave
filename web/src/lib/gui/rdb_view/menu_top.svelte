@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ContextMenu from "../common/ContextMenu.svelte";
+  import Button from "../common/Button.svelte";
   import MenuConstraint from "./menu_constraint.svelte";
   import MenuProperty from "./menu_property.svelte";
 
@@ -20,51 +20,123 @@
 
   export let display: string[];
 
-  export let popup_hidden = true;
+  let menu_hidden = true;
 
-  let properties_popup_hidden = true;
-  let constraint_popup_hidden = true;
+  let display_menu: { dir: string; title: string }[] = [];
+  function menu_back() {
+    display_menu.pop();
+    display_menu = display_menu;
+  }
+  function menu_next(dir: string, title: string) {
+    display_menu.push({ dir, title });
+    display_menu = display_menu;
+  }
+  export function set_menu(menu: { dir: string; title: string }[]) {
+    if (menu_hidden === true) {
+      menu_hidden = false;
+      display_menu = menu;
+    } else {
+      menu_hidden = true;
+      display_menu = [];
+    }
+  }
 </script>
 
-<div class="top">
-  <ContextMenu
-    bind:hidden={popup_hidden}
-    contents={[
-      {
-        name: "properties",
-        onClick: () => {
-          properties_popup_hidden = false;
-        },
-      },
-      {
-        name: "constraints",
-        onClick: () => {
-          constraint_popup_hidden = false;
-        },
-      },
-    ]}
-  />
-</div>
-
-<MenuProperty
-  {block_id}
-  {properties}
-  bind:display
-  bind:popup_hidden={properties_popup_hidden}
-/>
-
-<MenuConstraint
-  {rdb_id}
-  {properties}
-  {constraints}
-  bind:popup_hidden={constraint_popup_hidden}
-/>
+{#if menu_hidden === false}
+  <div class="contents">
+    <div class="header">
+      {#if display_menu.length !== 0}
+        <Button
+          style={{
+            buttonStyle: "text",
+          }}
+          on:click={() => {
+            menu_back();
+          }}
+        >
+          {"<"}
+        </Button>
+      {:else}
+        <div />
+      {/if}
+      <div>
+        {display_menu.length === 0
+          ? "RDB View Option"
+          : display_menu[display_menu.length - 1].title}
+      </div>
+      <Button
+        style={{
+          buttonStyle: "text",
+        }}
+        on:click={() => {
+          menu_hidden = true;
+        }}
+      >
+        x
+      </Button>
+    </div>
+    {#if display_menu.length === 0}
+      <Button
+        style={{
+          buttonStyle: "text",
+          width: "100%",
+          textAlign: "left",
+          height: "2rem",
+        }}
+        on:click={() => {
+          menu_next("properties", "properties");
+        }}
+      >
+        properties
+      </Button>
+      <Button
+        style={{
+          buttonStyle: "text",
+          width: "100%",
+          textAlign: "left",
+          height: "2rem",
+        }}
+        on:click={() => {
+          menu_next("constraints", "constraints");
+        }}
+      >
+        constraints
+      </Button>
+    {:else if display_menu[0].dir === "properties"}
+      <MenuProperty
+        {rdb_id}
+        {block_id}
+        {properties}
+        bind:display
+        display_menu={display_menu.toSpliced(0, 1)}
+        {menu_next}
+      />
+    {:else if display_menu[0].dir === "constraints"}
+      <MenuConstraint
+        {rdb_id}
+        {properties}
+        {constraints}
+        display_menu={display_menu.toSpliced(0, 1)}
+        {menu_next}
+      />
+    {/if}
+  </div>
+{/if}
 
 <style>
-  .top {
-    position: absolute;
-    top: 0;
-    right: 20rem;
-    z-index: 1;
+  .contents {
+    background-color: #ffffff;
+    width: 15rem;
+    height: 100%;
+    box-shadow: 0 0 6px -3px rgba(0, 0, 0, 128);
+    padding: 0.5rem;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
   }
 </style>

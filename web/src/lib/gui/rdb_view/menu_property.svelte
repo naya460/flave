@@ -1,23 +1,26 @@
 <script lang="ts">
   import Button from "../common/Button.svelte";
-  import ContextMenu from "../common/ContextMenu.svelte";
   import { flvFetch } from "$lib/flv_fetch";
+  import MenuAddProperty from "./menu_add_property.svelte";
 
+  export let rdb_id: string;
   export let block_id: string;
 
   export let properties: {
     id: string;
     type: string;
-    name: unknown;
+    name: string;
+    option?: unknown;
   }[];
 
   export let display: string[];
 
-  export let popup_hidden = true;
+  export let display_menu: { dir: string; title: string }[] = [];
+  export let menu_next: (dir: string, title: string) => void;
 </script>
 
-<div class="top">
-  <ContextMenu bind:hidden={popup_hidden}>
+<div>
+  {#if display_menu.length === 0}
     <div style:display="flex" style:flex-direction="row">
       <div style:flex-grow={1}>page</div>
       <Button
@@ -125,14 +128,22 @@
         </div>
       {/if}
     {/each}
-  </ContextMenu>
+    <Button
+      style={{
+        buttonStyle: "text",
+      }}
+      on:click={() => {
+        menu_next("add property", "add property");
+      }}
+    >
+      + Add Property
+    </Button>
+  {:else if display_menu[0].dir === "add property"}
+    <MenuAddProperty
+      {rdb_id}
+      bind:properties
+      display_menu={display_menu.toSpliced(0, 1)}
+      {menu_next}
+    />
+  {/if}
 </div>
-
-<style>
-  .top {
-    position: absolute;
-    top: 0;
-    right: 20rem;
-    z-index: 1;
-  }
-</style>
