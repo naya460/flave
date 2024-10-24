@@ -3,7 +3,7 @@
   import { flvFetch } from "$lib/flv_fetch";
   import TableRow from "$lib/gui/rdb_view/table_row.svelte";
   import TableHeader from "$lib/gui/rdb_view/table_header.svelte";
-  import { onMount } from "svelte";
+  import { beforeUpdate, onMount } from "svelte";
   import { workspace_id_store } from "$lib/store/workspace";
 
   export let rdb_id: string;
@@ -21,6 +21,11 @@
     option: object;
   }[];
 
+  export let filters: {
+    id: string;
+    value: string | boolean;
+  }[];
+
   let page_list: {
     _id: string;
     title: string;
@@ -33,6 +38,56 @@
       result: boolean;
     }[];
   }[] = [];
+
+  let filtered_page_list: {
+    _id: string;
+    title: string;
+    properties?: {
+      id: string;
+      value: unknown;
+    }[];
+    constraints?: {
+      id: string;
+      result: boolean;
+    }[];
+  }[];
+
+  beforeUpdate(() => {
+    filtered_page_list = [];
+
+    for (let page of page_list) {
+      let ok = true;
+
+      for (let filter of filters) {
+        let property = page?.properties?.find((v) => v.id === filter.id);
+
+        let value;
+        if (property?.value === undefined) {
+          switch (properties.find((v) => v.id === filter.id)?.type) {
+            case "text": {
+              value = "";
+              break;
+            }
+            case "checkbox": {
+              value = false;
+              break;
+            }
+          }
+        } else {
+          value = property?.value;
+        }
+        console.log(value, filter.value, value === filter.value);
+        if (value !== filter.value) {
+          ok = false;
+          break;
+        }
+      }
+
+      if (ok === true) {
+        filtered_page_list = [...filtered_page_list, page];
+      }
+    }
+  });
 
   export let display: string[];
 
@@ -51,7 +106,7 @@
       <TableHeader {rdb_id} bind:properties {display} {set_menu} />
     </div>
     {#if display.length !== 0}
-      {#each page_list as page}
+      {#each filtered_page_list as page (page._id)}
         <div class="row">
           {#if properties !== undefined}
             <TableRow {properties} {constraints} {page} {display} />

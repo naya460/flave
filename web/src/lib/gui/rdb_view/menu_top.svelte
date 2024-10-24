@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button from "../common/Button.svelte";
   import MenuConstraint from "./menu_constraint.svelte";
+  import MenuFilter from "./menu_filter.svelte";
   import MenuProperty from "./menu_property.svelte";
 
   export let rdb_id: string;
@@ -19,6 +20,11 @@
   }[];
 
   export let display: string[];
+
+  export let filters: {
+    id: string;
+    value: string | boolean;
+  }[] = [];
 
   let menu_hidden = true;
 
@@ -102,6 +108,19 @@
       >
         constraints
       </Button>
+      <Button
+        style={{
+          buttonStyle: "text",
+          width: "100%",
+          textAlign: "left",
+          height: "2rem",
+        }}
+        on:click={() => {
+          menu_next("filter", "filter");
+        }}
+      >
+        filter
+      </Button>
     {:else if display_menu[0].dir === "properties"}
       <MenuProperty
         {rdb_id}
@@ -118,6 +137,14 @@
         {constraints}
         display_menu={display_menu.toSpliced(0, 1)}
         {menu_next}
+      />
+    {:else if display_menu[0].dir === "filter"}
+      <MenuFilter
+        {properties}
+        display_menu={display_menu.toSpliced(0, 1)}
+        {menu_next}
+        {menu_back}
+        bind:filters
       />
     {/if}
   </div>

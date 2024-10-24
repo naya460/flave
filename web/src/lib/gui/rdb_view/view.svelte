@@ -24,6 +24,11 @@
     }[];
   };
 
+  let filters: {
+    id: string;
+    value: string | boolean;
+  }[] = [];
+
   let properties = rdb_data.properties === undefined ? [] : rdb_data.properties;
   let constraints =
     rdb_data.constraints === undefined ? [] : rdb_data.constraints;
@@ -54,7 +59,7 @@
     </Button>
   </div>
   <div class="contents">
-    <Table {rdb_id} {properties} {constraints} {display} {set_menu} />
+    <Table {rdb_id} {properties} {constraints} {display} {set_menu} {filters} />
     <MenuTop
       {rdb_id}
       {block_id}
@@ -62,6 +67,7 @@
       {constraints}
       bind:display
       bind:set_menu
+      bind:filters
     />
   </div>
 </div>
