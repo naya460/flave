@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "../common/Button.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
   import MenuConstraint from "./menu_constraint.svelte";
   import MenuFilter from "./menu_filter.svelte";
   import MenuProperty from "./menu_property.svelte";

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "../common/Button.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
 
   export let page_id: string;
   export let value:

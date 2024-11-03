@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Button from "../common/Button.svelte";
-  import TextInput from "../common/TextInput.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
+  import TextInput from "$lib/gui/common/TextInput.svelte";
 
   export let properties: {
     id: string;

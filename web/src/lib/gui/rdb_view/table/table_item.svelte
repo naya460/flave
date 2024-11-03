@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Item from "./item.svelte";
+  import Item from "../item/item.svelte";
 
   export let property: {
     id: string;

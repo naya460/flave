@@ -1,8 +1,8 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import { flvFetch } from "$lib/flv_fetch";
-  import TableRow from "$lib/gui/rdb_view/table_row.svelte";
-  import TableHeader from "$lib/gui/rdb_view/table_header.svelte";
+  import TableRow from "./table_row.svelte";
+  import TableHeader from "./table_header.svelte";
   import { beforeUpdate, onMount } from "svelte";
   import { workspace_id_store } from "$lib/store/workspace";
 

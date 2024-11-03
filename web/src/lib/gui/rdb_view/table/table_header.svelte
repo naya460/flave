@@ -1,8 +1,8 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import Button from "../common/Button.svelte";
-  import ContextMenu from "../common/ContextMenu.svelte";
-  import TextInput from "../common/TextInput.svelte";
+  import Button from "../../common/Button.svelte";
+  import ContextMenu from "../../common/ContextMenu.svelte";
+  import TextInput from "../../common/TextInput.svelte";
 
   export let rdb_id: string;
 

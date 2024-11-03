@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TableItem from "$lib/gui/rdb_view/table_item.svelte";
+  import TableItem from "./table_item.svelte";
   import { workspace_id_store } from "$lib/store/workspace";
 
   export let properties: {

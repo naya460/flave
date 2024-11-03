@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import TextInput from "$lib/gui/common/TextInput.svelte";
-  import Item from "$lib/gui/rdb_view/item.svelte";
+  import Item from "$lib/gui/rdb_view/item/item.svelte";
 
   export let page_id: string;
   export let rdb_id: string;

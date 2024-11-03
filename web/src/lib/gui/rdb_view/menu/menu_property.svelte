@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "../common/Button.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
   import { flvFetch } from "$lib/flv_fetch";
   import MenuAddProperty from "./menu_add_property.svelte";
 

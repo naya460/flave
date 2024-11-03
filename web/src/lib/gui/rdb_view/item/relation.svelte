@@ -1,8 +1,8 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import { beforeUpdate } from "svelte";
-  import Button from "../common/Button.svelte";
-  import ContextMenu from "../common/ContextMenu.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
+  import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
 
   export let page_id: string;
   export let property_id: string;

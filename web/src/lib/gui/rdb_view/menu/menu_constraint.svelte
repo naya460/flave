@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import Button from "../common/Button.svelte";
-  import Cards from "../common/Cards.svelte";
+  import Button from "$lib/gui/common/Button.svelte";
+  import Cards from "$lib/gui/common/Cards.svelte";
 
   export let rdb_id: string;
 

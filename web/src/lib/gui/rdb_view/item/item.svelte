@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ItemCheckbox from "./item_checkbox.svelte";
-  import ItemPage from "./item_page.svelte";
-  import ItemRelation from "./item_relation.svelte";
-  import ItemText from "./item_text.svelte";
+  import Checkbox from "./checkbox.svelte";
+  import Page from "./page.svelte";
+  import Relation from "./relation.svelte";
+  import Text from "./text.svelte";
 
   export let property: {
     id: string;
@@ -15,13 +15,13 @@
 </script>
 
 {#if property.type === "text" || property.type === undefined}
-  <ItemText {page_id} property_id={property.id} value={property.value} />
+  <Text {page_id} property_id={property.id} value={property.value} />
 {:else if property.type === "page"}
-  <ItemPage {page_id} value={property.value} />
+  <Page {page_id} value={property.value} />
 {:else if property.type === "checkbox"}
-  <ItemCheckbox {page_id} property_id={property.id} value={property.value} />
+  <Checkbox {page_id} property_id={property.id} value={property.value} />
 {:else if property.type === "relation"}
-  <ItemRelation
+  <Relation
     {page_id}
     property_id={property.id}
     option={property.option}

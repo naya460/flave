@@ -2,8 +2,8 @@
   import { flvFetch } from "$lib/flv_fetch";
   import Button from "../common/Button.svelte";
   import TextInput from "../common/TextInput.svelte";
-  import MenuTop from "./menu_top.svelte";
-  import Table from "./table.svelte";
+  import MenuTop from "./menu/menu_top.svelte";
+  import Table from "./table/table.svelte";
 
   export let block_id: string;
   export let rdb_id: string;

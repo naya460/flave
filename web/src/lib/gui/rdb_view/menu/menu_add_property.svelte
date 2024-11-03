@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
   import { workspace_id_store } from "$lib/store/workspace";
-  import Button from "../common/Button.svelte";
+  import Button from "../../common/Button.svelte";
 
   export let rdb_id: string;
 
