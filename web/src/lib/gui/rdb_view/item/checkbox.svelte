@@ -3,7 +3,7 @@
 
   export let page_id: string;
   export let property_id: string;
-  export let value: boolean | unknown;
+  export let value: boolean;
 
   let checked: boolean = false;
 

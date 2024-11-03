@@ -5,15 +5,11 @@
   import TableHeader from "./table_header.svelte";
   import { beforeUpdate, onMount } from "svelte";
   import { workspace_id_store } from "$lib/store/workspace";
+  import type { PropertyHeader } from "../types";
 
   export let rdb_id: string;
 
-  export let properties: {
-    id: string;
-    type: string;
-    name: string;
-    option: unknown;
-  }[];
+  export let properties: PropertyHeader[];
 
   export let constraints: {
     id: string;
@@ -76,7 +72,6 @@
         } else {
           value = property?.value;
         }
-        console.log(value, filter.value, value === filter.value);
         if (value !== filter.value) {
           ok = false;
           break;

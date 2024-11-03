@@ -4,6 +4,7 @@
   import TextInput from "../common/TextInput.svelte";
   import MenuTop from "./menu/menu_top.svelte";
   import Table from "./table/table.svelte";
+  import type { PropertyHeader } from "./types";
 
   export let block_id: string;
   export let rdb_id: string;
@@ -11,12 +12,7 @@
 
   export let rdb_data: {
     title: string;
-    properties?: {
-      id: string;
-      type: string;
-      name: string;
-      option: unknown;
-    }[];
+    properties?: PropertyHeader[];
     constraints?: {
       id: string;
       type: string;

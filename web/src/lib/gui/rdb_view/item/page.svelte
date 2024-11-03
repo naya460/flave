@@ -2,28 +2,10 @@
   import Button from "$lib/gui/common/Button.svelte";
 
   export let page_id: string;
-  export let value:
-    | {
-        workspace_id: string;
-        title: string;
-      }
-    | unknown;
-
-  let workspace_id: string;
-  let title: string;
-  $: {
-    if (
-      typeof value === "object" &&
-      value !== null &&
-      "workspace_id" in value &&
-      "title" in value &&
-      typeof value.workspace_id === "string" &&
-      typeof value.title === "string"
-    ) {
-      workspace_id = value.workspace_id;
-      title = value.title;
-    }
-  }
+  export let value: {
+    workspace_id: string;
+    title: string;
+  };
 </script>
 
 <Button
@@ -33,8 +15,8 @@
     width: "100%",
   }}
   on:click={() => {
-    location.assign(`/${workspace_id}/${page_id}`);
+    location.assign(`/${value.workspace_id}/${page_id}`);
   }}
 >
-  {title}
+  {value.title}
 </Button>

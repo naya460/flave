@@ -1,20 +1,16 @@
 <script lang="ts">
+  import type { Property } from "../types";
   import Checkbox from "./checkbox.svelte";
   import Page from "./page.svelte";
   import Relation from "./relation.svelte";
   import Text from "./text.svelte";
 
-  export let property: {
-    id: string;
-    type: string;
-    option?: unknown;
-    value: unknown;
-  };
+  export let property: Property;
 
   export let page_id: string;
 </script>
 
-{#if property.type === "text" || property.type === undefined}
+{#if property.type === "text"}
   <Text {page_id} property_id={property.id} value={property.value} />
 {:else if property.type === "page"}
   <Page {page_id} value={property.value} />

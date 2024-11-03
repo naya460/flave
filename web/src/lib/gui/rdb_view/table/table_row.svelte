@@ -1,13 +1,9 @@
 <script lang="ts">
   import TableItem from "./table_item.svelte";
   import { workspace_id_store } from "$lib/store/workspace";
+  import { toProperty, type PropertyHeader } from "../types";
 
-  export let properties: {
-    id: string;
-    type: string;
-    name: string;
-    option: unknown;
-  }[];
+  export let properties: PropertyHeader[];
 
   export let constraints: {
     id: string;
@@ -76,18 +72,10 @@
   {#if property !== undefined}
     <TableItem
       page_id={page._id}
-      property={{
-        id: property.id,
-        type: property.type,
-        option: property.option,
-        value: (() => {
-          const value = page.properties?.find(
-            (v) => v.id === property.id
-          )?.value;
-          if (value === undefined) return "";
-          return value;
-        })(),
-      }}
+      property={toProperty(
+        property,
+        page.properties?.find((v) => v.id === property.id)?.value
+      )}
     />
   {/if}
 {/each}

@@ -1,12 +1,8 @@
 <script lang="ts">
   import Item from "../item/item.svelte";
+  import type { Property } from "../types";
 
-  export let property: {
-    id: string;
-    type: string;
-    option?: unknown;
-    value: unknown;
-  };
+  export let property: Property | null;
 
   export let page_id: string;
 
@@ -18,7 +14,11 @@
 </script>
 
 <div class="item" style:width={style.width}>
-  <Item {property} {page_id} />
+  {#if property !== null}
+    <Item {property} {page_id} />
+  {:else}
+    <div>Invalid Property</div>
+  {/if}
 </div>
 
 <style>

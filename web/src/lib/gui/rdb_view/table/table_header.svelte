@@ -3,15 +3,11 @@
   import Button from "../../common/Button.svelte";
   import ContextMenu from "../../common/ContextMenu.svelte";
   import TextInput from "../../common/TextInput.svelte";
+  import type { PropertyHeader } from "../types";
 
   export let rdb_id: string;
 
-  export let properties: {
-    id: string;
-    type: string;
-    name: string;
-    option?: unknown;
-  }[];
+  export let properties: PropertyHeader[];
 
   export let display: string[];
 
