@@ -11,10 +11,12 @@
     type main_page_title_type,
   } from "./+layout.svelte";
   import { flvFetch } from "$lib/flv_fetch";
+  import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
 
   type PageData = {
     _id: string;
     title: string;
+    deleted: boolean;
   };
 
   export let data: LayoutData;
@@ -51,6 +53,7 @@
   });
 
   let mouse_over = false;
+  let submenu_hidden = true;
 </script>
 
 <ToggleMenu bind:expand style={{ darker: true }}>
@@ -91,6 +94,18 @@
     </div>
     {#if mouse_over}
       <div class="over">
+        <!-- submenu button -->
+        <Button
+          style={{
+            buttonStyle: "text",
+            buttonDarker: true,
+          }}
+          on:click={() => {
+            submenu_hidden = false;
+          }}
+        >
+          …
+        </Button>
         <!-- page creation button -->
         <Button
           style={{
@@ -108,6 +123,22 @@
         </Button>
       </div>
     {/if}
+    <ContextMenu bind:hidden={submenu_hidden}>
+      <Button
+        style={{
+          buttonStyle: "text",
+          width: "100%",
+          textAlign: "left",
+          height: "2rem",
+        }}
+        on:click={async () => {
+          await flvFetch(`pages/${page._id}`, "DELETE");
+          submenu_hidden = true;
+        }}
+      >
+        Delete this page
+      </Button>
+    </ContextMenu>
   </div>
   <!-- child pages -->
   <div slot="contents" class="contents">

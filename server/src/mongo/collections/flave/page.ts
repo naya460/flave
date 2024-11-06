@@ -18,6 +18,7 @@ type flvPageType = {
     id: string;
     result: boolean;
   }[];
+  deleted: boolean;
 };
 
 export const flvPageCollection = mongoClient

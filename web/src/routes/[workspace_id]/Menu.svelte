@@ -13,6 +13,7 @@
     {
       _id: string;
       title: string;
+      deleted: boolean;
     }[]
   > {
     const res = await flvFetch(`workspaces/${data.workspace_id}/pages`);

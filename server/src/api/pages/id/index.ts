@@ -13,6 +13,7 @@ import {
   flvPatchPagePropertyHandler,
   flvPatchPagePropertySchema,
 } from "./patch_property";
+import { flvDeletePageHandler, flvDeletePageSchema } from "./delete";
 
 export const flvPageIdRoute: apiRoute = (server, opt, done) => {
   // get page data
@@ -48,6 +49,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id/property/:property_id",
     { schema: flvPatchPagePropertySchema },
     flvPatchPagePropertyHandler
+  );
+
+  // delete page
+  server.delete(
+    "/:page_id",
+    { schema: flvDeletePageSchema },
+    flvDeletePageHandler
   );
 
   done();

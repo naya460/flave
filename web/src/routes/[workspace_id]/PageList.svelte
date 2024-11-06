@@ -8,13 +8,19 @@
   export let pages: {
     _id: string;
     title: string;
+    deleted: boolean;
   }[];
+
+  console.log(pages);
 
   export let first: boolean;
 </script>
 
 <div class="top">
   {#each pages as page}
+    {#if page.deleted === true}
+      <div>DLETED</div>
+    {/if}
     <PageContents
       {data}
       {page}

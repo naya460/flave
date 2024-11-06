@@ -5,6 +5,7 @@ export async function getPageList(arg: {
   workspace_id?: ObjectId | string;
   parent?: ObjectId | string;
   rdb_id?: ObjectId;
+  deleted?: boolean;
 }) {
   const { workspace_id, parent } = arg;
 
@@ -12,6 +13,7 @@ export async function getPageList(arg: {
     workspace?: ObjectId;
     parent?: ObjectId | { $exists: boolean };
     rdb?: ObjectId | { $exists: boolean };
+    deleted?: boolean;
   } = {};
 
   if (workspace_id !== undefined) {
@@ -41,6 +43,7 @@ export async function getPageList(arg: {
         updated_by: true,
         properties: true,
         constraints: true,
+        deleted: true,
       },
     })
     .toArray();
