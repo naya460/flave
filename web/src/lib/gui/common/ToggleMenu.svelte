@@ -43,6 +43,5 @@
 
   .summary {
     height: 100%;
-    overflow-wrap: anywhere;
   }
 </style>
