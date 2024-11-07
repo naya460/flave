@@ -10,26 +10,42 @@ export async function getPageList(arg: {
   const { workspace_id, parent } = arg;
 
   const filter: {
-    workspace?: ObjectId;
-    parent?: ObjectId | { $exists: boolean };
-    rdb?: ObjectId | { $exists: boolean };
-    deleted?: boolean;
-  } = {};
+    $and: (
+      | { workspace?: ObjectId }
+      | { parent?: ObjectId | { $exists: boolean } }
+      | { rdb?: ObjectId | { $exists: boolean } }
+      | {
+          $or: [
+            { deleted: { $exists: boolean } },
+            { deleted: { $eq: boolean } },
+          ];
+        }
+      | { deleted: boolean }
+    )[];
+  } = { $and: [] };
 
   if (workspace_id !== undefined) {
-    filter.workspace = new ObjectId(workspace_id);
+    filter.$and.push({ workspace: new ObjectId(workspace_id) });
   }
 
   if (parent === undefined) {
-    filter.parent = { $exists: false };
+    filter.$and.push({ parent: { $exists: false } });
   } else {
-    filter.parent = new ObjectId(parent);
+    filter.$and.push({ parent: new ObjectId(parent) });
   }
 
   if (arg.rdb_id === undefined) {
-    filter.rdb = { $exists: false };
+    filter.$and.push({ rdb: { $exists: false } });
   } else {
-    filter.rdb = new ObjectId(arg.rdb_id);
+    filter.$and.push({ rdb: new ObjectId(arg.rdb_id) });
+  }
+
+  if (arg.deleted === undefined || arg.deleted === false) {
+    filter.$and.push({
+      $or: [{ deleted: { $exists: false } }, { deleted: { $eq: false } }],
+    });
+  } else {
+    filter.$and.push({ deleted: true });
   }
 
   return await flvPageCollection

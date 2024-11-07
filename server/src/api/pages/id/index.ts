@@ -30,6 +30,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     flvPatchPageDataHandler
   );
 
+  // delete page
+  server.delete(
+    "/:page_id",
+    { schema: flvDeletePageSchema },
+    flvDeletePageHandler
+  );
+
   // get page path
   server.get(
     "/:page_id/path",
@@ -49,13 +56,6 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id/property/:property_id",
     { schema: flvPatchPagePropertySchema },
     flvPatchPagePropertyHandler
-  );
-
-  // delete page
-  server.delete(
-    "/:page_id",
-    { schema: flvDeletePageSchema },
-    flvDeletePageHandler
   );
 
   done();

@@ -11,8 +11,6 @@
     deleted: boolean;
   }[];
 
-  console.log(pages);
-
   export let first: boolean;
 </script>
 

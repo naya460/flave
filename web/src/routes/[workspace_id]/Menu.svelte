@@ -4,19 +4,22 @@
   import PageList from "./PageList.svelte";
   import RdbList from "./RdbList.svelte";
   import { flvFetch } from "$lib/flv_fetch";
+  import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
 
   export let data: LayoutData;
 
   let first = true;
 
-  async function getPageList(): Promise<
+  async function getPageList(deleted?: boolean): Promise<
     {
       _id: string;
       title: string;
       deleted: boolean;
     }[]
   > {
-    const res = await flvFetch(`workspaces/${data.workspace_id}/pages`);
+    const res = await flvFetch(
+      `workspaces/${data.workspace_id}/pages${deleted === undefined ? "" : "?deleted=" + deleted}`
+    );
     return await res.json();
   }
 
@@ -64,3 +67,14 @@
 {#await getRdbList() then rdbs}
   <RdbList rdb_list={rdbs} {data} />
 {/await}
+
+<ToggleMenu>
+  <div slot="summary">Trash Box</div>
+  <div slot="contents">
+    {#await getPageList(true) then pages}
+      {#each pages as page}
+        <div>{page.title}</div>
+      {/each}
+    {/await}
+  </div>
+</ToggleMenu>

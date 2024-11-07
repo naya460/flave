@@ -11,12 +11,21 @@ const paramsSchema = {
   required: ["workspace_id"],
 } as const;
 
+const querySchema = {
+  type: "object",
+  properties: {
+    deleted: { type: "boolean" },
+  },
+} as const;
+
 export const flvGetWorkspacePageListSchema = {
   params: paramsSchema,
+  query: querySchema,
 };
 
 export const flvGetWorkspacePageListHandler: apiHandler<{
   Params: FromSchema<typeof paramsSchema>;
+  Querystring: FromSchema<typeof querySchema>;
 }> = async (req, res) => {
   const auth = await checkAuth(
     { workspace: req.params.workspace_id },
@@ -27,5 +36,8 @@ export const flvGetWorkspacePageListHandler: apiHandler<{
 
   res.status(200);
   res.type("application/json");
-  return await getPageList({ workspace_id: req.params.workspace_id });
+  return await getPageList({
+    workspace_id: req.params.workspace_id,
+    deleted: req.query.deleted,
+  });
 };

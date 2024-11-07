@@ -18,6 +18,7 @@ export const createPage = async (data: {
     updated_by: ObjectId;
     parent?: ObjectId;
     rdb?: ObjectId;
+    deleted: boolean;
   } = {
     title: "New Page",
     workspace: new ObjectId(data.workspace_id),
@@ -25,6 +26,7 @@ export const createPage = async (data: {
     created_by: data.user_id,
     updated_at: date,
     updated_by: data.user_id,
+    deleted: false,
   };
   if (data.parent !== undefined) {
     doc.parent = new ObjectId(data.parent);
