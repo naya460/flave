@@ -14,6 +14,7 @@ import {
   flvPatchPagePropertySchema,
 } from "./patch_property";
 import { flvDeletePageHandler, flvDeletePageSchema } from "./delete";
+import { flvRecoverPageHandler, flvRecoverPageSchema } from "./recover";
 
 export const flvPageIdRoute: apiRoute = (server, opt, done) => {
   // get page data
@@ -35,6 +36,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id",
     { schema: flvDeletePageSchema },
     flvDeletePageHandler
+  );
+
+  // recover page
+  server.patch(
+    "/:page_id/recover",
+    { schema: flvRecoverPageSchema },
+    flvRecoverPageHandler
   );
 
   // get page path

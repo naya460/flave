@@ -73,7 +73,19 @@
   <div slot="contents">
     {#await getPageList(true) then pages}
       {#each pages as page}
-        <div>{page.title}</div>
+        <div style={"display: grid; grid-template-columns: 1fr auto;"}>
+          <div>{page.title}</div>
+          <Button
+            style={{
+              buttonStyle: "text",
+            }}
+            on:click={async () => {
+              await flvFetch(`pages/${page._id}/recover`, "PATCH");
+            }}
+          >
+            ↑
+          </Button>
+        </div>
       {/each}
     {/await}
   </div>
