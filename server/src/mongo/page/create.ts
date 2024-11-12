@@ -1,4 +1,5 @@
 import { flvPageCollection } from "mongo/collections/flave/page";
+import { createPageHistory } from "mongo/page_history/create";
 import { ObjectId } from "mongodb";
 
 export const createPage = async (data: {
@@ -38,6 +39,19 @@ export const createPage = async (data: {
   const result = await flvPageCollection.insertOne(doc);
 
   if (result.acknowledged) {
+    createPageHistory(
+      result.insertedId,
+      {
+        type: "create_page",
+        data: {
+          workspace_id: new ObjectId(data.workspace_id),
+          parent: new ObjectId(data.parent),
+          rdb_id: new ObjectId(data.rdb_id),
+        },
+      },
+      data.user_id
+    );
+
     return result.insertedId.toString();
   } else {
     return null;

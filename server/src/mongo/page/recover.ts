@@ -1,4 +1,5 @@
 import { flvPageCollection } from "mongo/collections/flave/page";
+import { createPageHistory } from "mongo/page_history/create";
 import { ObjectId } from "mongodb";
 
 export const recoverPage = async (page_id: ObjectId, user_id: ObjectId) => {
@@ -12,6 +13,10 @@ export const recoverPage = async (page_id: ObjectId, user_id: ObjectId) => {
       },
     }
   );
+
+  if (result.acknowledged) {
+    createPageHistory(page_id, { type: "recover_page" }, user_id);
+  }
 
   return result.acknowledged;
 };

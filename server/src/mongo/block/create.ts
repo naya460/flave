@@ -1,4 +1,5 @@
 import { flvBlockCollection } from "mongo/collections/flave/block";
+import { createPageHistory } from "mongo/page_history/create";
 import { ObjectId } from "mongodb";
 
 export async function createBlock(
@@ -33,7 +34,7 @@ export async function createBlock(
   const result = await flvBlockCollection.insertOne(doc);
 
   if (result.acknowledged) {
-    await flvBlockCollection.updateOne(
+    const tmp = await flvBlockCollection.updateOne(
       {
         $and: [
           { page: new ObjectId(page) },
@@ -43,6 +44,34 @@ export async function createBlock(
       },
       { $set: { next_of: result.insertedId } }
     );
+
+    createPageHistory(
+      new ObjectId(page),
+      {
+        type: "create_block",
+        data: {
+          block_id: result.insertedId,
+          next_of: next_of === null ? null : new ObjectId(next_of),
+          type,
+          data,
+        },
+      },
+      user_id
+    );
+
+    if (tmp.upsertedId !== null) {
+      createPageHistory(
+        new ObjectId(page),
+        {
+          type: "edit_block",
+          data: {
+            block_id: tmp.upsertedId,
+            next_of: result.insertedId,
+          },
+        },
+        user_id
+      );
+    }
 
     return result.insertedId;
   } else {

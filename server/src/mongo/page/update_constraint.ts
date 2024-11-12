@@ -1,4 +1,5 @@
 import { flvPageCollection } from "mongo/collections/flave/page";
+import { createPageHistory } from "mongo/page_history/create";
 import { ObjectId } from "mongodb";
 
 export async function updatePageConstraint(
@@ -21,6 +22,17 @@ export async function updatePageConstraint(
     }
   );
 
+  if (result.upsertedId !== null) {
+    createPageHistory(
+      page_id,
+      {
+        type: "edit_page_constraint",
+        data: { constraint },
+      },
+      user_id
+    );
+  }
+
   // when this property does not exist
   if (result.modifiedCount === 0) {
     const result = await flvPageCollection.updateOne(
@@ -41,6 +53,17 @@ export async function updatePageConstraint(
 
     if (result.acknowledged === false) {
       return false;
+    }
+
+    if (result.upsertedId !== null) {
+      createPageHistory(
+        page_id,
+        {
+          type: "edit_page_constraint",
+          data: { constraint },
+        },
+        user_id
+      );
     }
   }
 

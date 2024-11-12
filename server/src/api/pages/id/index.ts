@@ -15,6 +15,10 @@ import {
 } from "./patch_property";
 import { flvDeletePageHandler, flvDeletePageSchema } from "./delete";
 import { flvRecoverPageHandler, flvRecoverPageSchema } from "./recover";
+import {
+  flvGetPageHistoryhandler,
+  flvGetPageHistorySchema,
+} from "./get_history";
 
 export const flvPageIdRoute: apiRoute = (server, opt, done) => {
   // get page data
@@ -64,6 +68,13 @@ export const flvPageIdRoute: apiRoute = (server, opt, done) => {
     "/:page_id/property/:property_id",
     { schema: flvPatchPagePropertySchema },
     flvPatchPagePropertyHandler
+  );
+
+  // get page history
+  server.get(
+    "/:page_id/history",
+    { schema: flvGetPageHistorySchema },
+    flvGetPageHistoryhandler
   );
 
   done();

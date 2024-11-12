@@ -21,7 +21,7 @@ export const flvDeleteBlockHandler: apiHandler<{
   const auth = await checkAuth({ block: req.params.block_id }, req, res);
   if (auth === null) return null;
 
-  const result = await deleteBlock(req.params.block_id);
+  const result = await deleteBlock(req.params.block_id, auth);
 
   if (result === false) {
     res.status(400);

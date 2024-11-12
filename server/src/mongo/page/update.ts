@@ -1,4 +1,5 @@
 import { flvPageCollection } from "mongo/collections/flave/page";
+import { createPageHistory } from "mongo/page_history/create";
 import { ObjectId } from "mongodb";
 
 export const updatePage = async (
@@ -16,6 +17,17 @@ export const updatePage = async (
       },
     }
   );
+
+  if (result.upsertedId !== null) {
+    createPageHistory(
+      new ObjectId(page_id),
+      {
+        type: "edit_page_data",
+        data: { title },
+      },
+      user_id
+    );
+  }
 
   return result.acknowledged;
 };
