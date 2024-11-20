@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import Cards from "$lib/gui/common/Cards.svelte";
-  import CreateUser from "./CreateUser.svelte";
   import Popup from "$lib/gui/common/Popup.svelte";
   import { flvFetch } from "$lib/flv_fetch";
 
@@ -16,8 +15,6 @@
     return json;
   }
 </script>
-
-<CreateUser />
 
 <Cards
   items={data.items}

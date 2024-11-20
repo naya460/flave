@@ -6,7 +6,7 @@ type flvUserType = {
   name: string;
   auth_id: string;
   hash: string;
-  admin?: boolean;
+  admin: boolean;
 };
 
 export const flvUserCollection = mongoClient
@@ -20,3 +20,5 @@ flvUserCollection.countDocuments().then((count) => {
     });
   }
 });
+
+flvUserCollection.createIndex({ auth_id: 1 }, { unique: true });

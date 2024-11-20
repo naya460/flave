@@ -11,7 +11,6 @@ export async function createUser(
     hash: hash,
     admin: admin,
   };
-  console.log(doc);
 
   const result = await flvUserCollection.insertOne(doc);
 
