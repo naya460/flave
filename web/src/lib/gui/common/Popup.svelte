@@ -42,7 +42,7 @@
     position: relative;
     background-color: rgb(255, 255, 255);
     width: 20rem;
-    height: 20rem;
+    height: auto;
     padding: 1rem;
     box-sizing: border-box;
     border-radius: 0.5rem;
