@@ -6,6 +6,7 @@
   import { flvFetch } from "$lib/flv_fetch";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import type { Writable } from "svelte/store";
+  import { subscribePage } from "$lib/store/page";
 
   type PageData = {
     _id: string;
@@ -14,15 +15,18 @@
   };
 
   export let workspace_id: string;
-  export let page_id: string | undefined;
 
   export let page: PageData;
   export let page_path: string[] = [];
 
   export let first: boolean;
 
-  export let page_title_store: Writable<string>;
   export let page_path_store: Writable<string[]>;
+
+  let page_title = "";
+  subscribePage(page._id, (v) => {
+    page_title = v;
+  });
 
   let expand = false;
 
@@ -78,11 +82,7 @@
         }}
       >
         <div class="title_text">
-          {#if page._id === page_id}
-            {$page_title_store}
-          {:else}
-            {page.title}
-          {/if}
+          {page_title}
         </div>
       </Button>
     </div>
@@ -139,11 +139,9 @@
     {#if child_pages !== null}
       <PageList
         {workspace_id}
-        {page_id}
         pages={child_pages}
         {page_path}
         bind:first
-        bind:page_title_store
         bind:page_path_store
       />
     {/if}

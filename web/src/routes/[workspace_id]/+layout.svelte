@@ -3,9 +3,6 @@
 
   export const main_page_path_id = "page_path";
   export type main_page_path_type = Writable<string[]>;
-
-  export const main_page_title_id = "page_title";
-  export type main_page_title_type = Writable<string>;
 </script>
 
 <script lang="ts">
@@ -20,10 +17,8 @@
 
   let content_dom: HTMLDivElement;
 
-  let page_title_store = writable("");
   let page_path_store = writable([]);
 
-  setContext(main_page_title_id, page_title_store);
   setContext(main_page_path_id, page_path_store);
 
   onMount(() => {
@@ -48,11 +43,9 @@
 >
   <div slot="left" class="menu">
     <Menu
-      {page_title_store}
       {page_path_store}
       workspace_id={data.workspace_id}
       workspace_name={data.name}
-      page_id={data.page_id}
     />
   </div>
   <div bind:this={content_dom} slot="right" class="contents">

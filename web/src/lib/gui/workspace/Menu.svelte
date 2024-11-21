@@ -6,12 +6,10 @@
   import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
   import type { Writable } from "svelte/store";
 
-  export let page_title_store: Writable<string>;
   export let page_path_store: Writable<string[]>;
 
   export let workspace_id: string;
   export let workspace_name: string;
-  export let page_id: string | undefined;
 
   let first = true;
 
@@ -56,11 +54,9 @@
 {#await getPageList() then pages}
   <PageList
     {workspace_id}
-    {page_id}
     {pages}
     page_path={[]}
     bind:first
-    bind:page_title_store
     bind:page_path_store
   />
 {/await}

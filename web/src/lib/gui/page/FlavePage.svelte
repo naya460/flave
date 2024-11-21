@@ -4,9 +4,6 @@
   export const page_path_id = "page_path";
   export type page_path_type = Writable<string[]>;
 
-  export const page_title_id = "page_title";
-  export type page_title_type = Writable<string>;
-
   export const selecting_block_id = "selecting_block";
   export type selecting_block_type = Writable<string | undefined>;
 
@@ -22,12 +19,12 @@
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
   import Button from "../common/Button.svelte";
+  import { setPage } from "$lib/store/page";
 
   export let workspace_id: string;
   export let page_id: string;
 
   export let page_path: page_path_type = writable([]);
-  export let page_title: page_title_type = writable("");
   export let selecting_block: selecting_block_type = writable(undefined);
   export let page_block_moving: page_block_moving_type = writable(undefined);
 
@@ -42,12 +39,11 @@
   }> {
     let data = await (await flvFetch(`pages/${page_id}`)).json();
     let path = await (await flvFetch(`pages/${page_id}/path`)).json();
-    page_title.set(data.title);
+    setPage(page_id, data.title);
     page_path.set(path);
     return { ...data, path };
   }
 
-  setContext(page_title_id, page_title);
   setContext(selecting_block_id, selecting_block);
   setContext(page_block_moving_id, page_block_moving);
   setContext(page_path_id, page_path);
@@ -88,7 +84,7 @@
               });
             }}
             onKeyUp={(event) => {
-              page_title.set(event.currentTarget.value);
+              setPage(page_id, event.currentTarget.value);
             }}
           />
         </div>
