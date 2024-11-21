@@ -11,7 +11,7 @@
 <script lang="ts">
   import { onMount, setContext } from "svelte";
   import type { LayoutData } from "./$types";
-  import Menu from "./Menu.svelte";
+  import Menu from "../../lib/gui/workspace/Menu.svelte";
   import { workspace_contents_scroll_store } from "$lib/store/workspace";
   import { writable } from "svelte/store";
 
@@ -29,8 +29,11 @@
   let top_dom: HTMLDivElement;
   let content_dom: HTMLDivElement;
 
-  setContext(main_page_title_id, writable(""));
-  setContext(main_page_path_id, writable([]));
+  let page_title_store = writable("");
+  let page_path_store = writable([]);
+
+  setContext(main_page_title_id, page_title_store);
+  setContext(main_page_path_id, page_path_store);
 
   window.addEventListener("resize", () => {
     if (width >= top_dom.clientWidth / 2 && top_dom.clientWidth >= 400) {
@@ -66,7 +69,13 @@
   }}
 >
   <div class="menu" style:width={`${width}px`}>
-    <Menu {data} />
+    <Menu
+      {page_title_store}
+      {page_path_store}
+      workspace_id={data.workspace_id}
+      workspace_name={data.name}
+      page_id={data.page_id}
+    />
   </div>
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="split">

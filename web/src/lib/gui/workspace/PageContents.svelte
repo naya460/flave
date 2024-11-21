@@ -1,17 +1,11 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import ToggleMenu from "$lib/gui/common/ToggleMenu.svelte";
-  import { afterUpdate, getContext } from "svelte";
-  import type { LayoutData } from "./$types";
+  import { afterUpdate } from "svelte";
   import PageList from "./PageList.svelte";
-  import {
-    main_page_path_id,
-    main_page_title_id,
-    type main_page_path_type,
-    type main_page_title_type,
-  } from "./+layout.svelte";
   import { flvFetch } from "$lib/flv_fetch";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
+  import type { Writable } from "svelte/store";
 
   type PageData = {
     _id: string;
@@ -19,20 +13,20 @@
     deleted: boolean;
   };
 
-  export let data: LayoutData;
+  export let workspace_id: string;
+  export let page_id: string | undefined;
 
   export let page: PageData;
-
   export let page_path: string[] = [];
 
   export let first: boolean;
 
+  export let page_title_store: Writable<string>;
+  export let page_path_store: Writable<string[]>;
+
   let expand = false;
 
   let child_pages: PageData[] | null = null;
-
-  let page_title_store: main_page_title_type = getContext(main_page_title_id);
-  let page_path_store: main_page_path_type = getContext(main_page_path_id);
 
   page_path_store.subscribe((v) => {
     if (v[page_path.length - 1] == page._id) {
@@ -80,11 +74,11 @@
           width: "100%",
         }}
         on:click={() => {
-          location.assign(`/${data.workspace_id}/${page._id}`);
+          location.assign(`/${workspace_id}/${page._id}`);
         }}
       >
         <div class="title_text">
-          {#if page._id === data.page_id}
+          {#if page._id === page_id}
             {$page_title_store}
           {:else}
             {page.title}
@@ -114,7 +108,7 @@
           }}
           on:click={async () => {
             await flvFetch(`pages`, "POST", {
-              workspace_id: data.workspace_id,
+              workspace_id: workspace_id,
               parent: page._id,
             });
           }}
@@ -143,7 +137,15 @@
   <!-- child pages -->
   <div slot="contents" class="contents">
     {#if child_pages !== null}
-      <PageList {data} pages={child_pages} {page_path} bind:first />
+      <PageList
+        {workspace_id}
+        {page_id}
+        pages={child_pages}
+        {page_path}
+        bind:first
+        bind:page_title_store
+        bind:page_path_store
+      />
     {/if}
   </div>
 </ToggleMenu>

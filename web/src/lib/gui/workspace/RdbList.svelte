@@ -1,8 +1,7 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
-  import type { PageData } from "./$types";
 
-  export let data: PageData;
+  export let workspace_id: string;
 
   export let rdb_list: {
     _id: string;
@@ -19,7 +18,7 @@
         height: "2rem",
       }}
       on:click={() => {
-        location.assign(`/${data.workspace_id}/rdb/${rdb._id}`);
+        location.assign(`/${workspace_id}/rdb/${rdb._id}`);
       }}
     >
       {rdb.title}
