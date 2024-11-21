@@ -15,13 +15,29 @@
   ) => {
     const form_data = new FormData(event.currentTarget);
     const data = {
-      name: form_data.get("name"),
+      name: form_data.get("name")?.toString(),
     };
-    await flvFetch(`workspaces`, "POST", data);
-    location.reload();
+
+    const result = await flvFetch(`workspaces`, "POST", data);
+
+    if (result.ok) {
+      workspace_list = [
+        ...workspace_list,
+        {
+          _id: await result.json(),
+          name: data.name === undefined ? "" : data.name,
+        },
+      ];
+    } else {
+      alert("Failed to create workspace");
+    }
+
+    hidden_popup = true;
+    text_input.value = "";
   };
 
   let hidden_popup = true;
+  let text_input: HTMLInputElement;
 </script>
 
 <div>
@@ -42,7 +58,14 @@
         <ContextMenu bind:hidden={hidden_popup}>
           <form on:submit={onSubmit} class="form">
             <label for="name">Workspace Name</label>
-            <TextInput type="text" id="name" name="name" autocomplete="off" />
+            <TextInput
+              bind:dom={text_input}
+              type="text"
+              id="name"
+              name="name"
+              autocomplete="off"
+              autofocus={true}
+            />
             <Button style={{ buttonStyle: "filled" }}>Create</Button>
           </form>
         </ContextMenu>

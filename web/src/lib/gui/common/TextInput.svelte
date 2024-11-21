@@ -15,6 +15,8 @@
   export let name: string | undefined = undefined;
   export let autocomplete: "on" | "off" = "off";
   export let value: string = "";
+  export let autofocus: boolean = false;
+  export let dom: HTMLInputElement | undefined = undefined;
   export let onChange: (
     event: Event & { currentTarget: EventTarget & HTMLInputElement }
   ) => void = () => {};
@@ -26,12 +28,15 @@
   ) => void = () => {};
 </script>
 
+<!-- svelte-ignore a11y-autofocus -->
 <input
+  bind:this={dom}
   {type}
   {id}
   {name}
   {autocomplete}
   {value}
+  {autofocus}
   style:font-size={style.fontSize}
   style:padding={style.padding}
   class="input"

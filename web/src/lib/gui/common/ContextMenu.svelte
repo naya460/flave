@@ -48,7 +48,17 @@
   });
 </script>
 
-<div class="top" style:position={"relative"} bind:this={top_node}>
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  class="top"
+  style:position={"relative"}
+  bind:this={top_node}
+  on:keydown={(event) => {
+    if (event.key === "Escape") {
+      hidden = true;
+    }
+  }}
+>
   {#if submenu === false && hidden === false}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
