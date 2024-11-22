@@ -15,6 +15,7 @@ export function subscribePage(page_id: string, hook: (title: string) => void) {
 		fetchPage(page_id);
 	} else {
 		page_list.set(page_id, { title: tmp.title, hooks: [...tmp.hooks, hook] });
+		hook(tmp.title);
 	}
 }
 
