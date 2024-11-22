@@ -28,17 +28,38 @@
 
 <div>{workspace_name}</div>
 
-<Button {style} on:click={createPage}>Create Page</Button>
-
-<PageTree {workspace_id} {page_path_store} />
-
-<Button {style} on:click={createRdb}>Create Relational Database</Button>
-
-<RdbList {workspace_id} />
-
-<ToggleMenu style={{ darker: true }}>
-  <div slot="summary">Trash Box</div>
-  <div slot="contents">
-    <TrashBox {workspace_id} />
+<div class="contents">
+  <div class="heading">
+    <div>Pages</div>
+    <Button {style} on:click={createPage}>+</Button>
   </div>
-</ToggleMenu>
+  <PageTree {workspace_id} {page_path_store} />
+</div>
+
+<div class="contents">
+  <div class="heading">
+    <div>RDBs</div>
+    <Button {style} on:click={createRdb}>+</Button>
+  </div>
+  <RdbList {workspace_id} />
+</div>
+
+<div class="contents">
+  <ToggleMenu style={{ darker: true }}>
+    <div slot="summary">Trash Box</div>
+    <div slot="contents">
+      <TrashBox {workspace_id} />
+    </div>
+  </ToggleMenu>
+</div>
+
+<style>
+  .contents {
+    margin-top: 1rem;
+  }
+
+  .heading {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+</style>
