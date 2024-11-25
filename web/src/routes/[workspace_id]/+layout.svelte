@@ -46,6 +46,7 @@
       {page_path_store}
       workspace_id={data.workspace_id}
       workspace_name={data.name}
+      workspace_list={data.workspaces}
     />
   </div>
   <div bind:this={content_dom} slot="right" class="contents">

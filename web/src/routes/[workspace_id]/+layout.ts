@@ -35,5 +35,25 @@ export const load: LayoutLoad = async ({ params, fetch, url }) => {
 		workspace_id: params.workspace_id,
 		page_id: params.page_id,
 		name: json.name,
+		workspaces: await getWorkspaceList(fetch, url),
 	};
 };
+
+async function getWorkspaceList(
+	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+	url: URL
+) {
+	const res = await fetch(`http://${url.hostname}:8080/sessions/is_valid`, {
+		credentials: "include",
+	});
+	const json = await res.json();
+
+	const workspaces = await fetch(
+		`http://${url.hostname}:8080/users/${json.user_id}/workspaces`,
+		{ credentials: "include" }
+	);
+	const workspaces_json: { _id: string; name: string }[] =
+		await workspaces.json();
+
+	return workspaces_json;
+}

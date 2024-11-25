@@ -6,11 +6,17 @@
   import type { Writable } from "svelte/store";
   import PageTree from "./PageTree.svelte";
   import TrashBox from "./TrashBox.svelte";
+  import MenuHeader from "./MenuHeader.svelte";
 
   export let workspace_id: string;
   export let workspace_name: string;
 
   export let page_path_store: Writable<string[]>;
+
+  export let workspace_list: {
+    _id: string;
+    name: string;
+  }[];
 
   async function createPage() {
     await flvFetch(`pages`, "POST", { workspace_id: workspace_id });
@@ -26,7 +32,7 @@
   } as const;
 </script>
 
-<div>{workspace_name}</div>
+<MenuHeader {workspace_id} {workspace_name} {workspace_list} />
 
 <div class="contents">
   <div class="heading">

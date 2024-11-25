@@ -50,6 +50,31 @@
     background-color: rgb(44, 153, 97);
   }
 
+  .outline {
+    background: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    border: 1px solid #bbbbbb;
+  }
+
+  .outline:hover,
+  .outline:focus {
+    background-color: rgb(248, 248, 248);
+  }
+
+  .outline.darker:hover,
+  .outline.darker.focus {
+    background-color: rgb(238, 238, 238);
+  }
+
+  .outline:active {
+    background-color: rgb(238, 238, 238);
+  }
+
+  .outline.darker:active {
+    background-color: rgb(228, 228, 228);
+  }
+
   .text {
     background: none;
     padding: 0.3rem 0.5rem;
@@ -62,7 +87,7 @@
   }
 
   .text.darker:hover,
-  .text.darker.hover {
+  .text.darker.focus {
     background-color: rgb(238, 238, 238);
   }
 
