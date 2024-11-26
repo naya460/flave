@@ -2,6 +2,7 @@
   import { flvFetch } from "$lib/flv_fetch";
   import TextInput from "$lib/gui/common/TextInput.svelte";
   import Item from "$lib/gui/rdb_view/item/item.svelte";
+  import { toProperty, type PropertyHeader } from "../rdb_view/types";
 
   export let page_id: string;
   export let rdb_id: string;
@@ -11,9 +12,7 @@
     value: unknown;
   }[];
 
-  async function getRdbProperties(): Promise<
-    { id: string; type: string; name: string; option?: unknown }[]
-  > {
+  async function getRdbProperties(): Promise<PropertyHeader[]> {
     const res = await flvFetch(`rdbs/${rdb_id}`);
     return (await res.json()).properties;
   }
@@ -34,10 +33,10 @@
         }}
       />
       <Item
-        property={{
-          ...rdb_property,
-          value: properties.find((v) => v.id === rdb_property.id),
-        }}
+        property={toProperty(
+          rdb_property,
+          properties.find((v) => v.id === rdb_property.id)?.value
+        )}
         {page_id}
       />
     </div>

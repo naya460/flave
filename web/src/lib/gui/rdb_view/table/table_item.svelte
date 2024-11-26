@@ -14,11 +14,7 @@
 </script>
 
 <div class="item" style:width={style.width}>
-  {#if property !== null}
-    <Item {property} {page_id} />
-  {:else}
-    <div>Invalid Property</div>
-  {/if}
+  <Item {property} {page_id} />
 </div>
 
 <style>
