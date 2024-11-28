@@ -1,6 +1,5 @@
 <script lang="ts">
   import TableItem from "./table_item.svelte";
-  import { workspace_id_store } from "$lib/store/workspace";
   import { toProperty, type PropertyHeader } from "../types";
 
   export let properties: PropertyHeader[];
@@ -23,8 +22,6 @@
       result: boolean;
     }[];
   };
-
-  export let display: string[];
 
   let result = (() => {
     for (const v of constraints) {
@@ -53,29 +50,12 @@
   }}
 />
 
-{#if display.includes("page") === true}
+{#each properties as property (property.id)}
   <TableItem
     page_id={page._id}
-    property={{
-      id: "",
-      type: "page",
-      value: {
-        workspace_id: $workspace_id_store,
-        title: page.title,
-      },
-    }}
+    property={toProperty(
+      property,
+      page.properties?.find((v) => v.id === property.id)?.value
+    )}
   />
-{/if}
-
-{#each display as display_id (display_id)}
-  {@const property = properties.find((v) => v.id === display_id)}
-  {#if property !== undefined}
-    <TableItem
-      page_id={page._id}
-      property={toProperty(
-        property,
-        page.properties?.find((v) => v.id === property.id)?.value
-      )}
-    />
-  {/if}
 {/each}

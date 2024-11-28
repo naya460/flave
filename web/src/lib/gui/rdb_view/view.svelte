@@ -7,6 +7,7 @@
   import Table from "./table/table.svelte";
   import type { PropertyHeader } from "./types";
   import { toFilteredPageList, type PageList } from "./page_list_filter";
+  import { toFilteredProperties } from "./properties_filter";
 
   export let block_id: string;
   export let rdb_id: string;
@@ -86,10 +87,13 @@
   <div class="contents">
     <Table
       {rdb_id}
-      {properties}
-      page_list={toFilteredPageList(properties, page_list, filters)}
+      properties={toFilteredProperties(properties, display)}
+      page_list={toFilteredPageList(
+        toFilteredProperties(properties, display),
+        page_list,
+        filters
+      )}
       {constraints}
-      {display}
       {set_menu}
       push_page={(page) => {
         page_list = [...page_list, page];

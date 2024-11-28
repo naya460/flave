@@ -36,6 +36,10 @@ export function toFilteredPageList(
 			let value;
 			if (property?.value === undefined) {
 				switch (properties.find((v) => v.id === filter.id)?.type) {
+					case "page": {
+						value = page.title;
+						break;
+					}
 					case "text": {
 						value = "";
 						break;
@@ -46,11 +50,26 @@ export function toFilteredPageList(
 					}
 				}
 			} else {
-				value = property?.value;
+				value = property.value;
 			}
 			if (value !== filter.value) {
 				ok = false;
 				break;
+			}
+		}
+
+		const page_property = properties.find((v) => v.type === "page");
+		if (page_property !== undefined) {
+			const v = {
+				id: "",
+				value: {
+					title: page.title,
+				},
+			};
+			if (page.properties === undefined) {
+				page.properties = [v];
+			} else {
+				page.properties?.unshift(v);
 			}
 		}
 

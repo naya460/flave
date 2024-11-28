@@ -9,8 +9,6 @@
 
   export let properties: PropertyHeader[];
 
-  export let display: string[];
-
   export let set_menu: (menu: { dir: string; title: string }[]) => void;
 
   let context_id: string | null = null;
@@ -18,17 +16,18 @@
 
 <div class="item" style:width="4rem" />
 
-{#if display.includes("page") === true}
-  <div class="item" style:padding="0.2rem 0.5rem" style:box-sizing="border-box">
-    page
-  </div>
-{/if}
-
 {#if properties !== undefined}
-  {#each display as display_id}
-    {@const property = properties.find((v) => v.id === display_id)}
-    {#if property !== undefined}
-      <div class="item">
+  {#each properties as property (property.id)}
+    <div class="item">
+      {#if property.type === "page"}
+        <div
+          class="item"
+          style:padding="0.2rem 0.5rem"
+          style:box-sizing="border-box"
+        >
+          page
+        </div>
+      {:else}
         <ContextMenu
           hidden={property.id !== context_id}
           hide_parent={() => {
@@ -125,8 +124,8 @@
         >
           {property.name}
         </Button>
-      </div>
-    {/if}
+      {/if}
+    </div>
   {/each}
 {/if}
 

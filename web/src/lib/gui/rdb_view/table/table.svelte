@@ -19,8 +19,6 @@
 
   export let page_list: PageList = [];
 
-  export let display: string[];
-
   export let set_menu: (menu: { dir: string; title: string }[]) => void;
 
   export let push_page: (page: PageType) => void;
@@ -44,12 +42,12 @@
 <div class="top">
   <div class="table">
     <div class="row">
-      <TableHeader {rdb_id} bind:properties {display} {set_menu} />
+      <TableHeader {rdb_id} {properties} {set_menu} />
     </div>
-    {#if display.length !== 0}
+    {#if properties.length !== 0}
       {#each page_list as page (page._id)}
         <div class="row">
-          <TableRow {properties} {constraints} {page} {display} />
+          <TableRow {properties} {constraints} {page} />
         </div>
       {/each}
     {/if}

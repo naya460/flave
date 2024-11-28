@@ -24,7 +24,6 @@ export type Property =
 			type: "page";
 			option?: never;
 			value: {
-				workspace_id: string;
 				title: string;
 			};
 	  }
@@ -70,11 +69,8 @@ export function toProperty(
 		};
 	}
 	if (property.type === "page") {
-		const value = { workspace_id: "", title: "" };
+		const value = { title: "" };
 		if (typeof target === "object" && target !== null) {
-			if ("workspace_id" in target && typeof target.workspace_id === "string") {
-				value.workspace_id = target.workspace_id;
-			}
 			if ("title" in target && typeof target.title === "string") {
 				value.title = target.title;
 			}
@@ -82,7 +78,7 @@ export function toProperty(
 		return { id: property.id, type: "page", value: value } as {
 			id: string;
 			type: "page";
-			value: { workspace_id: string; title: string };
+			value: { title: string };
 		};
 	}
 	if (property.type === "checkbox") {

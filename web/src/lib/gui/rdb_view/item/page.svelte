@@ -3,7 +3,6 @@
 
   export let page_id: string;
   export let value: {
-    workspace_id: string;
     title: string;
   };
 </script>
@@ -15,7 +14,7 @@
     width: "100%",
   }}
   on:click={() => {
-    location.assign(`/${value.workspace_id}/${page_id}`);
+    location.assign(`${page_id}`);
   }}
 >
   {value.title}
