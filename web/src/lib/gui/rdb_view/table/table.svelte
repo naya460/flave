@@ -3,9 +3,9 @@
   import { flvFetch } from "$lib/flv_fetch";
   import TableRow from "./table_row.svelte";
   import TableHeader from "./table_header.svelte";
-  import { beforeUpdate, onMount } from "svelte";
   import { workspace_id_store } from "$lib/store/workspace";
   import type { PropertyHeader } from "../types";
+  import type { PageList, PageType } from "../page_list_filter";
 
   export let rdb_id: string;
 
@@ -17,82 +17,28 @@
     option: object;
   }[];
 
-  export let filters: {
-    id: string;
-    value: string | boolean;
-  }[];
-
-  let page_list: {
-    _id: string;
-    title: string;
-    properties?: {
-      id: string;
-      value: unknown;
-    }[];
-    constraints?: {
-      id: string;
-      result: boolean;
-    }[];
-  }[] = [];
-
-  let filtered_page_list: {
-    _id: string;
-    title: string;
-    properties?: {
-      id: string;
-      value: unknown;
-    }[];
-    constraints?: {
-      id: string;
-      result: boolean;
-    }[];
-  }[];
-
-  beforeUpdate(() => {
-    filtered_page_list = [];
-
-    for (let page of page_list) {
-      let ok = true;
-
-      for (let filter of filters) {
-        let property = page?.properties?.find((v) => v.id === filter.id);
-
-        let value;
-        if (property?.value === undefined) {
-          switch (properties.find((v) => v.id === filter.id)?.type) {
-            case "text": {
-              value = "";
-              break;
-            }
-            case "checkbox": {
-              value = false;
-              break;
-            }
-          }
-        } else {
-          value = property?.value;
-        }
-        if (value !== filter.value) {
-          ok = false;
-          break;
-        }
-      }
-
-      if (ok === true) {
-        filtered_page_list = [...filtered_page_list, page];
-      }
-    }
-  });
+  export let page_list: PageList = [];
 
   export let display: string[];
 
   export let set_menu: (menu: { dir: string; title: string }[]) => void;
 
-  onMount(async () => {
-    const res = await flvFetch(`rdbs/${rdb_id}/pages`);
-    if (res.ok === false) return;
-    page_list = await res.json();
-  });
+  export let push_page: (page: PageType) => void;
+
+  async function postPage() {
+    const res = await flvFetch(`pages`, "POST", {
+      workspace_id: $workspace_id_store,
+      rdb_id: rdb_id,
+    });
+    if (res.ok === true) {
+      const id = await res.text();
+      push_page({
+        _id: id,
+        title: "New Page",
+        properties: [],
+      });
+    }
+  }
 </script>
 
 <div class="top">
@@ -101,41 +47,22 @@
       <TableHeader {rdb_id} bind:properties {display} {set_menu} />
     </div>
     {#if display.length !== 0}
-      {#each filtered_page_list as page (page._id)}
+      {#each page_list as page (page._id)}
         <div class="row">
-          {#if properties !== undefined}
-            <TableRow {properties} {constraints} {page} {display} />
-          {/if}
+          <TableRow {properties} {constraints} {page} {display} />
         </div>
       {/each}
     {/if}
-    <div style:width="100%">
-      <Button
-        style={{
-          buttonStyle: "text",
-          textAlign: "left",
-          width: "100%",
-        }}
-        on:click={async () => {
-          const res = await flvFetch(`pages`, "POST", {
-            workspace_id: $workspace_id_store,
-            rdb_id: rdb_id,
-          });
-          if (res.ok === true) {
-            const id = await res.text();
-            console.log(id);
-            page_list.push({
-              _id: id,
-              title: "New Page",
-              properties: [],
-            });
-            page_list = page_list;
-          }
-        }}
-      >
-        + Create New Page
-      </Button>
-    </div>
+    <Button
+      style={{
+        buttonStyle: "text",
+        textAlign: "left",
+        width: "100%",
+      }}
+      on:click={postPage}
+    >
+      + Create New Page
+    </Button>
   </div>
 </div>
 
