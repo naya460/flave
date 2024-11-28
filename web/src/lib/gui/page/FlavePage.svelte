@@ -89,12 +89,13 @@
           />
         </div>
 
-        {#if page_data.rdb !== undefined && page_data.properties !== undefined}
+        {#if page_data.rdb !== undefined}
           <PropertyList
             {page_id}
             rdb_id={page_data.rdb}
             properties={page_data.properties}
           />
+          <div class="line" />
         {/if}
 
         <div style:position={"relative"}>
@@ -156,5 +157,13 @@
   .history {
     background-color: #f8f8f8;
     padding: 1rem;
+  }
+
+  .line {
+    height: 1px;
+    width: 100%;
+    background-color: #cccccc;
+    margin: 0.2rem 0;
+    margin-bottom: 1rem;
   }
 </style>

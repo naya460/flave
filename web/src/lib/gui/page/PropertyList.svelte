@@ -7,10 +7,12 @@
   export let page_id: string;
   export let rdb_id: string;
 
-  export let properties: {
-    id: string;
-    value: unknown;
-  }[];
+  export let properties:
+    | {
+        id: string;
+        value: unknown;
+      }[]
+    | undefined;
 
   async function getRdbProperties(): Promise<PropertyHeader[]> {
     const res = await flvFetch(`rdbs/${rdb_id}`);
@@ -19,26 +21,30 @@
 </script>
 
 {#await getRdbProperties() then rdb_properties}
-  {#each rdb_properties as rdb_property}
+  {#each rdb_properties as rdb_property (rdb_property.id)}
     <div class="property">
-      <TextInput
-        style={{ outline: false }}
-        value={rdb_property.name}
-        onChange={async (event) => {
-          await flvFetch(
-            `rdbs/${rdb_id}/property/${rdb_property.id}`,
-            "PATCH",
-            { name: event.currentTarget.value }
-          );
-        }}
-      />
-      <Item
-        property={toProperty(
-          rdb_property,
-          properties.find((v) => v.id === rdb_property.id)?.value
-        )}
-        {page_id}
-      />
+      <div class="text_input">
+        <TextInput
+          style={{ outline: false }}
+          value={rdb_property.name}
+          onChange={async (event) => {
+            await flvFetch(
+              `rdbs/${rdb_id}/property/${rdb_property.id}`,
+              "PATCH",
+              { name: event.currentTarget.value }
+            );
+          }}
+        />
+      </div>
+      <div>
+        <Item
+          property={toProperty(
+            rdb_property,
+            properties?.find((v) => v.id === rdb_property.id)?.value
+          )}
+          {page_id}
+        />
+      </div>
     </div>
   {/each}
 {/await}
@@ -47,7 +53,11 @@
   .property {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 1.5rem;
+    min-height: 1.5rem;
     margin: 0.5rem 0;
+  }
+
+  .text_input {
+    height: 1.5rem;
   }
 </style>
