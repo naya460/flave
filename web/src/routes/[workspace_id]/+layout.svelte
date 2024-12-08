@@ -6,10 +6,9 @@
 </script>
 
 <script lang="ts">
-  import { onMount, setContext } from "svelte";
+  import { setContext } from "svelte";
   import type { LayoutData } from "./$types";
   import Menu from "../../lib/gui/workspace/Menu.svelte";
-  import { workspace_contents_scroll_store } from "$lib/store/workspace";
   import { writable } from "svelte/store";
   import Split from "$lib/gui/common/Split.svelte";
 
@@ -20,12 +19,6 @@
   let page_path_store = writable([]);
 
   setContext(main_page_path_id, page_path_store);
-
-  onMount(() => {
-    content_dom.addEventListener("scroll", () => {
-      $workspace_contents_scroll_store = content_dom.scrollTop;
-    });
-  });
 
   let default_width = (() => {
     let item = localStorage.getItem("menu_width");

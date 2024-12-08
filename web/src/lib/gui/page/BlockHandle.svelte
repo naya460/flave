@@ -9,8 +9,6 @@
   } from "./FlavePage.svelte";
   import type { blockListStore } from "$lib/types/block_list";
   import { getContext, onMount } from "svelte";
-  import { workspace_contents_scroll_store } from "$lib/store/workspace";
-  import { get } from "svelte/store";
 
   export let workspace_id: string;
   export let page_id: string;
@@ -46,7 +44,7 @@
 
       if (rect !== undefined) {
         position_x = rect.x - offset_x;
-        position_y = rect.y - offset_y + get(workspace_contents_scroll_store);
+        position_y = rect.y - offset_y;
         enable = true;
       } else {
         enable = false;

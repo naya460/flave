@@ -10,7 +10,7 @@
     selecting_block_id,
     type selecting_block_type,
   } from "./FlavePage.svelte";
-  import { getContext } from "svelte";
+  import { beforeUpdate, getContext } from "svelte";
 
   let blocks: blockListStore = writable([]);
   let node: Node;
@@ -92,6 +92,11 @@
       });
     }
   }
+
+  let rect: { x: number; y: number; height: number; top: number } | undefined;
+  beforeUpdate(() => {
+    rect = node?.parentElement?.getBoundingClientRect();
+  });
 </script>
 
 {#await getBlocks()}
@@ -263,8 +268,7 @@
   <div>Failed loading</div>
 {/await}
 
-{#if node?.parentElement?.getBoundingClientRect !== undefined}
-  {@const rect = node.parentElement.getBoundingClientRect()}
+{#if rect !== undefined}
   <BlockHandle
     {blocks}
     {workspace_id}
