@@ -27,6 +27,7 @@
       type: "paragraph" | "rdb_view";
       next_of: string | null;
       data: unknown;
+      is_text: boolean;
     }[] = await res.json();
 
     for (const block of list.filter((v) => v.next_of === null)) {
@@ -124,30 +125,6 @@
         (v) => v.dom_node?.childNodes[0] === focus_node
       );
       if (index < 0) return;
-
-      if (event.key === "ArrowLeft") {
-        const block = $blocks[index - 1];
-
-        if (selection.focusOffset === 0 && index !== 0) {
-          event.preventDefault();
-
-          const node = block?.dom_node;
-          let offset = 0;
-
-          if (
-            typeof block.data === "object" &&
-            block.data !== null &&
-            "text" in block.data &&
-            typeof block.data.text === "string"
-          ) {
-            offset = block.data.text.length;
-          }
-
-          if (node !== undefined) {
-            selection.setPosition(node.firstChild, offset);
-          }
-        }
-      }
 
       if (event.key === "ArrowRight") {
         const current_block = $blocks[index];

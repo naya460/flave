@@ -1,10 +1,15 @@
 import type { Writable } from "svelte/store";
 
-type block_list = {
+export type TextFunctionsType = {
+	setEnd: () => void;
+};
+
+export type BlockListType = {
 	_id: string;
 	type: string;
 	data: unknown;
 	dom_node?: Node;
+	text_functions?: TextFunctionsType;
 }[];
 
-export type blockListStore = Writable<block_list>;
+export type blockListStore = Writable<BlockListType>;

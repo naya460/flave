@@ -1,6 +1,9 @@
 <script lang="ts">
   import Paragraph from "$lib/gui/block/Paragraph.svelte";
-  import type { blockListStore } from "$lib/types/block_list";
+  import type {
+    blockListStore,
+    TextFunctionsType,
+  } from "$lib/types/block_list";
   import { onMount } from "svelte";
   import Heading from "./Heading.svelte";
   import RdbView from "./RdbView.svelte";
@@ -85,9 +88,14 @@
 
   let own: HTMLDivElement;
 
+  let text_functions: TextFunctionsType | undefined = undefined;
+
   onMount(() => {
     const index = $block_list.findIndex((v) => v._id === block._id);
     $block_list[index].dom_node = own;
+    if (text_functions !== undefined) {
+      $block_list[index].text_functions = text_functions;
+    }
     $block_list = $block_list;
   });
 </script>
@@ -96,7 +104,13 @@
   {#if block.type === "paragraph"}
     {@const block_data = checkParagraph()}
     {#if block_data !== null}
-      <Paragraph {block_data} {page_id} {block_list} bind:own />
+      <Paragraph
+        {block_data}
+        {page_id}
+        {block_list}
+        bind:own
+        bind:text_functions
+      />
     {:else}
       <div>Error: Paragraph</div>
     {/if}
@@ -115,7 +129,13 @@
   {:else if block.type === "heading"}
     {@const block_data = checkHeading()}
     {#if block_data !== null}
-      <Heading {block_data} {page_id} {block_list} bind:own />
+      <Heading
+        {block_data}
+        {page_id}
+        {block_list}
+        bind:own
+        bind:text_functions
+      />
     {:else}
       <div>Error: Heading</div>
     {/if}

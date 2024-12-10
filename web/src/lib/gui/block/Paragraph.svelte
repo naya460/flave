@@ -2,6 +2,7 @@
   import { flvFetch } from "$lib/flv_fetch";
   import type { blockListStore } from "$lib/types/block_list";
   import { onDestroy } from "svelte";
+  import { onKeyDown, setEnd } from "./Paragraph";
 
   export let page_id: string;
 
@@ -26,6 +27,12 @@
 
   export let own: HTMLDivElement;
   let timeout: number | undefined = undefined;
+
+  export const text_functions = {
+    setEnd: () => {
+      setEnd(own);
+    },
+  };
 
   async function timeoutHandler() {
     if (block_data !== null) {
@@ -55,6 +62,11 @@
       }
     }}
     on:keydown={(event) => {
+      onKeyDown(
+        event,
+        $block_list.filter((v) => v?.text_functions !== undefined)
+      );
+
       if (!timeout) {
         timeout = setInterval(timeoutHandler, 1000);
       }

@@ -1,6 +1,9 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import type { blockListStore } from "$lib/types/block_list";
+  import type {
+    blockListStore,
+    TextFunctionsType,
+  } from "$lib/types/block_list";
   import Paragraph from "./Paragraph.svelte";
 
   export let page_id: string;
@@ -14,6 +17,8 @@
   export let block_list: blockListStore;
 
   export let own: HTMLDivElement;
+
+  export let text_functions: TextFunctionsType | undefined;
 </script>
 
 <Paragraph
@@ -21,6 +26,7 @@
   {block_data}
   {block_list}
   bind:own
+  bind:text_functions
   updateHandler={async (id, text) => {
     await flvFetch(`blocks/${id}`, "PATCH", {
       data: { text },
