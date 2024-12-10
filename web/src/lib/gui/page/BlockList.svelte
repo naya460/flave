@@ -115,34 +115,6 @@
         event.preventDefault();
       }
     }}
-    on:keydown={(event) => {
-      const selection = window.getSelection();
-      if (selection === null) return;
-      const focus_node = selection.focusNode;
-      if (focus_node === null) return;
-
-      const index = $blocks.findIndex(
-        (v) => v.dom_node?.childNodes[0] === focus_node
-      );
-      if (index < 0) return;
-
-      if (event.key === "ArrowUp" && index >= 1) {
-        const data = $blocks[index - 1].data;
-
-        if (
-          typeof data === "object" &&
-          data !== null &&
-          "text" in data &&
-          data.text === ""
-        ) {
-          const node = $blocks[index - 1]?.dom_node;
-          if (node !== undefined) {
-            selection.setPosition(node);
-          }
-          event.preventDefault();
-        }
-      }
-    }}
     on:beforeinput={(event) => {
       const selection = window.getSelection();
       if (selection === null) return;

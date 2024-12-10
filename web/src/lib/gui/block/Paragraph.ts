@@ -19,6 +19,11 @@ export function onKeyDown(event: KeyboardEvent, block_list: BlockListType) {
 		event.preventDefault();
 		onDownKeyDown(block_list, selection, index);
 	}
+
+	if (event.key === "ArrowUp") {
+		event.preventDefault();
+		onUpKeyDown(block_list, selection, index);
+	}
 }
 
 function getSelection(block_list: BlockListType): [Selection, number] | null {
@@ -77,6 +82,23 @@ function onDownKeyDown(
 	const size = context.measureText(text);
 
 	block_list[index + 1]?.text_functions?.setCursor(size.width);
+}
+
+function onUpKeyDown(
+	block_list: BlockListType,
+	selection: Selection,
+	index: number
+) {
+	let text = block_list[index].dom_node?.firstChild?.nodeValue;
+	if (text === null || text === undefined) return;
+	text = text.slice(0, selection.focusOffset);
+
+	const canvas = new OffscreenCanvas(0, 0);
+	const context = canvas.getContext("2d");
+	if (context === null) return;
+	const size = context.measureText(text);
+
+	block_list[index - 1]?.text_functions?.setCursor(size.width);
 }
 
 export function setEnd(own: HTMLDivElement) {
