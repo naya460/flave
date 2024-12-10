@@ -5,7 +5,7 @@
     TextFunctionsType,
   } from "$lib/types/block_list";
   import { onDestroy } from "svelte";
-  import { onKeyDown, setBegin, setEnd } from "./Paragraph";
+  import { onKeyDown, setBegin, setCursor, setEnd } from "./Paragraph";
 
   export let page_id: string;
 
@@ -34,6 +34,7 @@
   export const text_functions: TextFunctionsType = {
     setEnd: () => setEnd(own),
     setBegin: () => setBegin(own),
+    setCursor: (left: number) => setCursor(own, left),
   };
 
   async function timeoutHandler() {

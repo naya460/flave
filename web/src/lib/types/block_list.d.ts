@@ -3,6 +3,7 @@ import type { Writable } from "svelte/store";
 export type TextFunctionsType = {
 	setEnd: () => void;
 	setBegin: () => void;
+	setCursor: (left: number) => void;
 };
 
 export type BlockListType = {

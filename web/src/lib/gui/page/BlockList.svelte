@@ -126,23 +126,6 @@
       );
       if (index < 0) return;
 
-      if (event.key === "ArrowDown") {
-        const data = $blocks[index + 1].data;
-
-        if (
-          typeof data === "object" &&
-          data !== null &&
-          "text" in data &&
-          data.text === ""
-        ) {
-          const node = $blocks[index + 1]?.dom_node;
-          if (node !== undefined) {
-            selection.setPosition(node);
-          }
-          event.preventDefault();
-        }
-      }
-
       if (event.key === "ArrowUp" && index >= 1) {
         const data = $blocks[index - 1].data;
 
