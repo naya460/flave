@@ -115,44 +115,74 @@
       }
     }}
     on:keydown={(event) => {
-      if (event.key === "ArrowRight") {
-        const selection = window.getSelection();
-        if (selection === null) return;
-        const focus_node = selection.focusNode;
-        if (focus_node === null) return;
+      const selection = window.getSelection();
+      if (selection === null) return;
+      const focus_node = selection.focusNode;
+      if (focus_node === null) return;
 
-        if (selection.focusOffset === focus_node.nodeValue?.length) {
+      const index = $blocks.findIndex(
+        (v) => v.dom_node?.childNodes[0] === focus_node
+      );
+      if (index < 0) return;
+
+      if (event.key === "ArrowLeft") {
+        const block = $blocks[index - 1];
+
+        if (selection.focusOffset === 0 && index !== 0) {
           event.preventDefault();
+
+          const node = block?.dom_node;
+          let offset = 0;
+
+          if (
+            typeof block.data === "object" &&
+            block.data !== null &&
+            "text" in block.data &&
+            typeof block.data.text === "string"
+          ) {
+            offset = block.data.text.length;
+          }
+
+          if (node !== undefined) {
+            selection.setPosition(node.firstChild, offset);
+          }
         }
       }
 
-      if (event.key === "ArrowLeft") {
-        const selection = window.getSelection();
-        if (selection === null) return;
-        const focus_node = selection.focusNode;
-        if (focus_node === null) return;
+      if (event.key === "ArrowRight") {
+        const current_block = $blocks[index];
 
-        if (selection.focusOffset === 0) {
+        let offset = 0;
+        if (
+          typeof current_block.data === "object" &&
+          current_block.data !== null &&
+          "text" in current_block.data &&
+          typeof current_block.data.text === "string"
+        ) {
+          offset = current_block.data.text.length;
+        }
+
+        const next_block = $blocks[index + 1];
+
+        if (selection.focusOffset === offset) {
           event.preventDefault();
+
+          const node = next_block?.dom_node;
+
+          if (node !== undefined) {
+            selection.setPosition(node.firstChild, 0);
+          }
         }
       }
 
       if (event.key === "ArrowDown") {
-        const selection = window.getSelection();
-        if (selection === null) return;
-        const focus_node = selection.focusNode;
-        if (focus_node === null) return;
+        const data = $blocks[index + 1].data;
 
-        const index = $blocks.findIndex(
-          (v) => v.dom_node?.childNodes[0] === focus_node
-        );
-        if (index < 0) return;
-
-        if (index === $blocks.length - 1) {
-          event.preventDefault();
-        } else if (
-          $blocks[index + 1].dom_node?.childNodes[0].nodeValue?.length === 0 &&
-          event.shiftKey === false
+        if (
+          typeof data === "object" &&
+          data !== null &&
+          "text" in data &&
+          data.text === ""
         ) {
           const node = $blocks[index + 1]?.dom_node;
           if (node !== undefined) {
@@ -162,20 +192,14 @@
         }
       }
 
-      if (event.key === "ArrowUp") {
-        const selection = window.getSelection();
-        if (selection === null) return;
-        const focus_node = selection.focusNode;
-        if (focus_node === null) return;
-
-        const index = $blocks.findIndex(
-          (v) => v.dom_node?.childNodes[0] === focus_node
-        );
-        if (index < 1) return;
+      if (event.key === "ArrowUp" && index >= 1) {
+        const data = $blocks[index - 1].data;
 
         if (
-          $blocks[index - 1].dom_node?.childNodes[0].nodeValue?.length === 0 &&
-          event.shiftKey === false
+          typeof data === "object" &&
+          data !== null &&
+          "text" in data &&
+          data.text === ""
         ) {
           const node = $blocks[index - 1]?.dom_node;
           if (node !== undefined) {
