@@ -126,32 +126,6 @@
       );
       if (index < 0) return;
 
-      if (event.key === "ArrowRight") {
-        const current_block = $blocks[index];
-
-        let offset = 0;
-        if (
-          typeof current_block.data === "object" &&
-          current_block.data !== null &&
-          "text" in current_block.data &&
-          typeof current_block.data.text === "string"
-        ) {
-          offset = current_block.data.text.length;
-        }
-
-        const next_block = $blocks[index + 1];
-
-        if (selection.focusOffset === offset) {
-          event.preventDefault();
-
-          const node = next_block?.dom_node;
-
-          if (node !== undefined) {
-            selection.setPosition(node.firstChild, 0);
-          }
-        }
-      }
-
       if (event.key === "ArrowDown") {
         const data = $blocks[index + 1].data;
 

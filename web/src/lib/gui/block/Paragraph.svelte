@@ -1,8 +1,11 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import type { blockListStore } from "$lib/types/block_list";
+  import type {
+    blockListStore,
+    TextFunctionsType,
+  } from "$lib/types/block_list";
   import { onDestroy } from "svelte";
-  import { onKeyDown, setEnd } from "./Paragraph";
+  import { onKeyDown, setBegin, setEnd } from "./Paragraph";
 
   export let page_id: string;
 
@@ -28,10 +31,9 @@
   export let own: HTMLDivElement;
   let timeout: number | undefined = undefined;
 
-  export const text_functions = {
-    setEnd: () => {
-      setEnd(own);
-    },
+  export const text_functions: TextFunctionsType = {
+    setEnd: () => setEnd(own),
+    setBegin: () => setBegin(own),
   };
 
   async function timeoutHandler() {
