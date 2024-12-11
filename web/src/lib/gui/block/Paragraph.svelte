@@ -7,6 +7,7 @@
   import { onDestroy } from "svelte";
   import {
     concatEnd,
+    deleteBlock,
     onKeyDown,
     setBegin,
     setCursor,
@@ -47,6 +48,9 @@
       });
     },
     concatEnd: (text: string) => concatEnd(own, block_data._id, text),
+    deleteBlock: () => {
+      $block_list = deleteBlock($block_list, block_data._id);
+    },
   };
 
   async function timeoutHandler() {
@@ -77,13 +81,11 @@
       }
     }}
     on:keydown={(event) => {
-      const [changed, tmp_block_list] = onKeyDown(
+      const changed = onKeyDown(
         event,
         $block_list.filter((v) => v?.text_functions !== undefined),
         { family: "sans-serif", size: parseFloat(style.fontSize) }
       );
-
-      $block_list = tmp_block_list;
 
       if (event.key === "Enter") {
         const res = flvFetch(`blocks`, "POST", {

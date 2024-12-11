@@ -12,11 +12,11 @@ export function onKeyDown(
 		family: string;
 		size: number;
 	}
-): [boolean, BlockListType] {
+): boolean {
 	let changed = false;
 
 	const tmp = getSelection(block_list);
-	if (tmp === null) return [false, block_list];
+	if (tmp === null) return false;
 	const [selection, index] = tmp;
 
 	if (event.key === "ArrowLeft") {
@@ -42,11 +42,10 @@ export function onKeyDown(
 	if (event.key === "Backspace") {
 		event.preventDefault();
 		const tmp = onBackspaceKeyDown(block_list, selection, index);
-		if (tmp[0] === true) changed = true;
-		block_list = tmp[1];
+		if (tmp) changed = tmp;
 	}
 
-	return [changed, block_list];
+	return changed;
 }
 
 function getSelection(block_list: BlockListType): [Selection, number] | null {
@@ -138,7 +137,7 @@ function onBackspaceKeyDown(
 	block_list: BlockListType,
 	selection: Selection,
 	index: number
-): [boolean, BlockListType] {
+): boolean {
 	let changed = false;
 
 	if (selection.isCollapsed) {
@@ -151,14 +150,7 @@ function onBackspaceKeyDown(
 				const ok = block_list[index - 1].text_functions?.concatEnd(node_value);
 
 				if (ok) {
-					// send delete block to server
-					flvFetch(`blocks/${block_list[index]._id}`, "DELETE");
-
-					// delete block in block list
-					const list_index = block_list.findIndex(
-						(v) => v._id === block_list[index]._id
-					);
-					block_list.splice(list_index, 1);
+					block_list[index].text_functions?.deleteBlock();
 				}
 			}
 		}
@@ -191,7 +183,7 @@ function onBackspaceKeyDown(
 		}
 	}
 
-	return [changed, block_list];
+	return changed;
 }
 
 //
@@ -295,4 +287,18 @@ export function concatEnd(
 		return true;
 	}
 	return false;
+}
+
+export function deleteBlock(
+	block_list: BlockListType,
+	id: string
+): BlockListType {
+	// send delete block to server
+	flvFetch(`blocks/${id}`, "DELETE");
+
+	// delete block in block list
+	const list_index = block_list.findIndex((v) => v._id === id);
+	block_list.splice(list_index, 1);
+
+	return block_list;
 }
