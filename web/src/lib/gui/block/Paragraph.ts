@@ -1,6 +1,13 @@
 import type { BlockListType } from "$lib/types/block_list";
 
-export function onKeyDown(event: KeyboardEvent, block_list: BlockListType) {
+export function onKeyDown(
+	event: KeyboardEvent,
+	block_list: BlockListType,
+	font: {
+		family: string;
+		size: number;
+	}
+) {
 	const tmp = getSelection(block_list);
 	if (tmp === null) return;
 	const [selection, index] = tmp;
@@ -17,12 +24,12 @@ export function onKeyDown(event: KeyboardEvent, block_list: BlockListType) {
 
 	if (event.key === "ArrowDown") {
 		event.preventDefault();
-		onDownKeyDown(block_list, selection, index);
+		onDownKeyDown(block_list, selection, index, font);
 	}
 
 	if (event.key === "ArrowUp") {
 		event.preventDefault();
-		onUpKeyDown(block_list, selection, index);
+		onUpKeyDown(block_list, selection, index, font);
 	}
 }
 
@@ -70,7 +77,11 @@ function onRightKeyDown(
 function onDownKeyDown(
 	block_list: BlockListType,
 	selection: Selection,
-	index: number
+	index: number,
+	font: {
+		family: string;
+		size: number;
+	}
 ) {
 	let text = block_list[index].dom_node?.firstChild?.nodeValue;
 	if (text === null || text === undefined) return;
@@ -79,6 +90,7 @@ function onDownKeyDown(
 	const canvas = new OffscreenCanvas(0, 0);
 	const context = canvas.getContext("2d");
 	if (context === null) return;
+	context.font = `${font.size * 10}px ${font.family}`;
 	const size = context.measureText(text);
 
 	block_list[index + 1]?.text_functions?.setCursor(size.width);
@@ -87,7 +99,11 @@ function onDownKeyDown(
 function onUpKeyDown(
 	block_list: BlockListType,
 	selection: Selection,
-	index: number
+	index: number,
+	font: {
+		family: string;
+		size: number;
+	}
 ) {
 	let text = block_list[index].dom_node?.firstChild?.nodeValue;
 	if (text === null || text === undefined) return;
@@ -96,6 +112,7 @@ function onUpKeyDown(
 	const canvas = new OffscreenCanvas(0, 0);
 	const context = canvas.getContext("2d");
 	if (context === null) return;
+	context.font = `${font.size * 10}px ${font.family}`;
 	const size = context.measureText(text);
 
 	block_list[index - 1]?.text_functions?.setCursor(size.width);
@@ -115,10 +132,18 @@ export function setBegin(own: HTMLDivElement) {
 	selection.setPosition(own.firstChild, 0);
 }
 
-export function setCursor(own: HTMLDivElement, left: number) {
+export function setCursor(
+	own: HTMLDivElement,
+	left: number,
+	font: {
+		family: string;
+		size: number;
+	}
+) {
 	const canvas = new OffscreenCanvas(0, 0);
 	const context = canvas.getContext("2d");
 	if (context === null) return;
+	context.font = `${font.size * 10}px ${font.family}`;
 
 	const text = own.firstChild?.nodeValue;
 	if (text === undefined || text === null) return;

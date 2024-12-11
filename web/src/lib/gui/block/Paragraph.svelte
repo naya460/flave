@@ -17,7 +17,7 @@
   export let block_list: blockListStore;
 
   export let style: {
-    fontSize?: `${number}${"px" | "rem"}`;
+    fontSize: `${number}rem`;
   } = {
     fontSize: "1rem",
   };
@@ -34,7 +34,12 @@
   export const text_functions: TextFunctionsType = {
     setEnd: () => setEnd(own),
     setBegin: () => setBegin(own),
-    setCursor: (left: number) => setCursor(own, left),
+    setCursor: (left: number) => {
+      setCursor(own, left, {
+        family: "sans-serif",
+        size: parseFloat(style.fontSize),
+      });
+    },
   };
 
   async function timeoutHandler() {
@@ -67,7 +72,8 @@
     on:keydown={(event) => {
       onKeyDown(
         event,
-        $block_list.filter((v) => v?.text_functions !== undefined)
+        $block_list.filter((v) => v?.text_functions !== undefined),
+        { family: "sans-serif", size: parseFloat(style.fontSize) }
       );
 
       if (!timeout) {
@@ -125,5 +131,6 @@
   .top {
     outline: none;
     min-height: 1rem;
+    font-family: sans-serif;
   }
 </style>
