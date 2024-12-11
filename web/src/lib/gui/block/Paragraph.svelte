@@ -70,15 +70,13 @@
       }
     }}
     on:keydown={(event) => {
-      onKeyDown(
+      const [changed, tmp_block_list] = onKeyDown(
         event,
         $block_list.filter((v) => v?.text_functions !== undefined),
         { family: "sans-serif", size: parseFloat(style.fontSize) }
       );
 
-      if (!timeout) {
-        timeout = setInterval(timeoutHandler, 1000);
-      }
+      $block_list = tmp_block_list;
 
       if (event.key === "Enter") {
         const res = flvFetch(`blocks`, "POST", {
@@ -104,22 +102,10 @@
         });
 
         event.preventDefault();
-      } else if (event.key === "Backspace") {
-        if (own.innerText.length === 0) {
-          const res = flvFetch(`blocks/${block_data._id}`, "DELETE");
+      }
 
-          res.then((v) => {
-            if (v.ok === false) return;
-
-            const index = $block_list.findIndex(
-              (v) => v._id === block_data._id
-            );
-            $block_list.splice(index, 1);
-            $block_list = $block_list;
-          });
-
-          event.preventDefault();
-        }
+      if (!timeout && changed) {
+        timeout = setInterval(timeoutHandler, 1000);
       }
     }}
   >

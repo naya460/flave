@@ -1,4 +1,9 @@
+import { flvFetch } from "$lib/flv_fetch";
 import type { BlockListType } from "$lib/types/block_list";
+
+//
+// Keydown Events
+//
 
 export function onKeyDown(
 	event: KeyboardEvent,
@@ -7,9 +12,11 @@ export function onKeyDown(
 		family: string;
 		size: number;
 	}
-) {
+): [boolean, BlockListType] {
+	let changed = false;
+
 	const tmp = getSelection(block_list);
-	if (tmp === null) return;
+	if (tmp === null) return [false, block_list];
 	const [selection, index] = tmp;
 
 	if (event.key === "ArrowLeft") {
@@ -31,6 +38,15 @@ export function onKeyDown(
 		event.preventDefault();
 		onUpKeyDown(block_list, selection, index, font);
 	}
+
+	if (event.key === "Backspace") {
+		event.preventDefault();
+		const tmp = onBackspaceKeyDown(block_list, selection, index);
+		if (tmp[0] === true) changed = true;
+		block_list = tmp[1];
+	}
+
+	return [changed, block_list];
 }
 
 function getSelection(block_list: BlockListType): [Selection, number] | null {
@@ -117,6 +133,91 @@ function onUpKeyDown(
 
 	block_list[index - 1]?.text_functions?.setCursor(size.width);
 }
+
+function onBackspaceKeyDown(
+	block_list: BlockListType,
+	selection: Selection,
+	index: number
+): [boolean, BlockListType] {
+	let changed = false;
+
+	if (selection.isCollapsed) {
+		// delete line
+		if (selection.focusOffset == 0 && index !== 0) {
+			// get current text
+			const node_value = block_list[index].dom_node?.firstChild?.nodeValue;
+			if (node_value !== undefined && node_value !== null) {
+				// generate concat text
+				const text =
+					block_list[index - 1].dom_node?.firstChild?.nodeValue?.concat(
+						node_value
+					);
+
+				if (text !== undefined) {
+					// send delete block to server
+					flvFetch(`blocks/${block_list[index]._id}`, "DELETE");
+
+					// delete block in block list
+					const list_index = block_list.findIndex(
+						(v) => v._id === block_list[index]._id
+					);
+					block_list.splice(list_index, 1);
+
+					const target_node = block_list[index - 1].dom_node?.firstChild;
+					if (target_node !== undefined && target_node !== null) {
+						const offset = target_node.nodeValue?.length;
+
+						if (offset !== undefined) {
+							// apply deleted text to dom
+							target_node.nodeValue = text;
+
+							// move selection
+							selection.setPosition(target_node, offset);
+
+							// send change block to server
+							flvFetch(`blocks/${block_list[index - 1]._id}`, "PATCH", {
+								data: { text },
+							});
+						}
+					}
+				}
+			}
+		}
+		// delete text
+		else {
+			// generate deleted text
+			const node_value = block_list[index].dom_node?.firstChild?.nodeValue;
+			const text = node_value
+				?.slice(0, selection.focusOffset - 1)
+				.concat(node_value?.slice(selection.focusOffset));
+
+			if (
+				block_list[index].dom_node?.firstChild?.nodeValue !== undefined &&
+				block_list[index].dom_node?.firstChild?.nodeValue !== null &&
+				text !== undefined
+			) {
+				const offset = selection.focusOffset;
+
+				// apply deleted text to dom
+				block_list[index].dom_node.firstChild.nodeValue = text;
+
+				// move selection
+				selection.setPosition(
+					block_list[index].dom_node.firstChild,
+					offset - 1
+				);
+
+				changed = true;
+			}
+		}
+	}
+
+	return [changed, block_list];
+}
+
+//
+// text functions
+//
 
 export function setEnd(own: HTMLDivElement) {
 	const selection = window.getSelection();
