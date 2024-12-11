@@ -5,7 +5,13 @@
     TextFunctionsType,
   } from "$lib/types/block_list";
   import { onDestroy } from "svelte";
-  import { onKeyDown, setBegin, setCursor, setEnd } from "./Paragraph";
+  import {
+    concatEnd,
+    onKeyDown,
+    setBegin,
+    setCursor,
+    setEnd,
+  } from "./Paragraph";
 
   export let page_id: string;
 
@@ -40,6 +46,7 @@
         size: parseFloat(style.fontSize),
       });
     },
+    concatEnd: (text: string) => concatEnd(own, block_data._id, text),
   };
 
   async function timeoutHandler() {

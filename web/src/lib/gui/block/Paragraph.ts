@@ -148,12 +148,9 @@ function onBackspaceKeyDown(
 			const node_value = block_list[index].dom_node?.firstChild?.nodeValue;
 			if (node_value !== undefined && node_value !== null) {
 				// generate concat text
-				const text =
-					block_list[index - 1].dom_node?.firstChild?.nodeValue?.concat(
-						node_value
-					);
+				const ok = block_list[index - 1].text_functions?.concatEnd(node_value);
 
-				if (text !== undefined) {
+				if (ok) {
 					// send delete block to server
 					flvFetch(`blocks/${block_list[index]._id}`, "DELETE");
 
@@ -162,24 +159,6 @@ function onBackspaceKeyDown(
 						(v) => v._id === block_list[index]._id
 					);
 					block_list.splice(list_index, 1);
-
-					const target_node = block_list[index - 1].dom_node?.firstChild;
-					if (target_node !== undefined && target_node !== null) {
-						const offset = target_node.nodeValue?.length;
-
-						if (offset !== undefined) {
-							// apply deleted text to dom
-							target_node.nodeValue = text;
-
-							// move selection
-							selection.setPosition(target_node, offset);
-
-							// send change block to server
-							flvFetch(`blocks/${block_list[index - 1]._id}`, "PATCH", {
-								data: { text },
-							});
-						}
-					}
 				}
 			}
 		}
@@ -282,4 +261,38 @@ export function setCursor(
 	const offset = begin_error < end_error ? begin : end;
 
 	selection.setPosition(own.firstChild, offset);
+}
+
+export function concatEnd(
+	own: HTMLDivElement,
+	id: string,
+	text: string
+): boolean {
+	const selection = window.getSelection();
+	if (selection === null) return false;
+
+	const node_value = own.firstChild?.nodeValue;
+
+	if (
+		node_value !== undefined &&
+		node_value !== null &&
+		own.firstChild !== null
+	) {
+		const bind_text = node_value.concat(text);
+		const offset = node_value.length;
+
+		// apply deleted text to dom
+		own.firstChild.nodeValue = bind_text;
+
+		// move selection
+		selection.setPosition(own.firstChild, offset);
+
+		// send change block to server
+		flvFetch(`blocks/${id}`, "PATCH", {
+			data: { text: bind_text },
+		});
+
+		return true;
+	}
+	return false;
 }
