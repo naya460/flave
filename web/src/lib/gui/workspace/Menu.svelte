@@ -43,6 +43,15 @@
 </div>
 
 <div class="contents">
+  <Button
+    style={{ ...style, width: "100%", textAlign: "left" }}
+    on:click={() => location.assign("query_view")}
+  >
+    RDB Query View
+  </Button>
+</div>
+
+<div class="contents">
   <div class="heading">
     <div>RDBs</div>
     <Button {style} on:click={createRdb}>+</Button>

@@ -24,6 +24,5 @@
     block_id=""
     rdb_id={data.rdb_id}
     display={properties.map((v) => v.id)}
-    rdb_data={data.rdb_data}
   />
 {/if}
