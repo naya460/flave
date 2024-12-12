@@ -7,6 +7,7 @@
   import { onMount } from "svelte";
   import Heading from "./Heading.svelte";
   import RdbView from "./RdbView.svelte";
+  import BulletList from "./BulletList.svelte";
 
   export let page_id: string;
 
@@ -86,6 +87,23 @@
     }
   }
 
+  function checkBulletList() {
+    if (
+      block.type === "bullet_list" &&
+      typeof block.data === "object" &&
+      block.data !== null &&
+      "text" in block.data &&
+      typeof block.data.text === "string"
+    ) {
+      return {
+        _id: block._id,
+        text: block.data.text,
+      };
+    } else {
+      return null;
+    }
+  }
+
   let own: HTMLDivElement;
 
   let text_functions: TextFunctionsType | undefined = undefined;
@@ -138,6 +156,19 @@
       />
     {:else}
       <div>Error: Heading</div>
+    {/if}
+  {:else if block.type === "bullet_list"}
+    {@const block_data = checkBulletList()}
+    {#if block_data !== null}
+      <BulletList
+        {block_data}
+        {page_id}
+        {block_list}
+        bind:own
+        bind:text_functions
+      />
+    {:else}
+      <div>Error: BulletList</div>
     {/if}
   {:else}
     <div>Undefined Block Type</div>

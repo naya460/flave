@@ -171,6 +171,30 @@
         })(),
       },
       {
+        name: "Insert Bullet List",
+        onClick: () => {
+          const res = flvFetch("blocks", "POST", {
+            page_id: page_id,
+            next_of: context_id,
+            type: "bullet_list",
+            data: { text: "" },
+          });
+
+          res.then((v) => {
+            v.text().then((w) => {
+              if (typeof w !== "string") return;
+              const index = $blocks.findIndex((v) => v._id === context_id);
+              $blocks.splice(index + 1, 0, {
+                _id: w,
+                type: "bullet_list",
+                data: { text: "" },
+              });
+              $blocks = $blocks;
+            });
+          });
+        },
+      },
+      {
         name: "Insert RDB View",
         contents: (() => {
           return rdb_list.map((rdb) => {

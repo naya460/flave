@@ -57,3 +57,8 @@ flave_block_type.set("heading", {
   ...flave_block_type.get("paragraph"),
   level: "number",
 });
+
+// list
+flave_block_type.set("bullet_list", {
+  ...flave_block_type.get("paragraph"),
+});
