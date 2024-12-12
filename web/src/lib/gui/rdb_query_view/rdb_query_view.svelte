@@ -1,44 +1,18 @@
 <script lang="ts">
-  import { flvFetch } from "$lib/flv_fetch";
   import Button from "../common/Button.svelte";
   import ContextMenu from "../common/ContextMenu.svelte";
-  import type { PageList } from "../rdb_view/page_list_filter";
   import Table from "../rdb_view/table/table.svelte";
-  import type { PropertyHeader } from "../rdb_view/types";
   import { RdbList } from "./rdb_list";
+  import { RdbData } from "./rdb_data";
+  import { RdbPageList } from "./rdb_page_list";
 
   export let workspace_id: string;
 
   let rdb_list: RdbList = new RdbList(workspace_id);
 
-  async function getRdbData() {
-    if (current_rdb_id === undefined) return;
+  let rdb_data: RdbData = new RdbData(null);
 
-    const res = await flvFetch(`rdbs/${current_rdb_id}`);
-    rdb_data = await res.json();
-  }
-  let rdb_data:
-    | {
-        title: string;
-        properties?: PropertyHeader[];
-        constraints?: {
-          id: string;
-          type: string;
-          option: object;
-        }[];
-      }
-    | undefined = undefined;
-
-  async function getRdbPageList() {
-    if (current_rdb_id === undefined) return;
-
-    const res = await flvFetch(`rdbs/${current_rdb_id}/pages`);
-    if (res.ok === false) return;
-    rdb_page_list = await res.json();
-  }
-  let rdb_page_list: PageList | undefined = undefined;
-
-  let current_rdb_id: string | undefined = undefined;
+  let rdb_page_list: RdbPageList = new RdbPageList(null);
 
   let rdb_list_hidden = true;
 </script>
@@ -56,9 +30,7 @@
   >
     <div class="select">
       <div>
-        {current_rdb_id === undefined
-          ? "Select RDB"
-          : $rdb_list.find((v) => v._id === current_rdb_id)?.title}
+        {$rdb_data.title}
       </div>
       <div>v</div>
     </div>
@@ -74,9 +46,8 @@
           textAlign: "left",
         }}
         on:click={() => {
-          current_rdb_id = item._id;
-          getRdbData();
-          getRdbPageList();
+          rdb_data.changeRdb(item._id);
+          rdb_page_list.changeRdb(item._id);
           rdb_list_hidden = true;
         }}
       >
@@ -86,12 +57,12 @@
   </ContextMenu>
 </div>
 
-{#if current_rdb_id !== undefined && rdb_data !== undefined && rdb_page_list !== undefined}
+{#if $rdb_data.rdb_id !== null && $rdb_page_list.rdb_id !== null}
   <Table
     rdb_id={undefined}
-    properties={rdb_data.properties === undefined ? [] : rdb_data.properties}
-    constraints={rdb_data.constraints === undefined ? [] : rdb_data.constraints}
-    page_list={rdb_page_list}
+    properties={$rdb_data.properties}
+    constraints={$rdb_data.constraints}
+    page_list={$rdb_page_list.page_list}
     set_menu={() => {}}
     push_page={() => {}}
   />
