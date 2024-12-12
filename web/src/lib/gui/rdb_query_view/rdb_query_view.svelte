@@ -95,7 +95,7 @@
 
 {#if current_rdb_id !== undefined && rdb_data !== undefined && rdb_page_list !== undefined}
   <Table
-    rdb_id={current_rdb_id}
+    rdb_id={undefined}
     properties={rdb_data.properties === undefined ? [] : rdb_data.properties}
     constraints={rdb_data.constraints === undefined ? [] : rdb_data.constraints}
     page_list={rdb_page_list}

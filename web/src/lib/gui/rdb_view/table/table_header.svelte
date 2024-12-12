@@ -5,7 +5,7 @@
   import TextInput from "../../common/TextInput.svelte";
   import type { PropertyHeader } from "../types";
 
-  export let rdb_id: string;
+  export let rdb_id: string | undefined;
 
   export let properties: PropertyHeader[];
 
@@ -38,6 +38,7 @@
             style={{ outline: false }}
             value={property.name}
             onChange={async (event) => {
+              if (rdb_id === undefined) return;
               const value = event.currentTarget.value;
               await flvFetch(
                 `rdbs/${rdb_id}/property/${property.id}`,
@@ -75,6 +76,7 @@
                   return false;
                 })()}
                 on:change={(event) => {
+                  if (rdb_id === undefined) return;
                   let target_property = properties.find(
                     (v) => v.id === property.id
                   );
@@ -119,6 +121,7 @@
             textAlign: "left",
           }}
           on:click={() => {
+            if (rdb_id === undefined) return;
             context_id = property.id;
           }}
         >
@@ -129,31 +132,33 @@
   {/each}
 {/if}
 
-<div style:display="flex" style:flex-direction="row">
-  <Button
-    style={{
-      buttonStyle: "text",
-    }}
-    on:click={() => {
-      set_menu([
-        { dir: "properties", title: "properties" },
-        { dir: "add property", title: "add property" },
-      ]);
-    }}
-  >
-    +
-  </Button>
-  <Button
-    style={{
-      buttonStyle: "text",
-    }}
-    on:click={() => {
-      set_menu([{ dir: "properties", title: "properties" }]);
-    }}
-  >
-    …
-  </Button>
-</div>
+{#if rdb_id !== undefined}
+  <div style:display="flex" style:flex-direction="row">
+    <Button
+      style={{
+        buttonStyle: "text",
+      }}
+      on:click={() => {
+        set_menu([
+          { dir: "properties", title: "properties" },
+          { dir: "add property", title: "add property" },
+        ]);
+      }}
+    >
+      +
+    </Button>
+    <Button
+      style={{
+        buttonStyle: "text",
+      }}
+      on:click={() => {
+        set_menu([{ dir: "properties", title: "properties" }]);
+      }}
+    >
+      …
+    </Button>
+  </div>
+{/if}
 
 <style>
   .item {

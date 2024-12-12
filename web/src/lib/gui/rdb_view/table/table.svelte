@@ -7,7 +7,7 @@
   import type { PropertyHeader } from "../types";
   import type { PageList, PageType } from "../page_list_filter";
 
-  export let rdb_id: string;
+  export let rdb_id: string | undefined;
 
   export let properties: PropertyHeader[];
 
@@ -24,6 +24,8 @@
   export let push_page: (page: PageType) => void;
 
   async function postPage() {
+    if (rdb_id === undefined) return;
+
     const res = await flvFetch(`pages`, "POST", {
       workspace_id: $workspace_id_store,
       rdb_id: rdb_id,
@@ -51,16 +53,18 @@
         </div>
       {/each}
     {/if}
-    <Button
-      style={{
-        buttonStyle: "text",
-        textAlign: "left",
-        width: "100%",
-      }}
-      on:click={postPage}
-    >
-      + Create New Page
-    </Button>
+    {#if rdb_id !== undefined}
+      <Button
+        style={{
+          buttonStyle: "text",
+          textAlign: "left",
+          width: "100%",
+        }}
+        on:click={postPage}
+      >
+        + Create New Page
+      </Button>
+    {/if}
   </div>
 </div>
 
