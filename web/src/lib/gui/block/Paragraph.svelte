@@ -8,10 +8,12 @@
   import {
     concatEnd,
     deleteBlock,
+    insertBlock,
     onKeyDown,
     setBegin,
     setCursor,
     setEnd,
+    setText,
   } from "./Paragraph";
 
   export let page_id: string;
@@ -51,6 +53,18 @@
     deleteBlock: () => {
       $block_list = deleteBlock($block_list, block_data._id);
     },
+    insertBlock: (type, data) => {
+      insertBlock(page_id, block_data._id, type, data, (id) => {
+        const index = $block_list.findIndex((v) => v._id === block_data._id);
+        $block_list.splice(index + 1, 0, {
+          _id: id,
+          type,
+          data,
+        });
+        $block_list = $block_list;
+      });
+    },
+    setText: (text) => setText(own, block_data._id, text),
   };
 
   async function timeoutHandler() {
@@ -86,32 +100,6 @@
         $block_list.filter((v) => v?.text_functions !== undefined),
         { family: "sans-serif", size: parseFloat(style.fontSize) }
       );
-
-      if (event.key === "Enter") {
-        const res = flvFetch(`blocks`, "POST", {
-          page_id: page_id,
-          next_of: block_data._id,
-          type: "paragraph",
-          data: { text: "" },
-        });
-
-        res.then((v) => {
-          v.text().then((w) => {
-            if (typeof w !== "string") return;
-            const index = $block_list.findIndex(
-              (v) => v._id === block_data._id
-            );
-            $block_list.splice(index + 1, 0, {
-              _id: w,
-              type: "paragraph",
-              data: { text: "" },
-            });
-            $block_list = $block_list;
-          });
-        });
-
-        event.preventDefault();
-      }
 
       if (!timeout && changed) {
         timeout = setInterval(timeoutHandler, 1000);

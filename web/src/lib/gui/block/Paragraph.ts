@@ -45,6 +45,11 @@ export function onKeyDown(
 		if (tmp) changed = tmp;
 	}
 
+	if (event.key === "Enter") {
+		event.preventDefault();
+		onEnterKeyDown(block_list, selection, index);
+	}
+
 	return changed;
 }
 
@@ -186,6 +191,25 @@ function onBackspaceKeyDown(
 	return changed;
 }
 
+function onEnterKeyDown(
+	block_list: BlockListType,
+	selection: Selection,
+	index: number
+) {
+	if (selection.isCollapsed) {
+		const node_value = block_list[index]?.dom_node?.firstChild?.nodeValue;
+		const text1 = node_value?.slice(0, selection.focusOffset);
+		const text2 = node_value?.slice(selection.focusOffset);
+
+		if (text1 !== undefined && text2 !== undefined) {
+			block_list[index].text_functions?.insertBlock("paragraph", {
+				text: text2,
+			});
+			block_list[index].text_functions?.setText(text1);
+		}
+	}
+}
+
 //
 // text functions
 //
@@ -301,4 +325,38 @@ export function deleteBlock(
 	block_list.splice(list_index, 1);
 
 	return block_list;
+}
+
+export function insertBlock(
+	page_id: string,
+	block_id: string,
+	type: string,
+	data: unknown,
+	hook: (id: string) => void
+) {
+	const res = flvFetch("blocks", "POST", {
+		page_id,
+		next_of: block_id,
+		type,
+		data,
+	});
+
+	res.then((v) => {
+		v.text().then((w) => {
+			if (typeof w !== "string") return;
+			hook(w);
+		});
+	});
+}
+
+export function setText(own: HTMLDivElement, block_id: string, text: string) {
+	if (
+		own.firstChild?.nodeValue !== undefined &&
+		own.firstChild.nodeValue !== null
+	) {
+		own.firstChild.nodeValue = text;
+		flvFetch(`blocks/${block_id}`, "PATCH", {
+			data: { text },
+		});
+	}
 }

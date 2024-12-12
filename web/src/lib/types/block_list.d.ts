@@ -6,6 +6,8 @@ export type TextFunctionsType = {
 	setCursor: (left: number) => void;
 	concatEnd: (text: string) => boolean;
 	deleteBlock: () => void;
+	insertBlock: (type: string, data: unknown) => void;
+	setText: (text: string) => void;
 };
 
 export type BlockListType = {
