@@ -4,16 +4,17 @@
   import TableRow from "./table_row.svelte";
   import TableHeader from "./table_header.svelte";
   import { workspace_id_store } from "$lib/store/workspace";
-  import type { RdbData } from "$lib/gui/rdb_query_view/rdb_data/rdb_data";
   import type { RdbPageList } from "$lib/gui/rdb_query_view/rdb_page_list";
   import { afterUpdate } from "svelte";
   import { toFilteredPageList, type PageList } from "../page_list_filter";
   import type { FiltablePropertyList } from "$lib/gui/rdb_query_view/rdb_data/filtable_property_list";
+  import type { ConstraintType } from "$lib/gui/rdb_query_view/rdb_data/rdb_data";
 
   export let rdb_id: string;
 
-  export let rdb_data: RdbData;
   export let property_list: FiltablePropertyList;
+
+  export let constraints: ConstraintType[];
 
   export let rdb_page_list: RdbPageList;
 
@@ -70,7 +71,7 @@
         <div class="row">
           <TableRow
             properties={$property_list.filtered_properties}
-            constraints={$rdb_data.constraints}
+            {constraints}
             {page}
           />
         </div>

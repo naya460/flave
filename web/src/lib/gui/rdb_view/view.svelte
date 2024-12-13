@@ -56,8 +56,8 @@
   <div class="contents">
     <Table
       {rdb_id}
-      {rdb_data}
       {property_list}
+      constraints={$rdb_data.constraints}
       {rdb_page_list}
       bind:filters
       {set_menu}

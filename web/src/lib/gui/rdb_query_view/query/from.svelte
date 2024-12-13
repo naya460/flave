@@ -2,13 +2,13 @@
   import Button from "$lib/gui/common/Button.svelte";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import Frame from "../frame.svelte";
-  import type { RdbData } from "../rdb_data/rdb_data";
   import type { RdbList } from "../rdb_list";
   import type { RdbPageList } from "../rdb_page_list";
+  import { RdbFromClause } from "./from";
 
   export let rdb_list: RdbList;
 
-  export let rdb_data: RdbData;
+  export let rdb_from_clause: RdbFromClause;
 
   export let rdb_page_list: RdbPageList;
 
@@ -30,7 +30,7 @@
     >
       <div class="select">
         <div>
-          {$rdb_data.title}
+          {$rdb_from_clause.title}
         </div>
         <div>v</div>
       </div>
@@ -45,7 +45,7 @@
             textAlign: "left",
           }}
           on:click={() => {
-            rdb_data.changeRdb(item._id);
+            rdb_from_clause.changeRdb(item._id);
             rdb_page_list.changeRdb(item._id);
             rdb_list_hidden = true;
           }}

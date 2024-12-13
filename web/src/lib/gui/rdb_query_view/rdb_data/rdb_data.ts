@@ -1,7 +1,7 @@
 import { flvFetch } from "$lib/flv_fetch";
 import { FiltablePropertyList } from "./filtable_property_list";
 
-type ConstraintType = {
+export type ConstraintType = {
 	id: string;
 	type: string;
 	option: object;
