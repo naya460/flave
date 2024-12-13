@@ -4,8 +4,7 @@
   import Button from "../common/Button.svelte";
   import TextInput from "../common/TextInput.svelte";
   import Table from "./table/table.svelte";
-  import { RdbData } from "../rdb_query_view/rdb_data";
-  import { RdbFilteredProperties } from "../rdb_query_view/rdb_filtered_properties";
+  import { RdbData } from "../rdb_query_view/rdb_data/rdb_data";
   import { RdbPageList } from "../rdb_query_view/rdb_page_list";
   import MenuTop from "./menu/menu_top.svelte";
 
@@ -19,7 +18,7 @@
   }[] = [];
 
   let rdb_data = new RdbData(null);
-  let rdb_filtered_properties = new RdbFilteredProperties(rdb_data);
+  let property_list = rdb_data.getPropertyList();
 
   let rdb_page_list: RdbPageList = new RdbPageList(null);
 
@@ -28,7 +27,7 @@
   afterUpdate(() => {
     rdb_data.changeRdb(rdb_id);
     rdb_page_list.changeRdb(rdb_id);
-    display.forEach((v) => rdb_filtered_properties.add(v));
+    display.forEach((v) => property_list.add(v));
   });
 </script>
 
@@ -58,7 +57,7 @@
     <Table
       {rdb_id}
       {rdb_data}
-      {rdb_filtered_properties}
+      {property_list}
       {rdb_page_list}
       bind:filters
       {set_menu}
@@ -67,7 +66,7 @@
       {rdb_id}
       {block_id}
       {rdb_data}
-      {rdb_filtered_properties}
+      {property_list}
       bind:set_menu
       bind:filters
     />

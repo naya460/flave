@@ -5,7 +5,8 @@
   import TextInput from "../../common/TextInput.svelte";
   import type { PropertyHeader } from "../types";
 
-  export let rdb_id: string | undefined;
+  export let rdb_id: string;
+  export let menu_enable: boolean;
 
   export let properties: PropertyHeader[];
 
@@ -38,7 +39,8 @@
             style={{ outline: false }}
             value={property.name}
             onChange={async (event) => {
-              if (rdb_id === undefined) return;
+              if (menu_enable === false) return;
+
               const value = event.currentTarget.value;
               await flvFetch(
                 `rdbs/${rdb_id}/property/${property.id}`,
@@ -76,7 +78,8 @@
                   return false;
                 })()}
                 on:change={(event) => {
-                  if (rdb_id === undefined) return;
+                  if (menu_enable === false) return;
+
                   let target_property = properties.find(
                     (v) => v.id === property.id
                   );
@@ -121,7 +124,7 @@
             textAlign: "left",
           }}
           on:click={() => {
-            if (rdb_id === undefined) return;
+            if (menu_enable === false) return;
             context_id = property.id;
           }}
         >
@@ -132,7 +135,7 @@
   {/each}
 {/if}
 
-{#if rdb_id !== undefined}
+{#if menu_enable}
   <div style:display="flex" style:flex-direction="row">
     <Button
       style={{

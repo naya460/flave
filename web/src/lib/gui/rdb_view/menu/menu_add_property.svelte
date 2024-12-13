@@ -1,7 +1,6 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import type { RdbData } from "$lib/gui/rdb_query_view/rdb_data";
-  import type { RdbFilteredProperties } from "$lib/gui/rdb_query_view/rdb_filtered_properties";
+  import type { FiltablePropertyList } from "$lib/gui/rdb_query_view/rdb_data/filtable_property_list";
   import { RdbList } from "$lib/gui/rdb_query_view/rdb_list";
   import { workspace_id_store } from "$lib/store/workspace";
   import Button from "../../common/Button.svelte";
@@ -9,8 +8,7 @@
 
   export let rdb_id: string;
 
-  export let rdb_data: RdbData;
-  export let rdb_filtered_properties: RdbFilteredProperties;
+  export let property_list: FiltablePropertyList;
 
   let rdb_list = new RdbList($workspace_id_store);
 
@@ -24,8 +22,8 @@
       option,
     });
     const id = await res.text();
-    rdb_data.addProperty({ id, type, name, option } as PropertyHeader);
-    rdb_filtered_properties.add(id);
+    property_list.addProperty({ id, type, name, option } as PropertyHeader);
+    property_list.add(id);
   }
 
   async function createTextProperty() {

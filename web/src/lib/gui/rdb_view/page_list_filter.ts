@@ -21,6 +21,7 @@ type Filters = {
 }[];
 
 export function toFilteredPageList(
+	rdb_id: string,
 	properties: PropertyHeader[],
 	page_list: PageList,
 	filters: Filters
@@ -61,7 +62,7 @@ export function toFilteredPageList(
 		const page_property = properties.find((v) => v.type === "page");
 		if (page_property !== undefined) {
 			const v = {
-				id: "",
+				id: rdb_id,
 				value: {
 					title: page.title,
 				},

@@ -1,5 +1,5 @@
 import { flvFetch } from "$lib/flv_fetch";
-import type { PropertyHeader } from "../rdb_view/types";
+import { FiltablePropertyList } from "./filtable_property_list";
 
 type ConstraintType = {
 	id: string;
@@ -10,7 +10,6 @@ type ConstraintType = {
 type HookType = (v: {
 	rdb_id: string | null;
 	title: string;
-	properties: PropertyHeader[];
 	constraints: ConstraintType[];
 }) => void;
 
@@ -20,7 +19,7 @@ export class RdbData {
 	hooks: HookType[] = [];
 
 	title: string = "";
-	properties: PropertyHeader[] = [];
+	property_list = new FiltablePropertyList(null);
 	constraints: ConstraintType[] = [];
 
 	constructor(rdb_id: string | null) {
@@ -37,7 +36,7 @@ export class RdbData {
 		this.rdb_id = rdb_id;
 
 		this.title = "";
-		this.properties = [];
+		this.property_list.changeRdb(rdb_id);
 		this.constraints = [];
 
 		this.fetch();
@@ -50,16 +49,15 @@ export class RdbData {
 		const rdb_data = await res.json();
 
 		this.title = rdb_data.title;
-		this.properties =
-			rdb_data.properties === undefined ? [] : rdb_data.properties;
+
+		if (rdb_data.properties !== undefined) {
+			this.property_list.setProperties(rdb_data.properties);
+		}
+
 		this.constraints =
 			rdb_data.constraints === undefined ? [] : rdb_data.constraints;
 
 		this.callHooks();
-	}
-
-	addProperty(property: PropertyHeader) {
-		this.properties.push(property);
 	}
 
 	public subscribe(hook: HookType) {
@@ -67,7 +65,6 @@ export class RdbData {
 		hook({
 			rdb_id: this.rdb_id,
 			title: this.title,
-			properties: this.properties,
 			constraints: this.constraints,
 		});
 
@@ -77,12 +74,15 @@ export class RdbData {
 		};
 	}
 
+	public getPropertyList() {
+		return this.property_list;
+	}
+
 	callHooks() {
 		for (const hook of this.hooks) {
 			hook({
 				rdb_id: this.rdb_id,
 				title: this.title,
-				properties: this.properties,
 				constraints: this.constraints,
 			});
 		}

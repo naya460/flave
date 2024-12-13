@@ -3,16 +3,15 @@
   import ContextMenu from "../common/ContextMenu.svelte";
   import Table from "../rdb_view/table/table.svelte";
   import { RdbList } from "./rdb_list";
-  import { RdbData } from "./rdb_data";
+  import { RdbData } from "./rdb_data/rdb_data";
   import { RdbPageList } from "./rdb_page_list";
-  import { RdbFilteredProperties } from "./rdb_filtered_properties";
 
   export let workspace_id: string;
 
   let rdb_list = new RdbList(workspace_id);
 
   let rdb_data = new RdbData(null);
-  let rdb_filtered_properties = new RdbFilteredProperties(rdb_data);
+  let property_list = rdb_data.getPropertyList();
 
   let rdb_page_list: RdbPageList = new RdbPageList(null);
 
@@ -32,7 +31,7 @@
           height: "1.5rem",
         }}
         on:click={() => {
-          rdb_filtered_properties.removeAll();
+          property_list.removeAll();
         }}
       >
         0
@@ -45,7 +44,7 @@
           height: "1.5rem",
         }}
         on:click={() => {
-          rdb_filtered_properties.addAll();
+          property_list.addAll();
         }}
       >
         *
@@ -64,27 +63,25 @@
         +
       </Button>
       <ContextMenu bind:hidden={select_add_button_hidden}>
-        {#each $rdb_data.properties as data}
-          {#if $rdb_filtered_properties.display.includes(data.id)}
-            <Button
-              style={{
-                buttonStyle: "outline",
-                width: "auto",
-                height: "2.2rem",
-              }}
-              on:click={() => {
-                rdb_filtered_properties.add(data.id);
-              }}
-            >
-              {data.name}
-            </Button>
-          {/if}
+        {#each $property_list.hidden_properties as data (data.id)}
+          <Button
+            style={{
+              buttonStyle: "outline",
+              width: "auto",
+              height: "2.2rem",
+            }}
+            on:click={() => {
+              property_list.add(data.id);
+            }}
+          >
+            {data.name}
+          </Button>
         {/each}
       </ContextMenu>
     </div>
   </div>
   <div>
-    {#each $rdb_filtered_properties.properties as property}
+    {#each $property_list.filtered_properties as property}
       <Button
         style={{
           buttonStyle: "outline",
@@ -92,7 +89,7 @@
           height: "2.2rem",
         }}
         on:click={() => {
-          rdb_filtered_properties.remove(property.id);
+          property_list.remove(property.id);
         }}
       >
         {property.name}
@@ -133,7 +130,6 @@
           on:click={() => {
             rdb_data.changeRdb(item._id);
             rdb_page_list.changeRdb(item._id);
-            rdb_filtered_properties.addAll();
             rdb_list_hidden = true;
           }}
         >
@@ -149,8 +145,9 @@
   <div style:overflow-x="hidden">
     {#if $rdb_data.rdb_id !== null && $rdb_page_list.rdb_id !== null}
       <Table
-        rdb_id={undefined}
-        {rdb_filtered_properties}
+        rdb_id={$rdb_data.rdb_id}
+        menu_enable={false}
+        {property_list}
         {rdb_data}
         {rdb_page_list}
         set_menu={() => {}}
