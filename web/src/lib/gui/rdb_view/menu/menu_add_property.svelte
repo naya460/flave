@@ -2,6 +2,7 @@
   import { flvFetch } from "$lib/flv_fetch";
   import type { RdbData } from "$lib/gui/rdb_query_view/rdb_data";
   import type { RdbFilteredProperties } from "$lib/gui/rdb_query_view/rdb_filtered_properties";
+  import { RdbList } from "$lib/gui/rdb_query_view/rdb_list";
   import { workspace_id_store } from "$lib/store/workspace";
   import Button from "../../common/Button.svelte";
   import type { PropertyHeader } from "../types";
@@ -11,93 +12,49 @@
   export let rdb_data: RdbData;
   export let rdb_filtered_properties: RdbFilteredProperties;
 
-  let rdb_list: { _id: string; title: string }[] = [];
+  let rdb_list = new RdbList($workspace_id_store);
 
-  flvFetch(`workspaces/${$workspace_id_store}/rdbs`).then((res) => {
-    res.json().then((value) => {
-      rdb_list = value;
-    });
-  });
   export let display_menu: { dir: string; title: string }[] = [];
   export let menu_next: (dir: string, title: string) => void;
 
-  async function createTextProperty() {
+  async function createProperty(type: string, name: string, option?: unknown) {
     const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-      type: "text",
-      name: "new text property",
+      type,
+      name,
+      option,
     });
     const id = await res.text();
-    rdb_data.addProperty({
-      id,
-      type: "text",
-      name: "new text property",
-    } as PropertyHeader);
+    rdb_data.addProperty({ id, type, name, option } as PropertyHeader);
     rdb_filtered_properties.add(id);
+  }
+
+  async function createTextProperty() {
+    createProperty("text", "new text property");
   }
 
   async function createCheckboxProperty() {
-    const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-      type: "checkbox",
-      name: "new checkbox property",
-    });
-    const id = await res.text();
-    rdb_data.addProperty({
-      id,
-      type: "checkbox",
-      name: "new checkbox property",
-    } as PropertyHeader);
-    rdb_filtered_properties.add(id);
+    createProperty("checkbox", "new checkbox property");
   }
 
   async function createRelationProperty(rdb_id: string) {
-    const res = await flvFetch(`rdbs/${rdb_id}/property`, "POST", {
-      type: "relation",
-      name: "new relation property",
-      option: {
-        rdb: rdb_id,
-      },
+    createProperty("relation", "new relation property", {
+      option: { rdb: rdb_id },
     });
-    const id = await res.text();
-    rdb_data.addProperty({
-      id,
-      type: "relation",
-      name: "new relation property",
-      option: {
-        rdb: rdb_id,
-      },
-    } as PropertyHeader);
-    rdb_filtered_properties.add(id);
   }
+
+  const style = {
+    buttonStyle: "text",
+    width: "100%",
+    textAlign: "left",
+  } as const;
 </script>
 
 {#if display_menu.length === 0}
   <div>
+    <Button {style} on:click={createTextProperty}>text</Button>
+    <Button {style} on:click={createCheckboxProperty}>checkbox</Button>
     <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        textAlign: "left",
-      }}
-      on:click={createTextProperty}
-    >
-      text
-    </Button>
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        textAlign: "left",
-      }}
-      on:click={createCheckboxProperty}
-    >
-      checkbox
-    </Button>
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        textAlign: "left",
-      }}
+      {style}
       on:click={() => {
         menu_next("add relation", "add relation");
       }}
@@ -106,15 +63,8 @@
     </Button>
   </div>
 {:else if display_menu[0].dir === "add relation"}
-  {#each rdb_list as v}
-    <Button
-      style={{
-        buttonStyle: "text",
-        width: "100%",
-        textAlign: "left",
-      }}
-      on:click={async () => createRelationProperty(v._id)}
-    >
+  {#each $rdb_list as v}
+    <Button {style} on:click={async () => await createRelationProperty(v._id)}>
       {v.title}
     </Button>
   {/each}
