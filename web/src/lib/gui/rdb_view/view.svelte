@@ -1,13 +1,13 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
   import Button from "../common/Button.svelte";
   import TextInput from "../common/TextInput.svelte";
-  import MenuTop from "./menu/menu_top.svelte";
   import Table from "./table/table.svelte";
-  import type { PropertyHeader } from "./types";
-  import { toFilteredPageList, type PageList } from "./page_list_filter";
-  import { toFilteredProperties } from "./properties_filter";
+  import { RdbData } from "../rdb_query_view/rdb_data";
+  import { RdbFilteredProperties } from "../rdb_query_view/rdb_filtered_properties";
+  import { RdbPageList } from "../rdb_query_view/rdb_page_list";
+  import MenuTop from "./menu/menu_top.svelte";
 
   export let block_id: string;
   export let rdb_id: string;
@@ -18,47 +18,17 @@
     value: string | boolean;
   }[] = [];
 
-  let title: string = "";
+  let rdb_data = new RdbData(null);
+  let rdb_filtered_properties = new RdbFilteredProperties(rdb_data);
 
-  let properties: PropertyHeader[] = [];
-
-  let constraints: {
-    id: string;
-    type: string;
-    option: object;
-  }[] = [];
-
-  let page_list: PageList = [];
+  let rdb_page_list: RdbPageList = new RdbPageList(null);
 
   let set_menu: (menu: { dir: string; title: string }[]) => void;
 
-  onMount(async () => {
-    const res = await flvFetch(`rdbs/${rdb_id}`);
-    const rdb_data: {
-      title: string;
-      properties?: PropertyHeader[];
-      constraints?: {
-        id: string;
-        type: string;
-        option: object;
-      }[];
-    } = await res.json();
-
-    title = rdb_data.title;
-
-    if (rdb_data.properties !== undefined) {
-      properties = rdb_data.properties;
-    }
-
-    if (rdb_data.constraints !== undefined) {
-      constraints = rdb_data.constraints;
-    }
-  });
-
-  onMount(async () => {
-    const res = await flvFetch(`rdbs/${rdb_id}/pages`);
-    if (res.ok === false) return;
-    page_list = await res.json();
+  afterUpdate(() => {
+    rdb_data.changeRdb(rdb_id);
+    rdb_page_list.changeRdb(rdb_id);
+    display.forEach((v) => rdb_filtered_properties.add(v));
   });
 </script>
 
@@ -66,7 +36,7 @@
   <div class="header">
     <TextInput
       style={{ outline: false, fontSize: "1.5rem" }}
-      value={title}
+      value={$rdb_data.title}
       onChange={async (event) => {
         await flvFetch(`rdbs/${rdb_id}`, "PATCH", {
           title: event.currentTarget.value,
@@ -87,24 +57,17 @@
   <div class="contents">
     <Table
       {rdb_id}
-      properties={toFilteredProperties(properties, display)}
-      page_list={toFilteredPageList(
-        toFilteredProperties(properties, display),
-        page_list,
-        filters
-      )}
-      {constraints}
+      {rdb_data}
+      {rdb_filtered_properties}
+      {rdb_page_list}
+      bind:filters
       {set_menu}
-      push_page={(page) => {
-        page_list = [...page_list, page];
-      }}
     />
     <MenuTop
       {rdb_id}
       {block_id}
-      {properties}
-      {constraints}
-      bind:display
+      {rdb_data}
+      {rdb_filtered_properties}
       bind:set_menu
       bind:filters
     />

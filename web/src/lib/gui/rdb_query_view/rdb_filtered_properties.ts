@@ -1,11 +1,14 @@
 import type { PropertyHeader } from "../rdb_view/types";
 import type { RdbData } from "./rdb_data";
 
-type HookType = (v: PropertyHeader[]) => void;
+type HookType = (v: {
+	properties: PropertyHeader[];
+	display: string[];
+}) => void;
 
 export class RdbFilteredProperties {
 	rdb_data: RdbData;
-	filter: string[] = [];
+	display: string[] = [];
 
 	hooks: HookType[] = [];
 
@@ -19,7 +22,7 @@ export class RdbFilteredProperties {
 			this.properties = v.properties;
 
 			if (this.rdb_id !== v.rdb_id) {
-				this.filter = [];
+				this.display = [];
 				this.rdb_id = v.rdb_id;
 				this.addAll();
 			}
@@ -31,7 +34,7 @@ export class RdbFilteredProperties {
 	get_filtered_properties(): PropertyHeader[] {
 		const filtered_properties: PropertyHeader[] = [];
 
-		for (const display_id of this.filter) {
+		for (const display_id of this.display) {
 			const property = this.properties.find((v) => v.id === display_id);
 			if (property !== undefined) {
 				filtered_properties.push(property);
@@ -42,37 +45,58 @@ export class RdbFilteredProperties {
 	}
 
 	public add(id: string) {
-		if (this.filter.includes(id) === false) {
-			this.filter.push(id);
+		if (this.display.includes(id) === false) {
+			this.display.push(id);
 		}
 		this.callHooks();
 	}
 
 	public remove(id: string) {
-		const index = this.filter.findIndex((v) => v === id);
+		const index = this.display.findIndex((v) => v === id);
 		if (index !== -1) {
-			this.filter.splice(index, 1);
+			this.display.splice(index, 1);
 		}
 		this.callHooks();
 	}
 
 	public addAll() {
 		for (const property of this.properties) {
-			if (this.filter.includes(property.id) === false) {
-				this.filter.push(property.id);
+			if (this.display.includes(property.id) === false) {
+				this.display.push(property.id);
 			}
 		}
 		this.callHooks();
 	}
 
 	public removeAll() {
-		this.filter = [];
+		this.display = [];
 		this.callHooks();
+	}
+
+	public moveUp(id: string) {
+		const index = this.display.findIndex((v) => v === id);
+		if (index !== -1) {
+			this.display.splice(index, 1);
+			this.display.splice(index - 1, 0, id);
+			this.callHooks();
+		}
+	}
+
+	public moveDown(id: string) {
+		const index = this.display.findIndex((v) => v === id);
+		if (index !== -1) {
+			this.display.splice(index, 1);
+			this.display.splice(index + 1, 0, id);
+			this.callHooks();
+		}
 	}
 
 	public subscribe(hook: HookType) {
 		this.hooks.push(hook);
-		hook(this.get_filtered_properties());
+		hook({
+			properties: this.get_filtered_properties(),
+			display: this.display,
+		});
 
 		return () => {
 			const index = this.hooks.findIndex((v) => v === hook);
@@ -83,7 +107,10 @@ export class RdbFilteredProperties {
 	callHooks() {
 		const filtered_properties = this.get_filtered_properties();
 		for (const hook of this.hooks) {
-			hook(filtered_properties);
+			hook({
+				properties: filtered_properties,
+				display: this.display,
+			});
 		}
 	}
 }

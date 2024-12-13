@@ -9,11 +9,10 @@
 
   export let workspace_id: string;
 
-  let rdb_list: RdbList = new RdbList(workspace_id);
+  let rdb_list = new RdbList(workspace_id);
 
-  let rdb_data: RdbData = new RdbData(null);
-  let rdb_filtered_properties: RdbFilteredProperties =
-    new RdbFilteredProperties(rdb_data);
+  let rdb_data = new RdbData(null);
+  let rdb_filtered_properties = new RdbFilteredProperties(rdb_data);
 
   let rdb_page_list: RdbPageList = new RdbPageList(null);
 
@@ -66,7 +65,7 @@
       </Button>
       <ContextMenu bind:hidden={select_add_button_hidden}>
         {#each $rdb_data.properties as data}
-          {#if $rdb_filtered_properties.findIndex((v) => v.id === data.id) === -1}
+          {#if $rdb_filtered_properties.display.includes(data.id)}
             <Button
               style={{
                 buttonStyle: "outline",
@@ -85,7 +84,7 @@
     </div>
   </div>
   <div>
-    {#each $rdb_filtered_properties as property}
+    {#each $rdb_filtered_properties.properties as property}
       <Button
         style={{
           buttonStyle: "outline",
@@ -151,11 +150,10 @@
     {#if $rdb_data.rdb_id !== null && $rdb_page_list.rdb_id !== null}
       <Table
         rdb_id={undefined}
-        properties={$rdb_filtered_properties}
-        constraints={$rdb_data.constraints}
-        page_list={$rdb_page_list.page_list}
+        {rdb_filtered_properties}
+        {rdb_data}
+        {rdb_page_list}
         set_menu={() => {}}
-        push_page={() => {}}
       />
     {/if}
   </div>

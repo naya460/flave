@@ -2,18 +2,14 @@
   import Button from "$lib/gui/common/Button.svelte";
   import { flvFetch } from "$lib/flv_fetch";
   import MenuAddProperty from "./menu_add_property.svelte";
+  import type { RdbFilteredProperties } from "$lib/gui/rdb_query_view/rdb_filtered_properties";
+  import type { RdbData } from "$lib/gui/rdb_query_view/rdb_data";
 
   export let rdb_id: string;
   export let block_id: string;
 
-  export let properties: {
-    id: string;
-    type: string;
-    name: string;
-    option?: unknown;
-  }[];
-
-  export let display: string[];
+  export let rdb_data: RdbData;
+  export let rdb_filtered_properties: RdbFilteredProperties;
 
   export let display_menu: { dir: string; title: string }[] = [];
   export let menu_next: (dir: string, title: string) => void;
@@ -29,85 +25,68 @@
           width: "2rem",
         }}
         on:click={async () => {
-          if (display.includes("page")) {
-            const index = display.findIndex((v) => v === "page");
-            display.splice(index, 1);
+          if ($rdb_filtered_properties.display.includes("page")) {
+            rdb_filtered_properties.remove("page");
           } else {
-            display.push("page");
+            rdb_filtered_properties.add("page");
           }
-          display = display;
           await flvFetch(`blocks/${block_id}`, "PATCH", {
-            data: { display },
+            data: { display: $rdb_filtered_properties.display },
           });
         }}
       >
-        {display.includes("page") ? "-" : "+"}
+        {$rdb_filtered_properties.display.includes("page") ? "-" : "+"}
       </Button>
     </div>
-    {#each display as display_id, i (display_id)}
-      {@const property = properties.find((v) => v.id === display_id)}
-      {#if property !== undefined}
-        <div style:display="flex" style:flex-direction="row">
-          <div style:flex-grow={1}>{property.name}</div>
-          <Button
-            style={{
-              buttonStyle: "text",
-              width: "2rem",
-            }}
-            on:click={async () => {
-              if (i !== 0) {
-                const p = display[i];
-                display.splice(i, 1);
-                display.splice(i - 1, 0, p);
-                display = display;
-                await flvFetch(`blocks/${block_id}`, "PATCH", {
-                  data: { display },
-                });
-              }
-            }}
-          >
-            ↑
-          </Button>
-          <Button
-            style={{
-              buttonStyle: "text",
-              width: "2rem",
-            }}
-            on:click={async () => {
-              if (i !== display.length - 1) {
-                const p = display[i];
-                display.splice(i, 1);
-                display.splice(i + 1, 0, p);
-                display = display;
-                await flvFetch(`blocks/${block_id}`, "PATCH", {
-                  data: { display },
-                });
-              }
-            }}
-          >
-            ↓
-          </Button>
-          <Button
-            style={{
-              buttonStyle: "text",
-              width: "2rem",
-            }}
-            on:click={async () => {
-              const index = display.findIndex((v) => v === property.id);
-              display.splice(index, 1);
-              display = display;
-              await flvFetch(`blocks/${block_id}`, "PATCH", {
-                data: { display },
-              });
-            }}
-          >
-            -
-          </Button>
-        </div>
-      {/if}
+    {#each $rdb_filtered_properties.properties as property (property.id)}
+      <div style:display="flex" style:flex-direction="row">
+        <div style:flex-grow={1}>{property.name}</div>
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "2rem",
+          }}
+          on:click={async () => {
+            rdb_filtered_properties.moveUp(property.id);
+            await flvFetch(`blocks/${block_id}`, "PATCH", {
+              data: { display: $rdb_filtered_properties.display },
+            });
+          }}
+        >
+          ↑
+        </Button>
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "2rem",
+          }}
+          on:click={async () => {
+            rdb_filtered_properties.moveDown(property.id);
+            await flvFetch(`blocks/${block_id}`, "PATCH", {
+              data: { display: $rdb_filtered_properties.display },
+            });
+          }}
+        >
+          ↓
+        </Button>
+        <Button
+          style={{
+            buttonStyle: "text",
+            width: "2rem",
+          }}
+          on:click={async () => {
+            rdb_filtered_properties.remove(property.id);
+            await flvFetch(`blocks/${block_id}`, "PATCH", {
+              data: { display: $rdb_filtered_properties.display },
+            });
+          }}
+        >
+          -
+        </Button>
+      </div>
     {/each}
-    {#each properties as property (property.id)}
-      {#if display.includes(property.id) === false}
+    {#each $rdb_data.properties as property (property.id)}
+      {#if $rdb_filtered_properties.display.includes(property.id) === false}
         <div style:display="flex" style:flex-direction="row">
           <div style:flex-grow={1}>{property.name}</div>
           <Button
@@ -116,10 +95,9 @@
               width: "2rem",
             }}
             on:click={async () => {
-              display.push(property.id);
-              display = display;
+              rdb_filtered_properties.add(property.id);
               await flvFetch(`blocks/${block_id}`, "PATCH", {
-                data: { display },
+                data: { display: $rdb_filtered_properties.display },
               });
             }}
           >
@@ -141,7 +119,8 @@
   {:else if display_menu[0].dir === "add property"}
     <MenuAddProperty
       {rdb_id}
-      bind:properties
+      {rdb_data}
+      {rdb_filtered_properties}
       display_menu={display_menu.toSpliced(0, 1)}
       {menu_next}
     />

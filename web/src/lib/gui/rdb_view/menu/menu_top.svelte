@@ -1,5 +1,7 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
+  import type { RdbData } from "$lib/gui/rdb_query_view/rdb_data";
+  import type { RdbFilteredProperties } from "$lib/gui/rdb_query_view/rdb_filtered_properties";
   import MenuConstraint from "./menu_constraint.svelte";
   import MenuFilter from "./menu_filter.svelte";
   import MenuProperty from "./menu_property.svelte";
@@ -7,19 +9,8 @@
   export let rdb_id: string;
   export let block_id: string;
 
-  export let properties: {
-    id: string;
-    type: string;
-    name: string;
-  }[];
-
-  export let constraints: {
-    id: string;
-    type: string;
-    option: object;
-  }[];
-
-  export let display: string[];
+  export let rdb_data: RdbData;
+  export let rdb_filtered_properties: RdbFilteredProperties;
 
   export let filters: {
     id: string;
@@ -125,22 +116,22 @@
       <MenuProperty
         {rdb_id}
         {block_id}
-        {properties}
-        bind:display
+        {rdb_data}
+        {rdb_filtered_properties}
         display_menu={display_menu.toSpliced(0, 1)}
         {menu_next}
       />
     {:else if display_menu[0].dir === "constraints"}
       <MenuConstraint
         {rdb_id}
-        {properties}
-        {constraints}
+        properties={$rdb_data.properties}
+        constraints={$rdb_data.constraints}
         display_menu={display_menu.toSpliced(0, 1)}
         {menu_next}
       />
     {:else if display_menu[0].dir === "filter"}
       <MenuFilter
-        {properties}
+        properties={$rdb_data.properties}
         display_menu={display_menu.toSpliced(0, 1)}
         {menu_next}
         {menu_back}

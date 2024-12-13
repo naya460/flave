@@ -1,5 +1,5 @@
 import { flvFetch } from "$lib/flv_fetch";
-import type { PageList } from "../rdb_view/page_list_filter";
+import type { PageList, PageType } from "../rdb_view/page_list_filter";
 
 type HookType = (v: { rdb_id: string | null; page_list: PageList }) => void;
 
@@ -15,7 +15,9 @@ export class RdbPageList {
 	}
 
 	public changeRdb(rdb_id: string | null) {
-		this.init(rdb_id);
+		if (this.rdb_id !== rdb_id) {
+			this.init(rdb_id);
+		}
 	}
 
 	init(rdb_id: string | null) {
@@ -35,6 +37,11 @@ export class RdbPageList {
 		if (res.ok === false) return;
 		this.page_list = await res.json();
 
+		this.callHooks();
+	}
+
+	public addPage(page: PageType) {
+		this.page_list.push(page);
 		this.callHooks();
 	}
 

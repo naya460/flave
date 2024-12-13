@@ -28,7 +28,9 @@ export class RdbData {
 	}
 
 	public changeRdb(rdb_id: string | null) {
-		this.init(rdb_id);
+		if (this.rdb_id !== rdb_id) {
+			this.init(rdb_id);
+		}
 	}
 
 	init(rdb_id: string | null) {
@@ -54,6 +56,10 @@ export class RdbData {
 			rdb_data.constraints === undefined ? [] : rdb_data.constraints;
 
 		this.callHooks();
+	}
+
+	addProperty(property: PropertyHeader) {
+		this.properties.push(property);
 	}
 
 	public subscribe(hook: HookType) {
