@@ -5,7 +5,7 @@
   import TextInput from "../../common/TextInput.svelte";
   import type { PropertyHeader } from "../types";
 
-  export let rdb_id: string;
+  export let rdb_id: string | null;
   export let menu_enable: boolean;
 
   export let properties: PropertyHeader[];

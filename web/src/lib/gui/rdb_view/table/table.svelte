@@ -4,38 +4,22 @@
   import TableRow from "./table_row.svelte";
   import TableHeader from "./table_header.svelte";
   import { workspace_id_store } from "$lib/store/workspace";
-  import type { RdbPageList } from "$lib/gui/rdb_query_view/rdb_page_list";
-  import { afterUpdate } from "svelte";
-  import { toFilteredPageList, type PageList } from "../page_list_filter";
-  import type { FiltablePropertyList } from "$lib/gui/rdb_query_view/rdb_data/filtable_property_list";
+  import { type PageList } from "../page_list_filter";
   import type { ConstraintType } from "$lib/gui/rdb_query_view/rdb_data/rdb_data";
+  import type { PropertyHeader } from "../types";
 
-  export let rdb_id: string;
+  export let rdb_id: string | null;
 
-  export let property_list: FiltablePropertyList;
+  export let property_list: PropertyHeader[];
 
   export let constraints: ConstraintType[];
 
-  export let rdb_page_list: RdbPageList;
-
   export let menu_enable = true;
 
-  export let filters: {
-    id: string;
-    value: string | boolean;
-  }[] = [];
-
-  let page_list: PageList = [];
-  afterUpdate(() => {
-    page_list = toFilteredPageList(
-      rdb_id,
-      $property_list.filtered_properties,
-      $rdb_page_list.page_list,
-      filters
-    );
-  });
+  export let page_list: PageList;
 
   export let set_menu: (menu: { dir: string; title: string }[]) => void;
+  export let add_page: (id: string) => void;
 
   async function postPage() {
     if (menu_enable === false) return;
@@ -47,11 +31,7 @@
 
     if (res.ok === true) {
       const id = await res.text();
-      rdb_page_list.addPage({
-        _id: id,
-        title: "New Page",
-        properties: [],
-      });
+      add_page(id);
     }
   }
 </script>
@@ -62,18 +42,14 @@
       <TableHeader
         {rdb_id}
         {menu_enable}
-        properties={$property_list.filtered_properties}
+        properties={property_list}
         {set_menu}
       />
     </div>
-    {#if $property_list.filtered_properties.length !== 0}
+    {#if property_list.length !== 0}
       {#each page_list as page (page._id)}
         <div class="row">
-          <TableRow
-            properties={$property_list.filtered_properties}
-            {constraints}
-            {page}
-          />
+          <TableRow properties={property_list} {constraints} {page} />
         </div>
       {/each}
     {/if}

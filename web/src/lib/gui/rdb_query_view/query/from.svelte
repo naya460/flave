@@ -3,16 +3,14 @@
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import Frame from "../frame.svelte";
   import type { RdbList } from "../rdb_list";
-  import type { RdbPageList } from "../rdb_page_list";
   import { RdbFromClause } from "./from";
 
   export let rdb_list: RdbList;
 
   export let rdb_from_clause: RdbFromClause;
 
-  export let rdb_page_list: RdbPageList;
-
   let rdb_list_hidden = true;
+  let rdb_title: string = "";
 </script>
 
 <Frame>
@@ -30,7 +28,7 @@
     >
       <div class="select">
         <div>
-          {$rdb_from_clause.title}
+          {rdb_title}
         </div>
         <div>v</div>
       </div>
@@ -46,8 +44,8 @@
           }}
           on:click={() => {
             rdb_from_clause.changeRdb(item._id);
-            rdb_page_list.changeRdb(item._id);
             rdb_list_hidden = true;
+            rdb_title = item.title;
           }}
         >
           {item.title}
