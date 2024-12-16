@@ -3,16 +3,20 @@
   import { RdbList } from "./rdb_list";
   import Frame from "./frame.svelte";
   import Query from "./query/query.svelte";
-  import { RdbFromClause } from "./query/from";
+  import type { RdbResourcesType } from "./query/rdb_resources";
 
   export let workspace_id: string;
 
   let rdb_list = new RdbList(workspace_id);
 
-  let rdb_from_clause = new RdbFromClause(null);
+  let rdb_resources: RdbResourcesType = {
+    properties: [],
+    constraints: [],
+    page_list: [],
+  };
 </script>
 
-<Query {rdb_list} {rdb_from_clause} />
+<Query {rdb_list} update_resources={(v) => (rdb_resources = v)} />
 
 <Frame>
   <div slot="heading">RESULT</div>
@@ -20,9 +24,9 @@
     <Table
       rdb_id={null}
       menu_enable={false}
-      property_list={$rdb_from_clause.properties}
-      constraints={$rdb_from_clause.constraints}
-      page_list={$rdb_from_clause.page_list}
+      property_list={rdb_resources.properties}
+      constraints={rdb_resources.constraints}
+      page_list={rdb_resources.page_list}
       set_menu={() => {}}
       add_page={() => {}}
     />

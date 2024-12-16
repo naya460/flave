@@ -2,13 +2,16 @@
   import type { RdbList } from "../rdb_list";
   import { RdbFromClause } from "./from";
   import From from "./from.svelte";
-  // import Select from "./select.svelte";
+  import type { RdbResourcesType } from "./rdb_resources";
+  import Select from "./select.svelte";
 
   export let rdb_list: RdbList;
 
-  export let rdb_from_clause: RdbFromClause;
+  let rdb_from_clause = new RdbFromClause(null);
+
+  export let update_resources: (v: RdbResourcesType) => void;
 </script>
 
-<!-- <Select property_list={$rdb_from_clause.properties} /> -->
+<Select {rdb_from_clause} {update_resources} />
 
 <From {rdb_list} {rdb_from_clause} />

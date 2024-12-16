@@ -2,9 +2,27 @@
   import Button from "$lib/gui/common/Button.svelte";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import Frame from "../frame.svelte";
-  import type { FiltablePropertyList } from "../rdb_data/filtable_property_list";
+  import type { RdbFromClause } from "./from";
+  import type { RdbResourcesType } from "./rdb_resources";
+  import { RdbSelectClause } from "./select";
 
-  export let property_list: FiltablePropertyList;
+  export let rdb_from_clause: RdbFromClause;
+
+  export let update_resources: (v: RdbResourcesType) => void;
+
+  let rdb_select_clause = new RdbSelectClause({
+    properties: [],
+    constraints: [],
+    page_list: [],
+  });
+
+  rdb_from_clause.subscribe((v) => {
+    rdb_select_clause.updateRdbResources(v);
+  });
+
+  rdb_select_clause.subscribe((v) => {
+    update_resources(v.rdb_resources);
+  });
 
   let select_add_button_hidden = true;
 
@@ -29,7 +47,7 @@
       <Button
         style={heading_style}
         on:click={() => {
-          property_list.removeAll();
+          rdb_select_clause.hideAllProperties();
         }}
       >
         0
@@ -37,7 +55,7 @@
       <Button
         style={heading_style}
         on:click={() => {
-          property_list.addAll();
+          rdb_select_clause.displayAllProperties();
         }}
       >
         *
@@ -51,25 +69,25 @@
         +
       </Button>
       <ContextMenu bind:hidden={select_add_button_hidden}>
-        {#each $property_list.hidden_properties as data (data.id)}
+        {#each $rdb_select_clause.rdb_select_resources.hidden_properties as property (property.id)}
           <Button
             style={property_style}
             on:click={() => {
-              property_list.add(data.id);
+              rdb_select_clause.displayProperty(property.id);
             }}
           >
-            {data.name}
+            {property.name}
           </Button>
         {/each}
       </ContextMenu>
     </div>
   </div>
   <div slot="contents">
-    {#each $property_list.filtered_properties as property}
+    {#each $rdb_select_clause.rdb_select_resources.display_properties as property (property.id)}
       <Button
         style={property_style}
         on:click={() => {
-          property_list.remove(property.id);
+          rdb_select_clause.hideProperty(property.id);
         }}
       >
         {property.name}
