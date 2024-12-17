@@ -1,12 +1,11 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
-  import { afterUpdate } from "svelte";
   import Button from "../common/Button.svelte";
   import TextInput from "../common/TextInput.svelte";
   import Table from "./table/table.svelte";
   import { RdbData } from "../rdb_query_view/rdb_data/rdb_data";
-  import { RdbPageList } from "../rdb_query_view/rdb_page_list";
   import MenuTop from "./menu/menu_top.svelte";
+  import { RdbSelectClause } from "../rdb_query_view/query/select";
 
   export let block_id: string;
   export let rdb_id: string;
@@ -17,18 +16,22 @@
     value: string | boolean;
   }[] = [];
 
-  let rdb_data = new RdbData(null);
-  let property_list = rdb_data.getPropertyList();
+  let rdb_data = new RdbData(rdb_id);
+  let rdb_select_clause = new RdbSelectClause({
+    properties: [],
+    constraints: [],
+    page_list: [],
+  });
 
-  let rdb_page_list: RdbPageList = new RdbPageList(null);
+  rdb_data.subscribe((v) => {
+    rdb_select_clause.updateRdbResources(v.rdb_resources);
+  });
+
+  for (const display_id of display) {
+    rdb_select_clause.displayProperty(display_id);
+  }
 
   let set_menu: (menu: { dir: string; title: string }[]) => void;
-
-  afterUpdate(() => {
-    rdb_data.changeRdb(rdb_id);
-    rdb_page_list.changeRdb(rdb_id);
-    display.forEach((v) => property_list.add(v));
-  });
 </script>
 
 <div class="top">
@@ -56,17 +59,18 @@
   <div class="contents">
     <Table
       {rdb_id}
-      {property_list}
-      constraints={$rdb_data.constraints}
-      {rdb_page_list}
-      bind:filters
+      property_list={$rdb_select_clause.rdb_resources.properties}
+      constraints={$rdb_select_clause.rdb_resources.constraints}
+      page_list={$rdb_select_clause.rdb_resources.page_list}
       {set_menu}
+      add_page={(id) =>
+        rdb_data.getPageList().addPage({ _id: id, title: "New Page" })}
     />
     <MenuTop
       {rdb_id}
       {block_id}
       {rdb_data}
-      {property_list}
+      {rdb_select_clause}
       bind:set_menu
       bind:filters
     />

@@ -33,7 +33,9 @@ export class PropertyList {
 
 	public setProperties(properties: PropertyHeader[]) {
 		for (const property of properties) {
-			this.addProperty(property);
+			if (this.properties.some((v) => v.id === property.id) === false) {
+				this.properties.push(property);
+			}
 		}
 		this.callHooks();
 	}

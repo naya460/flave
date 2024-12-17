@@ -1,5 +1,9 @@
 import { flvFetch } from "$lib/flv_fetch";
-import { FiltablePropertyList } from "./filtable_property_list";
+import type { PageList } from "$lib/gui/rdb_view/page_list_filter";
+import type { PropertyHeader } from "$lib/gui/rdb_view/types";
+import type { RdbResourcesType } from "../query/rdb_resources";
+import { RdbPageList } from "../rdb_page_list";
+import { PropertyList } from "./property_list";
 
 export type ConstraintType = {
 	id: string;
@@ -10,19 +14,33 @@ export type ConstraintType = {
 type HookType = (v: {
 	rdb_id: string | null;
 	title: string;
-	constraints: ConstraintType[];
+	rdb_resources: RdbResourcesType;
 }) => void;
 
 export class RdbData {
-	rdb_id: string | null = null;
+	private rdb_id: string | null = null;
 
-	hooks: HookType[] = [];
+	private property_list = new PropertyList(null);
+	private page_list = new RdbPageList(null);
 
-	title: string = "";
-	property_list = new FiltablePropertyList(null);
-	constraints: ConstraintType[] = [];
+	private hooks: HookType[] = [];
+
+	private title: string = "";
+	private properties: PropertyHeader[] = [];
+	private constraints: ConstraintType[] = [];
+	private pages: PageList = [];
 
 	constructor(rdb_id: string | null) {
+		this.property_list.subscribe((v) => {
+			this.properties = v;
+			this.callHooks();
+		});
+
+		this.page_list.subscribe((v) => {
+			this.pages = v.page_list;
+			this.callHooks();
+		});
+
 		this.init(rdb_id);
 	}
 
@@ -35,9 +53,13 @@ export class RdbData {
 	init(rdb_id: string | null) {
 		this.rdb_id = rdb_id;
 
-		this.title = "";
 		this.property_list.changeRdb(rdb_id);
+		this.page_list.changeRdb(rdb_id);
+
+		this.title = "";
+		this.properties = [];
 		this.constraints = [];
+		this.pages = [];
 
 		this.fetch();
 	}
@@ -65,7 +87,11 @@ export class RdbData {
 		hook({
 			rdb_id: this.rdb_id,
 			title: this.title,
-			constraints: this.constraints,
+			rdb_resources: {
+				properties: this.properties,
+				constraints: this.constraints,
+				page_list: this.pages,
+			},
 		});
 
 		return () => {
@@ -78,12 +104,20 @@ export class RdbData {
 		return this.property_list;
 	}
 
+	public getPageList() {
+		return this.page_list;
+	}
+
 	callHooks() {
 		for (const hook of this.hooks) {
 			hook({
 				rdb_id: this.rdb_id,
 				title: this.title,
-				constraints: this.constraints,
+				rdb_resources: {
+					properties: this.properties,
+					constraints: this.constraints,
+					page_list: this.pages,
+				},
 			});
 		}
 	}

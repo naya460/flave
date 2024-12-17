@@ -1,14 +1,10 @@
-import type { FiltablePropertyList } from "../rdb_data/filtable_property_list";
 import { RdbData } from "../rdb_data/rdb_data";
-import { RdbPageList } from "../rdb_page_list";
 import { type RdbResourcesType } from "./rdb_resources";
 
 type HookType = (v: RdbResourcesType) => void;
 
 export class RdbFromClause {
 	private rdb_data: RdbData;
-	private property_list: FiltablePropertyList;
-	private page_list: RdbPageList;
 
 	private hooks: HookType[] = [];
 
@@ -20,21 +16,11 @@ export class RdbFromClause {
 
 	constructor(rdb_id: string | null) {
 		this.rdb_data = new RdbData(rdb_id);
-		this.property_list = this.rdb_data.getPropertyList();
-		this.page_list = new RdbPageList(rdb_id);
 
 		this.rdb_data.subscribe((v) => {
-			this.rdb_resources.constraints = v.constraints;
-			this.callHooks();
-		});
-
-		this.property_list.subscribe((v) => {
-			this.rdb_resources.properties = v.properties;
-			this.callHooks();
-		});
-
-		this.page_list.subscribe((v) => {
-			this.rdb_resources.page_list = v.page_list;
+			this.rdb_resources.properties = v.rdb_resources.properties;
+			this.rdb_resources.constraints = v.rdb_resources.constraints;
+			this.rdb_resources.page_list = v.rdb_resources.page_list;
 			this.callHooks();
 		});
 
@@ -43,7 +29,6 @@ export class RdbFromClause {
 
 	public changeRdb(rdb_id: string | null) {
 		this.rdb_data.changeRdb(rdb_id);
-		this.page_list.changeRdb(rdb_id);
 	}
 
 	public subscribe(hook: HookType) {
