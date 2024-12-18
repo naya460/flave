@@ -26,7 +26,7 @@
             width: "2rem",
           }}
           on:click={async () => {
-            property_list.moveUp(property.id);
+            // property_list.moveUp(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
                 display: $rdb_select_clause.rdb_select_resources.display,
@@ -42,7 +42,7 @@
             width: "2rem",
           }}
           on:click={async () => {
-            property_list.moveDown(property.id);
+            // property_list.moveDown(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
                 display: $rdb_select_clause.rdb_select_resources.display,
@@ -58,7 +58,8 @@
             width: "2rem",
           }}
           on:click={async () => {
-            property_list.remove(property.id);
+            // property_list.remove(property.id);
+            rdb_select_clause.hideProperty(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
                 display: $rdb_select_clause.rdb_select_resources.display,
@@ -79,7 +80,8 @@
             width: "2rem",
           }}
           on:click={async () => {
-            property_list.add(property.id);
+            // property_list.add(property.id);
+            rdb_select_clause.displayProperty(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
                 display: $rdb_select_clause.rdb_select_resources.display,

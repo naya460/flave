@@ -17,7 +17,7 @@
   });
 
   rdb_from_clause.subscribe((v) => {
-    rdb_select_clause.updateRdbResources(v);
+    rdb_select_clause.updateRdbResources(v.resources);
   });
 
   rdb_select_clause.subscribe((v) => {
