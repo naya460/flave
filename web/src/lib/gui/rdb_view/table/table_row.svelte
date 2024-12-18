@@ -1,6 +1,7 @@
 <script lang="ts">
   import TableItem from "./table_item.svelte";
   import { toProperty, type PropertyHeader } from "../types";
+  import type { PageType } from "$lib/gui/rdb_query_view/rdb_page_list";
 
   export let properties: PropertyHeader[];
 
@@ -10,18 +11,7 @@
     option: object;
   }[];
 
-  export let page: {
-    _id: string;
-    title: string;
-    properties?: {
-      id: string;
-      value: unknown;
-    }[];
-    constraints?: {
-      id: string;
-      result: boolean;
-    }[];
-  };
+  export let page: PageType;
 
   let result = (() => {
     for (const v of constraints) {

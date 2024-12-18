@@ -58,8 +58,7 @@ export class RdbJoinClause {
 				);
 				if (v1 !== undefined && v2 !== undefined && v1?.value === v2?.value) {
 					tmp.page_list.push({
-						_id: page._id + target_page._id,
-						title: page.title + " " + target_page.title,
+						_id: null,
 						properties: [
 							...(page.properties === undefined ? [] : page.properties),
 							...(target_page.properties === undefined

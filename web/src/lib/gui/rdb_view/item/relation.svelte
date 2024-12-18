@@ -3,7 +3,7 @@
   import Button from "$lib/gui/common/Button.svelte";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
 
-  export let page_id: string;
+  export let page_id: string | null;
   export let property_id: string;
   export let option: {
     rdb: string;
@@ -40,6 +40,7 @@
           textAlign: "left",
         }}
         on:click={async () => {
+          if (page_id === null) return;
           if (option.only === true) {
             value.page_list = [];
           } else {
@@ -70,6 +71,7 @@
             textAlign: "left",
           }}
           on:click={async () => {
+            if (page_id === null) return;
             if (option.only === true) {
               value.page_list = [page._id];
             } else {

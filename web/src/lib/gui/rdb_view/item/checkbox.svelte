@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
 
-  export let page_id: string;
+  export let page_id: string | null;
   export let property_id: string;
   export let value: boolean;
 
@@ -17,6 +17,7 @@
     type="checkbox"
     {checked}
     on:change={async (event) => {
+      if (page_id === null) return;
       await flvFetch(`pages/${page_id}/property/${property_id}`, "PATCH", {
         value: event.currentTarget.checked,
       });

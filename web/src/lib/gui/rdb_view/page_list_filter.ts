@@ -1,19 +1,5 @@
+import type { PageType } from "../rdb_query_view/rdb_page_list";
 import type { PropertyHeader } from "./types";
-
-export type PageType = {
-	_id: string;
-	title: string;
-	properties?: {
-		id: string;
-		value: unknown;
-	}[];
-	constraints?: {
-		id: string;
-		result: boolean;
-	}[];
-};
-
-export type PageList = PageType[];
 
 type Filters = {
 	id: string;
@@ -21,12 +7,11 @@ type Filters = {
 }[];
 
 export function toFilteredPageList(
-	rdb_id: string,
 	properties: PropertyHeader[],
-	page_list: PageList,
+	page_list: PageType[],
 	filters: Filters
 ) {
-	let filtered_page_list: PageList = [];
+	let filtered_page_list: PageType[] = [];
 
 	for (const page of page_list) {
 		let ok = true;
@@ -37,10 +22,6 @@ export function toFilteredPageList(
 			let value;
 			if (property?.value === undefined) {
 				switch (properties.find((v) => v.id === filter.id)?.type) {
-					case "page": {
-						value = page.title;
-						break;
-					}
 					case "text": {
 						value = "";
 						break;
@@ -56,21 +37,6 @@ export function toFilteredPageList(
 			if (value !== filter.value) {
 				ok = false;
 				break;
-			}
-		}
-
-		const page_property = properties.find((v) => v.type === "page");
-		if (page_property !== undefined) {
-			const v = {
-				id: rdb_id,
-				value: {
-					title: page.title,
-				},
-			};
-			if (page.properties === undefined) {
-				page.properties = [v];
-			} else {
-				page.properties?.unshift(v);
 			}
 		}
 

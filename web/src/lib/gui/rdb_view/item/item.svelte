@@ -7,7 +7,7 @@
 
   export let property: Property | null;
 
-  export let page_id: string;
+  export let page_id: string | null;
 </script>
 
 {#if property === null}
@@ -15,7 +15,7 @@
 {:else if property.type === "text"}
   <Text {page_id} property_id={property.id} value={property.value} />
 {:else if property.type === "page"}
-  <Page {page_id} value={property.value} />
+  <Page value={property.value} />
 {:else if property.type === "checkbox"}
   <Checkbox {page_id} property_id={property.id} value={property.value} />
 {:else if property.type === "relation"}

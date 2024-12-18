@@ -60,7 +60,11 @@
       {rdb_query}
       {set_menu}
       add_page={(id) =>
-        rdb_data.getPageList().addPage({ _id: id, title: "New Page" })}
+        rdb_data.getPageList().addPage({
+          _id: id,
+          properties: [{ id: id, value: { id: id, title: "New Page" } }],
+          constraints: [],
+        })}
     />
     <MenuTop
       {rdb_id}

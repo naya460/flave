@@ -1,8 +1,8 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
 
-  export let page_id: string;
   export let value: {
+    id: string;
     title: string;
   };
 </script>
@@ -14,7 +14,7 @@
     width: "100%",
   }}
   on:click={() => {
-    location.assign(`${page_id}`);
+    location.assign(`${value.id}`);
   }}
 >
   {value.title}

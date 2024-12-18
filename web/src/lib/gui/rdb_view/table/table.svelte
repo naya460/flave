@@ -42,7 +42,7 @@
       />
     </div>
     {#if $rdb_query.properties.length !== 0}
-      {#each $rdb_query.page_list as page (page._id)}
+      {#each $rdb_query.page_list as page (page)}
         <div class="row">
           <TableRow
             properties={$rdb_query.properties}

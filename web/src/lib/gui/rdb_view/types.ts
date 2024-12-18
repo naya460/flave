@@ -24,6 +24,7 @@ export type Property =
 			type: "page";
 			option?: never;
 			value: {
+				id: string;
 				title: string;
 			};
 	  }
@@ -69,16 +70,19 @@ export function toProperty(
 		};
 	}
 	if (property.type === "page") {
-		const value = { title: "" };
+		const value = { id: "", title: "" };
 		if (typeof target === "object" && target !== null) {
 			if ("title" in target && typeof target.title === "string") {
 				value.title = target.title;
+			}
+			if ("_id" in target && typeof target._id === "string") {
+				value.id = target._id;
 			}
 		}
 		return { id: property.id, type: "page", value: value } as {
 			id: string;
 			type: "page";
-			value: { title: string };
+			value: { id: string; title: string };
 		};
 	}
 	if (property.type === "checkbox") {

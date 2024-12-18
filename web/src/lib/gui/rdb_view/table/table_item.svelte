@@ -4,7 +4,7 @@
 
   export let property: Property | null;
 
-  export let page_id: string;
+  export let page_id: string | null;
 
   export let style: {
     width: `${number}${"rem"}`;

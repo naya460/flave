@@ -1,14 +1,38 @@
 import { flvFetch } from "$lib/flv_fetch";
-import type { PageList, PageType } from "../rdb_view/page_list_filter";
 
-type HookType = (v: { rdb_id: string | null; page_list: PageList }) => void;
+type OriginalPageType = {
+	_id: string;
+	title: string;
+	properties?: {
+		id: string;
+		value: unknown;
+	}[];
+	constraints?: {
+		id: string;
+		result: boolean;
+	}[];
+};
+
+export type PageType = {
+	_id: string | null;
+	properties: {
+		id: string;
+		value: unknown;
+	}[];
+	constraints: {
+		id: string;
+		result: boolean;
+	}[];
+};
+
+type HookType = (v: { rdb_id: string | null; page_list: PageType[] }) => void;
 
 export class RdbPageList {
 	rdb_id: string | null = null;
 
 	hooks: HookType[] = [];
 
-	page_list: PageList = [];
+	page_list: PageType[] = [];
 
 	constructor(rdb_id: string | null) {
 		this.init(rdb_id);
@@ -35,7 +59,33 @@ export class RdbPageList {
 
 		const res = await flvFetch(`rdbs/${this.rdb_id}/pages`);
 		if (res.ok === false) return;
-		this.page_list = await res.json();
+		const original_page_list: OriginalPageType[] = await res.json();
+
+		// add page property
+		for (const page of original_page_list) {
+			const new_page: PageType = {
+				_id: this.rdb_id,
+				properties: [
+					{
+						id: this.rdb_id,
+						value: {
+							_id: page._id,
+							title: page.title,
+						},
+					},
+				],
+				constraints: [],
+			};
+
+			if (page.properties !== undefined) {
+				new_page.properties = [...new_page.properties, ...page.properties];
+			}
+			if (page.constraints !== undefined) {
+				new_page.constraints = [...page.constraints];
+			}
+
+			this.page_list.push(new_page);
+		}
 
 		this.callHooks();
 	}
