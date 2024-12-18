@@ -1,14 +1,16 @@
 <script lang="ts">
   import { flvFetch } from "$lib/flv_fetch";
+  import type { RdbSelectClause } from "$lib/gui/rdb_query_view/query/select";
+  import type { PropertyList } from "$lib/gui/rdb_query_view/rdb_data/property_list";
   import Button from "../../common/Button.svelte";
   import ContextMenu from "../../common/ContextMenu.svelte";
   import TextInput from "../../common/TextInput.svelte";
-  import type { PropertyHeader } from "../types";
 
   export let rdb_id: string | null;
   export let menu_enable: boolean;
 
-  export let properties: PropertyHeader[];
+  export let property_list: PropertyList;
+  export let rdb_select_clause: RdbSelectClause;
 
   export let set_menu: (menu: { dir: string; title: string }[]) => void;
 
@@ -17,8 +19,8 @@
 
 <div class="item" style:width="4rem" />
 
-{#if properties !== undefined}
-  {#each properties as property (property.id)}
+{#if property_list !== undefined}
+  {#each $rdb_select_clause.rdb_select_resources.display_properties as property (property.id)}
     <div class="item">
       {#if property.type === "page"}
         <div
@@ -49,13 +51,7 @@
                   name: value,
                 }
               );
-              const target_property = properties.find(
-                (v) => v.id === property.id
-              );
-              if (target_property !== undefined) {
-                target_property.name = value;
-              }
-              properties = properties;
+              property_list.renameProperty(property.id, value);
               context_id = null;
             }}
           />
@@ -80,37 +76,16 @@
                 on:change={(event) => {
                   if (menu_enable === false) return;
 
-                  let target_property = properties.find(
-                    (v) => v.id === property.id
-                  );
-                  if (target_property !== undefined) {
-                    if (
-                      target_property.option !== undefined &&
-                      target_property.option !== null &&
-                      typeof target_property.option === "object" &&
-                      "only" in target_property.option &&
-                      typeof target_property.option.only === "boolean"
-                    ) {
-                      target_property.option.only = event.currentTarget.checked;
-                    } else {
-                      Object.assign(target_property, {
-                        option: {
-                          only: event.currentTarget.checked,
-                        },
-                      });
-                    }
-                    properties = [...properties];
+                  property_list.setPropertyOption(property.id, {
+                    rdb_id: property.option.rdb,
+                    only: event.currentTarget.checked,
+                  });
 
-                    flvFetch(
-                      `rdbs/${rdb_id}/property/${property.id}`,
-                      "PATCH",
-                      {
-                        option: {
-                          only: event.currentTarget.checked,
-                        },
-                      }
-                    );
-                  }
+                  flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
+                    option: {
+                      only: event.currentTarget.checked,
+                    },
+                  });
                 }}
               />
               <div>only</div>

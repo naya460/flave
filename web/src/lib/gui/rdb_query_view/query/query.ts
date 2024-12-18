@@ -5,7 +5,7 @@ import { RdbSelectClause } from "./select";
 type HookType = (v: RdbResourcesType) => void;
 
 export class RdbQuery {
-	private rdb_from = new RdbFromClause(null);
+	private rdb_from: RdbFromClause;
 	private rdb_select = new RdbSelectClause({
 		properties: [],
 		constraints: [],
@@ -20,7 +20,9 @@ export class RdbQuery {
 		page_list: [],
 	};
 
-	constructor() {
+	constructor(rdb_id: string | null = null) {
+		this.rdb_from = new RdbFromClause(rdb_id);
+
 		this.rdb_from.subscribe((v) => {
 			this.rdb_select.updateRdbResources(v.resources);
 		});
@@ -28,6 +30,10 @@ export class RdbQuery {
 			this.rdb_resources = v.rdb_resources;
 			this.callHooks();
 		});
+	}
+
+	public getRdbData() {
+		return this.rdb_from.getRdbData();
 	}
 
 	public getRdbQueryClause() {

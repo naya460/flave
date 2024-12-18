@@ -120,6 +120,7 @@
         {rdb_select_clause}
         display_menu={display_menu.toSpliced(0, 1)}
         {menu_next}
+        {menu_back}
       />
     {:else if display_menu[0].dir === "constraints"}
       <MenuConstraint

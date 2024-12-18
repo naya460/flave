@@ -20,9 +20,7 @@
     <Table
       rdb_id={null}
       menu_enable={false}
-      property_list={$rdb_query.properties}
-      constraints={$rdb_query.constraints}
-      page_list={$rdb_query.page_list}
+      {rdb_query}
       set_menu={() => {}}
       add_page={() => {}}
     />

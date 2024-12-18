@@ -13,6 +13,7 @@
 
   export let display_menu: { dir: string; title: string }[] = [];
   export let menu_next: (dir: string, title: string) => void;
+  export let menu_back: () => void;
 </script>
 
 <div>
@@ -26,7 +27,7 @@
             width: "2rem",
           }}
           on:click={async () => {
-            // property_list.moveUp(property.id);
+            rdb_select_clause.moveUpProperty(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
                 display: $rdb_select_clause.rdb_select_resources.display,
@@ -42,7 +43,7 @@
             width: "2rem",
           }}
           on:click={async () => {
-            // property_list.moveDown(property.id);
+            rdb_select_clause.moveDownProperty(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
                 display: $rdb_select_clause.rdb_select_resources.display,
@@ -58,7 +59,6 @@
             width: "2rem",
           }}
           on:click={async () => {
-            // property_list.remove(property.id);
             rdb_select_clause.hideProperty(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
@@ -80,7 +80,6 @@
             width: "2rem",
           }}
           on:click={async () => {
-            // property_list.add(property.id);
             rdb_select_clause.displayProperty(property.id);
             await flvFetch(`blocks/${block_id}`, "PATCH", {
               data: {
@@ -107,8 +106,10 @@
     <MenuAddProperty
       {rdb_id}
       {property_list}
+      {rdb_select_clause}
       display_menu={display_menu.toSpliced(0, 1)}
       {menu_next}
+      {menu_back}
     />
   {/if}
 </div>

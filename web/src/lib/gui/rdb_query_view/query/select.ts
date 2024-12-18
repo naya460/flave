@@ -67,6 +67,24 @@ export class RdbSelectClause {
 		this.callHooks();
 	}
 
+	public moveUpProperty(property_id: string) {
+		const index = this.display.findIndex((v) => v === property_id);
+		if (index >= 1) {
+			const tmp = this.display.splice(index, 1);
+			this.display.splice(index - 1, 0, tmp[0]);
+			this.callHooks();
+		}
+	}
+
+	public moveDownProperty(property_id: string) {
+		const index = this.display.findIndex((v) => v === property_id);
+		if (index !== -1 && index <= this.display.length - 1) {
+			const tmp = this.display.splice(index, 1);
+			this.display.splice(index + 1, 0, tmp[0]);
+			this.callHooks();
+		}
+	}
+
 	private getProperties() {
 		const display_properties: PropertyHeader[] = [];
 		const hidden_properties: PropertyHeader[] = [

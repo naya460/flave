@@ -40,6 +40,22 @@ export class PropertyList {
 		this.callHooks();
 	}
 
+	public renameProperty(property_id: string, name: string) {
+		const property = this.properties.find((v) => v.id === property_id);
+		if (property !== undefined) {
+			property.name = name;
+			this.callHooks();
+		}
+	}
+
+	public setPropertyOption(property_id: string, option: unknown) {
+		const property = this.properties.find((v) => v.id === property_id);
+		if (property !== undefined) {
+			property.option = option as typeof property.option;
+			this.callHooks();
+		}
+	}
+
 	public addProperty(property: PropertyHeader) {
 		if (this.properties.some((v) => v.id === property.id) === false) {
 			this.properties.push(property);

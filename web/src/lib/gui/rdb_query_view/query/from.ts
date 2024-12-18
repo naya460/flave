@@ -44,6 +44,10 @@ export class RdbFromClause {
 		this.rdb_data.changeRdb(rdb_id);
 	}
 
+	public getRdbData() {
+		return this.rdb_data;
+	}
+
 	public addJoin(id: string, on: { value1: string; value2: string }) {
 		const join_clause = new RdbJoinClause({ id, on });
 		this.join_list.push(join_clause);
