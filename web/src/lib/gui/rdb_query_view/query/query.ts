@@ -1,4 +1,4 @@
-import { RdbFromClause } from "./from";
+import { RdbFromClause } from "./from/from";
 import type { RdbResourcesType } from "./rdb_resources";
 import { RdbSelectClause } from "./select";
 

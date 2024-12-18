@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { RdbList } from "../rdb_list";
-  import From from "./from.svelte";
+  import From from "./from/from.svelte";
   import type { RdbQuery } from "./query";
   import Select from "./select.svelte";
 

@@ -1,9 +1,9 @@
 <script lang="ts">
   import Button from "$lib/gui/common/Button.svelte";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
-  import Frame from "../frame.svelte";
-  import { RdbData } from "../rdb_data/rdb_data";
-  import type { RdbList } from "../rdb_list";
+  import Frame from "../../frame.svelte";
+  import { RdbData } from "../../rdb_data/rdb_data";
+  import type { RdbList } from "../../rdb_list";
   import { RdbFromClause } from "./from";
 
   export let rdb_list: RdbList;
