@@ -1,10 +1,10 @@
 import { RdbData } from "../../rdb_data/rdb_data";
 import { type RdbResourcesType } from "../rdb_resources";
-import { RdbJoinClause, type JoinData } from "./join";
+import { RdbJoinClause } from "./join";
 
 type HookType = (v: {
 	resources: RdbResourcesType;
-	join_list: JoinData[];
+	join_list: RdbJoinClause[];
 }) => void;
 
 export class RdbFromClause {
@@ -43,7 +43,10 @@ export class RdbFromClause {
 		return this.rdb_data;
 	}
 
-	public addJoin(id: string, on: { value1: string; value2: string }) {
+	public addJoin(
+		id: string | null,
+		on: { value1: string | null; value2: string | null }
+	) {
 		const join_clause = new RdbJoinClause({ id, on });
 		this.join_list.push(join_clause);
 		join_clause.subscribe(() => {
@@ -51,19 +54,11 @@ export class RdbFromClause {
 		});
 	}
 
-	private getJoinList() {
-		const tmp = [];
-		for (const join_data of this.join_list) {
-			tmp.push(join_data.getJoinData());
-		}
-		return tmp;
-	}
-
 	public subscribe(hook: HookType) {
 		this.hooks.push(hook);
 		const resources = this.calcJoinedResources();
 		hook({
-			join_list: this.getJoinList(),
+			join_list: this.join_list,
 			resources,
 		});
 
@@ -87,10 +82,9 @@ export class RdbFromClause {
 
 	private callHooks() {
 		const resources = this.calcJoinedResources();
-		const join_list = this.getJoinList();
 		for (const hook of this.hooks) {
 			hook({
-				join_list,
+				join_list: this.join_list,
 				resources,
 			});
 		}

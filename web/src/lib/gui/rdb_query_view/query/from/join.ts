@@ -1,21 +1,29 @@
+import type { PropertyHeader } from "$lib/gui/rdb_view/types";
 import { RdbData } from "../../rdb_data/rdb_data";
 import type { RdbResourcesType } from "../rdb_resources";
 
 export type JoinData = {
-	id: string;
+	id: string | null;
 	on: {
-		value1: string;
-		value2: string;
+		value1: string | null;
+		value2: string | null;
 	};
 };
+
+export type HookType = (v: {
+	title: string;
+	join_data: JoinData;
+	abailable_properties: PropertyHeader[];
+}) => void;
 
 export class RdbJoinClause {
 	private rdb_data: RdbData;
 
-	private hooks: (() => void)[] = [];
+	private hooks: HookType[] = [];
 
 	private join_data: JoinData;
 
+	private title: string = "";
 	private rdb_resources: RdbResourcesType = {
 		properties: [],
 		constraints: [],
@@ -26,16 +34,24 @@ export class RdbJoinClause {
 		this.join_data = join_data;
 		this.rdb_data = new RdbData(join_data.id);
 		this.rdb_data.subscribe((v) => {
+			this.title = v.title;
 			this.rdb_resources = v.rdb_resources;
 			this.callHooks();
 		});
 	}
 
-	getJoinData() {
-		return this.join_data;
+	public updateJoinData(join_data: JoinData) {
+		this.join_data = join_data;
+		this.rdb_data.changeRdb(join_data.id);
+		this.callHooks();
 	}
 
-	getJoinedResources(resources: RdbResourcesType) {
+	public getJoinedResources(resources: RdbResourcesType): RdbResourcesType {
+		const on = this.join_data.on;
+		if (on === null) {
+			return resources;
+		}
+
 		const tmp: RdbResourcesType = {
 			properties: [...resources.properties, ...this.rdb_resources.properties],
 			constraints: [
@@ -47,15 +63,11 @@ export class RdbJoinClause {
 
 		for (const page of resources.page_list) {
 			const target_page_list = this.rdb_resources.page_list.filter((v) =>
-				v.properties?.some((v) => v.id === this.join_data.on.value2)
+				v.properties?.some((v) => v.id === on.value2)
 			);
 			for (const target_page of target_page_list) {
-				const v1 = page.properties?.find(
-					(v) => v.id === this.join_data.on.value1
-				);
-				const v2 = target_page.properties?.find(
-					(v) => v.id === this.join_data.on.value2
-				);
+				const v1 = page.properties?.find((v) => v.id === on.value1);
+				const v2 = target_page.properties?.find((v) => v.id === on.value2);
 				if (v1 !== undefined && v2 !== undefined && v1?.value === v2?.value) {
 					tmp.page_list.push({
 						_id: null,
@@ -79,9 +91,13 @@ export class RdbJoinClause {
 		return tmp;
 	}
 
-	public subscribe(hook: () => void) {
+	public subscribe(hook: HookType) {
 		this.hooks.push(hook);
-		hook();
+		hook({
+			title: this.title,
+			join_data: this.join_data,
+			abailable_properties: this.rdb_resources.properties,
+		});
 
 		return () => {
 			const index = this.hooks.findIndex((v) => v === hook);
@@ -91,7 +107,11 @@ export class RdbJoinClause {
 
 	private callHooks() {
 		for (const hook of this.hooks) {
-			hook();
+			hook({
+				title: this.title,
+				join_data: this.join_data,
+				abailable_properties: this.rdb_resources.properties,
+			});
 		}
 	}
 }
