@@ -2,27 +2,9 @@
   import Button from "$lib/gui/common/Button.svelte";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import Frame from "../frame.svelte";
-  import type { RdbFromClause } from "./from";
-  import type { RdbResourcesType } from "./rdb_resources";
   import { RdbSelectClause } from "./select";
 
-  export let rdb_from_clause: RdbFromClause;
-
-  export let update_resources: (v: RdbResourcesType) => void;
-
-  let rdb_select_clause = new RdbSelectClause({
-    properties: [],
-    constraints: [],
-    page_list: [],
-  });
-
-  rdb_from_clause.subscribe((v) => {
-    rdb_select_clause.updateRdbResources(v.resources);
-  });
-
-  rdb_select_clause.subscribe((v) => {
-    update_resources(v.rdb_resources);
-  });
+  export let rdb_select_clause: RdbSelectClause;
 
   let select_add_button_hidden = true;
 
