@@ -45,7 +45,7 @@
 <div class="contents">
   <Button
     style={{ ...style, width: "100%", textAlign: "left" }}
-    on:click={() => location.assign("query_view")}
+    on:click={() => location.assign(`/${workspace_id}/query_view`)}
   >
     RDB Query View
   </Button>
