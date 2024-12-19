@@ -3,7 +3,7 @@ import cors from "@fastify/cors";
 import { flvApiRoute } from "api";
 import fastifyCookie from "@fastify/cookie";
 
-const server = fastify();
+const server = fastify({ bodyLimit: 30000000 });
 server.register(cors, {
   origin: true,
   credentials: true,

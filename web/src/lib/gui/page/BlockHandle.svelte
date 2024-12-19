@@ -195,6 +195,30 @@
         },
       },
       {
+        name: "Insert File",
+        onClick: () => {
+          const res = flvFetch("blocks", "POST", {
+            page_id: page_id,
+            next_of: context_id,
+            type: "file",
+            data: { file_id: "" },
+          });
+
+          res.then((v) => {
+            v.text().then((w) => {
+              if (typeof w !== "string") return;
+              const index = $blocks.findIndex((v) => v._id === context_id);
+              $blocks.splice(index + 1, 0, {
+                _id: w,
+                type: "file",
+                data: { file_id: "" },
+              });
+              $blocks = $blocks;
+            });
+          });
+        },
+      },
+      {
         name: "Insert RDB View",
         contents: (() => {
           return rdb_list.map((rdb) => {

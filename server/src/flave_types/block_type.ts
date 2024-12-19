@@ -62,3 +62,8 @@ flave_block_type.set("heading", {
 flave_block_type.set("bullet_list", {
   ...flave_block_type.get("paragraph"),
 });
+
+// file
+flave_block_type.set("file", {
+  file_id: "string",
+});

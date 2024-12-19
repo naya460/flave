@@ -8,6 +8,7 @@
   import Heading from "./Heading.svelte";
   import RdbView from "./RdbView.svelte";
   import BulletList from "./BulletList.svelte";
+  import File from "./File.svelte";
 
   export let page_id: string;
 
@@ -104,6 +105,23 @@
     }
   }
 
+  function checkFile() {
+    if (
+      block.type === "file" &&
+      typeof block.data === "object" &&
+      block.data !== null &&
+      "file_id" in block.data &&
+      typeof block.data.file_id === "string"
+    ) {
+      return {
+        _id: block._id,
+        file_id: block.data.file_id,
+      };
+    } else {
+      return null;
+    }
+  }
+
   let own: HTMLDivElement;
 
   let text_functions: TextFunctionsType | undefined = undefined;
@@ -169,6 +187,11 @@
       />
     {:else}
       <div>Error: BulletList</div>
+    {/if}
+  {:else if block.type === "file"}
+    {@const block_data = checkFile()}
+    {#if block_data !== null}
+      <File {block_data} bind:own />
     {/if}
   {:else}
     <div>Undefined Block Type</div>

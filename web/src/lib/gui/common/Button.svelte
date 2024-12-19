@@ -51,7 +51,7 @@
   }
 
   .outline {
-    background: none;
+    background-color: #ffffff;
     padding: 0.3rem 0.5rem;
     border-radius: 0.4rem;
     border: 1px solid #bbbbbb;
