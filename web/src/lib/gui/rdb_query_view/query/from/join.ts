@@ -1,6 +1,7 @@
 import type { PropertyHeader } from "$lib/gui/rdb_view/types";
 import { RdbData } from "../../rdb_data/rdb_data";
 import type { RdbResourcesType } from "../rdb_resources";
+import { checkEqual } from "./on";
 
 export type JoinData = {
 	id: string | null;
@@ -48,7 +49,7 @@ export class RdbJoinClause {
 
 	public getJoinedResources(resources: RdbResourcesType): RdbResourcesType {
 		const on = this.join_data.on;
-		if (on === null) {
+		if (on.value1 === null || on.value2 === null) {
 			return resources;
 		}
 
@@ -62,28 +63,27 @@ export class RdbJoinClause {
 		};
 
 		for (const page of resources.page_list) {
-			const target_page_list = this.rdb_resources.page_list.filter((v) =>
-				v.properties?.some((v) => v.id === on.value2)
-			);
-			for (const target_page of target_page_list) {
-				const v1 = page.properties?.find((v) => v.id === on.value1);
-				const v2 = target_page.properties?.find((v) => v.id === on.value2);
-				if (v1 !== undefined && v2 !== undefined && v1?.value === v2?.value) {
-					tmp.page_list.push({
-						_id: null,
-						properties: [
-							...(page.properties === undefined ? [] : page.properties),
-							...(target_page.properties === undefined
-								? []
-								: target_page.properties),
-						],
-						constraints: [
-							...(page.constraints === undefined ? [] : page.constraints),
-							...(target_page.constraints === undefined
-								? []
-								: target_page.constraints),
-						],
-					});
+			if (on.value1 === on.value2) {
+				tmp.page_list.push(page);
+			} else {
+				for (const target_page of this.rdb_resources.page_list) {
+					if (checkEqual(page, target_page, on.value1, on.value2)) {
+						tmp.page_list.push({
+							_id: null,
+							properties: [
+								...(page.properties === undefined ? [] : page.properties),
+								...(target_page.properties === undefined
+									? []
+									: target_page.properties),
+							],
+							constraints: [
+								...(page.constraints === undefined ? [] : page.constraints),
+								...(target_page.constraints === undefined
+									? []
+									: target_page.constraints),
+							],
+						});
+					}
 				}
 			}
 		}
