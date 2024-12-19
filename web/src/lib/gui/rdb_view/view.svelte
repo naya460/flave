@@ -58,6 +58,7 @@
     <Table
       {rdb_id}
       {rdb_query}
+      {filters}
       {set_menu}
       add_page={(id) =>
         rdb_data.getPageList().addPage({

@@ -5,10 +5,16 @@
   import TableHeader from "./table_header.svelte";
   import { workspace_id_store } from "$lib/store/workspace";
   import type { RdbQuery } from "$lib/gui/rdb_query_view/query/query";
+  import { toFilteredPageList } from "../page_list_filter";
 
   export let rdb_id: string | null;
 
   export let rdb_query: RdbQuery;
+
+  export let filters: {
+    id: string;
+    value: string | boolean;
+  }[];
 
   export let menu_enable = true;
 
@@ -42,7 +48,7 @@
       />
     </div>
     {#if $rdb_query.properties.length !== 0}
-      {#each $rdb_query.page_list as page (page)}
+      {#each toFilteredPageList($rdb_query.properties, $rdb_query.page_list, filters) as page (page)}
         <div class="row">
           <TableRow
             properties={$rdb_query.properties}
