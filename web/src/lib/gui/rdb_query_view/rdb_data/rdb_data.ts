@@ -1,8 +1,7 @@
 import { flvFetch } from "$lib/flv_fetch";
-import type { PageList } from "$lib/gui/rdb_view/page_list_filter";
 import type { PropertyHeader } from "$lib/gui/rdb_view/types";
 import type { RdbResourcesType } from "../query/rdb_resources";
-import { RdbPageList } from "../rdb_page_list";
+import { RdbPageList, type PageType } from "../rdb_page_list";
 import { PropertyList } from "./property_list";
 
 export type ConstraintType = {
@@ -28,7 +27,7 @@ export class RdbData {
 	private title: string = "";
 	private properties: PropertyHeader[] = [];
 	private constraints: ConstraintType[] = [];
-	private pages: PageList = [];
+	private pages: PageType[] = [];
 
 	constructor(rdb_id: string | null) {
 		this.property_list.subscribe((v) => {

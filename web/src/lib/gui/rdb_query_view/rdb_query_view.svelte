@@ -23,6 +23,7 @@
       {rdb_query}
       set_menu={() => {}}
       add_page={() => {}}
+      filters={[]}
     />
   </div>
 </Frame>
