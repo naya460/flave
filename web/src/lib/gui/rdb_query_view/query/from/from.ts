@@ -24,7 +24,9 @@ export class RdbFromClause {
 		this.rdb_data = new RdbData(rdb_id);
 
 		this.rdb_data.subscribe((v) => {
-			this.rdb_resources.properties = v.rdb_resources.properties;
+			this.rdb_resources.properties = v.rdb_resources.properties.map(w => {
+				return { ...w, name: `${v.title} . ${w.name}` };
+			});
 			this.rdb_resources.constraints = v.rdb_resources.constraints;
 			this.rdb_resources.page_list = v.rdb_resources.page_list;
 			this.callHooks();

@@ -41,6 +41,9 @@ export class RdbJoinClause {
 		this.rdb_data.subscribe((v) => {
 			this.title = v.title;
 			this.rdb_resources = v.rdb_resources;
+			this.rdb_resources.properties = this.rdb_resources.properties.map(w => {
+				return { ...w, name: `${v.title} . ${w.name}` }
+			});
 			this.callHooks();
 		});
 	}
