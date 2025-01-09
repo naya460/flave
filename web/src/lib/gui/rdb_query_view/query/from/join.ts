@@ -23,6 +23,10 @@ export class RdbJoinClause {
 	private hooks: HookType[] = [];
 
 	private join_data: JoinData;
+	private usable_properties: {
+		id: string;
+		name: string;
+	}[] = [];
 
 	private title: string = "";
 	private rdb_resources: RdbResourcesType = {
@@ -41,6 +45,10 @@ export class RdbJoinClause {
 		});
 	}
 
+	public getUsableProperties() {
+		return this.usable_properties;
+	}
+
 	public updateJoinData(join_data: JoinData) {
 		this.join_data = join_data;
 		this.rdb_data.changeRdb(join_data.id);
@@ -48,6 +56,21 @@ export class RdbJoinClause {
 	}
 
 	public getJoinedResources(resources: RdbResourcesType): RdbResourcesType {
+		this.usable_properties = [
+			...resources.properties.map((v) => {
+				return {
+					id: v.id,
+					name: v.name,
+				};
+			}),
+			...this.rdb_resources.properties.map((v) => {
+				return {
+					id: v.id,
+					name: v.name,
+				};
+			}),
+		];
+
 		const on = this.join_data.on;
 		if (on.value1 === null || on.value2 === null) {
 			return resources;

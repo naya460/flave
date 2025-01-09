@@ -73,7 +73,7 @@
       {/each}
     </ContextMenu>
     {#each $rdb_from_clause.join_list as join_clause}
-      <Join {rdb_list} rdb_data={rdb_from_clause.getRdbData()} {join_clause} />
+      <Join {rdb_list} {join_clause} />
     {/each}
   </div>
 </Frame>

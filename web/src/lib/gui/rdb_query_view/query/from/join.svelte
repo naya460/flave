@@ -2,12 +2,10 @@
   import Button from "$lib/gui/common/Button.svelte";
   import ContextMenu from "$lib/gui/common/ContextMenu.svelte";
   import Frame from "../../frame.svelte";
-  import type { RdbData } from "../../rdb_data/rdb_data";
   import type { RdbList } from "../../rdb_list";
   import type { RdbJoinClause } from "./join";
 
   export let rdb_list: RdbList;
-  export let rdb_data: RdbData;
   export let join_clause: RdbJoinClause;
 
   let rdb_list_hidden = true;
@@ -78,15 +76,16 @@
             <div>
               {$join_clause.join_data.on.value1 === null
                 ? ""
-                : $rdb_data.rdb_resources.properties.find(
-                    (v) => v.id === $join_clause.join_data.on.value1
-                  )?.name}
+                : join_clause
+                    .getUsableProperties()
+                    .find((v) => v.id === $join_clause.join_data.on.value1)
+                    ?.name}
             </div>
             <div>v</div>
           </div>
         </Button>
         <ContextMenu bind:hidden={value1_hidden}>
-          {#each $rdb_data.rdb_resources.properties as item}
+          {#each join_clause.getUsableProperties() as item}
             <Button
               style={{
                 buttonStyle: "text",
@@ -127,15 +126,16 @@
             <div>
               {$join_clause.join_data.on.value2 === null
                 ? ""
-                : $join_clause.abailable_properties.find(
-                    (v) => v.id === $join_clause.join_data.on.value2
-                  )?.name}
+                : join_clause
+                    .getUsableProperties()
+                    .find((v) => v.id === $join_clause.join_data.on.value2)
+                    ?.name}
             </div>
             <div>v</div>
           </div>
         </Button>
         <ContextMenu bind:hidden={value2_hidden}>
-          {#each $join_clause.abailable_properties as item}
+          {#each join_clause.getUsableProperties() as item}
             <Button
               style={{
                 buttonStyle: "text",
