@@ -13,7 +13,7 @@
   let value1_hidden = true;
   let value2_hidden = true;
 
-  const join_type_list = ["INNER", "LEFT"] as const;
+  const join_type_list = ["INNER", "LEFT", "RIGHT"] as const;
 </script>
 
 <Frame>

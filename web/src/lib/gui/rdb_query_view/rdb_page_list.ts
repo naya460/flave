@@ -64,7 +64,7 @@ export class RdbPageList {
 		// add page property
 		for (const page of original_page_list) {
 			const new_page: PageType = {
-				_id: this.rdb_id,
+				_id: page._id,
 				properties: [
 					{
 						id: this.rdb_id,

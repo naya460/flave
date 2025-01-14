@@ -1,11 +1,12 @@
 import type { PropertyHeader } from "$lib/gui/rdb_view/types";
 import { RdbData } from "../../rdb_data/rdb_data";
+import type { PageType } from "../../rdb_page_list";
 import type { RdbResourcesType } from "../rdb_resources";
 import { checkEqual } from "./on";
 
 export type JoinData = {
 	id: string | null;
-	type: "INNER" | "LEFT";
+	type: "INNER" | "LEFT" | "RIGHT";
 	on: {
 		value1: string | null;
 		value2: string | null;
@@ -89,8 +90,11 @@ export class RdbJoinClause {
 			page_list: [],
 		};
 
+		const right_not_joined: PageType[] = [...this.rdb_resources.page_list];
+
 		for (const page of resources.page_list) {
 			let joined = false;
+
 			for (const target_page of this.rdb_resources.page_list) {
 				if (checkEqual(page, target_page, on.value1, on.value2)) {
 					tmp.page_list.push({
@@ -108,14 +112,29 @@ export class RdbJoinClause {
 								: target_page.constraints),
 						],
 					});
+
 					joined = true;
+
+					if (this.join_data.type === "RIGHT") {
+						const index = right_not_joined.findIndex(
+							(v) => v._id === target_page._id
+						);
+						if (index !== -1) {
+							right_not_joined.splice(index, 1);
+						}
+					}
 				}
 			}
+
 			if (joined === false) {
 				if (this.join_data.type === "LEFT") {
 					tmp.page_list.push(page);
 				}
 			}
+		}
+
+		if (this.join_data.type === "RIGHT") {
+			tmp.page_list = [...tmp.page_list, ...right_not_joined];
 		}
 
 		return tmp;
