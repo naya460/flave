@@ -29,7 +29,7 @@ export class RdbFromClause {
 			if (this.join_list.length === 0) {
 				this.rdb_resources.properties = v.rdb_resources.properties;
 			} else {
-				this.rdb_resources.properties = v.rdb_resources.properties.map(w => {
+				this.rdb_resources.properties = v.rdb_resources.properties.map((w) => {
 					return { ...w, name: `${v.title} . ${w.name}` };
 				});
 			}
@@ -54,15 +54,16 @@ export class RdbFromClause {
 
 	public addJoin(
 		id: string | null,
+		type: "INNER" | "LEFT",
 		on: { value1: string | null; value2: string | null }
 	) {
 		if (this.join_list.length === 0) {
-			this.rdb_resources.properties = this.rdb_resources.properties.map(v => {
+			this.rdb_resources.properties = this.rdb_resources.properties.map((v) => {
 				return { ...v, name: `${this.from_title} . ${v.name}` };
 			});
 		}
 
-		const join_clause = new RdbJoinClause({ id, on });
+		const join_clause = new RdbJoinClause({ id, type, on });
 		this.join_list.push(join_clause);
 		join_clause.subscribe(() => {
 			this.callHooks();

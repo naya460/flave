@@ -28,7 +28,10 @@
       <Button
         style={heading_style}
         on:click={() => {
-          rdb_from_clause.addJoin(null, { value1: null, value2: null });
+          rdb_from_clause.addJoin(null, "INNER", {
+            value1: null,
+            value2: null,
+          });
         }}
       >
         +

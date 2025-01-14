@@ -5,6 +5,7 @@ import { checkEqual } from "./on";
 
 export type JoinData = {
 	id: string | null;
+	type: "INNER" | "LEFT";
 	on: {
 		value1: string | null;
 		value2: string | null;
@@ -41,8 +42,8 @@ export class RdbJoinClause {
 		this.rdb_data.subscribe((v) => {
 			this.title = v.title;
 			this.rdb_resources = v.rdb_resources;
-			this.rdb_resources.properties = this.rdb_resources.properties.map(w => {
-				return { ...w, name: `${v.title} . ${w.name}` }
+			this.rdb_resources.properties = this.rdb_resources.properties.map((w) => {
+				return { ...w, name: `${v.title} . ${w.name}` };
 			});
 			this.callHooks();
 		});
@@ -89,27 +90,30 @@ export class RdbJoinClause {
 		};
 
 		for (const page of resources.page_list) {
-			if (on.value1 === on.value2) {
-				tmp.page_list.push(page);
-			} else {
-				for (const target_page of this.rdb_resources.page_list) {
-					if (checkEqual(page, target_page, on.value1, on.value2)) {
-						tmp.page_list.push({
-							_id: null,
-							properties: [
-								...(page.properties === undefined ? [] : page.properties),
-								...(target_page.properties === undefined
-									? []
-									: target_page.properties),
-							],
-							constraints: [
-								...(page.constraints === undefined ? [] : page.constraints),
-								...(target_page.constraints === undefined
-									? []
-									: target_page.constraints),
-							],
-						});
-					}
+			let joined = false;
+			for (const target_page of this.rdb_resources.page_list) {
+				if (checkEqual(page, target_page, on.value1, on.value2)) {
+					tmp.page_list.push({
+						_id: null,
+						properties: [
+							...(page.properties === undefined ? [] : page.properties),
+							...(target_page.properties === undefined
+								? []
+								: target_page.properties),
+						],
+						constraints: [
+							...(page.constraints === undefined ? [] : page.constraints),
+							...(target_page.constraints === undefined
+								? []
+								: target_page.constraints),
+						],
+					});
+					joined = true;
+				}
+			}
+			if (joined === false) {
+				if (this.join_data.type === "LEFT") {
+					tmp.page_list.push(page);
 				}
 			}
 		}
