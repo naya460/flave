@@ -12,6 +12,7 @@ export class RdbFromClause {
 
 	private hooks: HookType[] = [];
 
+	private from_title: string = "";
 	private rdb_resources: RdbResourcesType = {
 		properties: [],
 		constraints: [],
@@ -24,9 +25,15 @@ export class RdbFromClause {
 		this.rdb_data = new RdbData(rdb_id);
 
 		this.rdb_data.subscribe((v) => {
-			this.rdb_resources.properties = v.rdb_resources.properties.map(w => {
-				return { ...w, name: `${v.title} . ${w.name}` };
-			});
+			this.from_title = v.title;
+			if (this.join_list.length === 0) {
+				this.rdb_resources.properties = v.rdb_resources.properties;
+			} else {
+				this.rdb_resources.properties = v.rdb_resources.properties.map(w => {
+					return { ...w, name: `${v.title} . ${w.name}` };
+				});
+			}
+
 			this.rdb_resources.constraints = v.rdb_resources.constraints;
 			this.rdb_resources.page_list = v.rdb_resources.page_list;
 			this.callHooks();
@@ -49,6 +56,12 @@ export class RdbFromClause {
 		id: string | null,
 		on: { value1: string | null; value2: string | null }
 	) {
+		if (this.join_list.length === 0) {
+			this.rdb_resources.properties = this.rdb_resources.properties.map(v => {
+				return { ...v, name: `${this.from_title} . ${v.name}` };
+			});
+		}
+
 		const join_clause = new RdbJoinClause({ id, on });
 		this.join_list.push(join_clause);
 		join_clause.subscribe(() => {
