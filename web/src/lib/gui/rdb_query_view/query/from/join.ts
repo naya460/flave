@@ -6,7 +6,7 @@ import { checkEqual } from "./on";
 
 export type JoinData = {
 	id: string | null;
-	type: "INNER" | "LEFT" | "RIGHT";
+	type: "INNER" | "LEFT" | "RIGHT" | "FULL";
 	on: {
 		value1: string | null;
 		value2: string | null;
@@ -115,7 +115,10 @@ export class RdbJoinClause {
 
 					joined = true;
 
-					if (this.join_data.type === "RIGHT") {
+					if (
+						this.join_data.type === "RIGHT" ||
+						this.join_data.type === "FULL"
+					) {
 						const index = right_not_joined.findIndex(
 							(v) => v._id === target_page._id
 						);
@@ -127,13 +130,13 @@ export class RdbJoinClause {
 			}
 
 			if (joined === false) {
-				if (this.join_data.type === "LEFT") {
+				if (this.join_data.type === "LEFT" || this.join_data.type === "FULL") {
 					tmp.page_list.push(page);
 				}
 			}
 		}
 
-		if (this.join_data.type === "RIGHT") {
+		if (this.join_data.type === "RIGHT" || this.join_data.type === "FULL") {
 			tmp.page_list = [...tmp.page_list, ...right_not_joined];
 		}
 
