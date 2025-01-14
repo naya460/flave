@@ -22,90 +22,77 @@
 {#if property_list !== undefined}
   {#each $rdb_select_clause.rdb_select_resources.display_properties as property (property.id)}
     <div class="item">
-      {#if property.type === "page"}
-        <div
-          class="item"
-          style:padding="0.2rem 0.5rem"
-          style:box-sizing="border-box"
-        >
-          page
-        </div>
-      {:else}
-        <ContextMenu
-          hidden={property.id !== context_id}
-          hide_parent={() => {
+      <ContextMenu
+        hidden={property.id !== context_id}
+        hide_parent={() => {
+          context_id = null;
+        }}
+      >
+        <TextInput
+          style={{ outline: false }}
+          value={property.name}
+          onChange={async (event) => {
+            if (menu_enable === false) return;
+
+            const value = event.currentTarget.value;
+            await flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
+              name: value,
+            });
+            property_list.renameProperty(property.id, value);
             context_id = null;
           }}
-        >
-          <TextInput
-            style={{ outline: false }}
-            value={property.name}
-            onChange={async (event) => {
-              if (menu_enable === false) return;
-
-              const value = event.currentTarget.value;
-              await flvFetch(
-                `rdbs/${rdb_id}/property/${property.id}`,
-                "PATCH",
-                {
-                  name: value,
-                }
-              );
-              property_list.renameProperty(property.id, value);
-              context_id = null;
-            }}
-          />
-          {#if property.type === "relation"}
-            <div style:display="flex" style:flex-direction="row">
-              <input
-                type="checkbox"
-                checked={(() => {
+        />
+        {#if property.type === "relation"}
+          <div style:display="flex" style:flex-direction="row">
+            <input
+              type="checkbox"
+              checked={(() => {
+                if (
+                  typeof property.option === "object" &&
+                  property.option !== null
+                ) {
                   if (
-                    typeof property.option === "object" &&
-                    property.option !== null
+                    "only" in property.option &&
+                    typeof property.option.only === "boolean"
                   ) {
-                    if (
-                      "only" in property.option &&
-                      typeof property.option.only === "boolean"
-                    ) {
-                      return property.option.only;
-                    }
+                    return property.option.only;
                   }
-                  return false;
-                })()}
-                on:change={(event) => {
-                  if (menu_enable === false) return;
+                }
+                return false;
+              })()}
+              on:change={(event) => {
+                if (menu_enable === false) return;
 
-                  property_list.setPropertyOption(property.id, {
-                    rdb_id: property.option.rdb,
+                property_list.setPropertyOption(property.id, {
+                  rdb_id: property.option.rdb,
+                  only: event.currentTarget.checked,
+                });
+
+                flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
+                  option: {
                     only: event.currentTarget.checked,
-                  });
-
-                  flvFetch(`rdbs/${rdb_id}/property/${property.id}`, "PATCH", {
-                    option: {
-                      only: event.currentTarget.checked,
-                    },
-                  });
-                }}
-              />
-              <div>only</div>
-            </div>
-          {/if}
-        </ContextMenu>
-        <Button
-          style={{
-            buttonStyle: "text",
-            width: "100%",
-            textAlign: "left",
-          }}
-          on:click={() => {
-            if (menu_enable === false) return;
-            context_id = property.id;
-          }}
-        >
-          {property.name}
-        </Button>
-      {/if}
+                  },
+                });
+              }}
+            />
+            <div>only</div>
+          </div>
+        {/if}
+      </ContextMenu>
+      <Button
+        style={{
+          buttonStyle: "text",
+          width: "100%",
+          textAlign: "left",
+        }}
+        on:click={() => {
+          if (property.type === "page") return;
+          if (menu_enable === false) return;
+          context_id = property.id;
+        }}
+      >
+        {property.name}
+      </Button>
     </div>
   {/each}
 {/if}
