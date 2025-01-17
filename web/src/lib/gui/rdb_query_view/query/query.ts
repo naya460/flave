@@ -1,6 +1,7 @@
 import { RdbFromClause } from "./from/from";
 import type { RdbResourcesType } from "./rdb_resources";
 import { RdbSelectClause } from "./select";
+import { RdbWhereClause } from "./where";
 
 type HookType = (v: RdbResourcesType) => void;
 
@@ -11,6 +12,14 @@ export class RdbQuery {
 		constraints: [],
 		page_list: [],
 	});
+	private rdb_where = new RdbWhereClause(
+		{
+			properties: [],
+			constraints: [],
+			page_list: [],
+		},
+		[]
+	);
 
 	private hooks: HookType[] = [];
 
@@ -24,8 +33,14 @@ export class RdbQuery {
 		this.rdb_from = new RdbFromClause(rdb_id);
 
 		this.rdb_from.subscribe((v) => {
-			this.rdb_select.updateRdbResources(v.resources);
+			this.rdb_where.updateRdbResources(v.resources);
 		});
+
+		this.rdb_where.subscribe((v) => {
+			this.rdb_select.updateRdbResources(v.resources);
+			this.callHooks();
+		});
+
 		this.rdb_select.subscribe((v) => {
 			this.rdb_resources = v.rdb_resources;
 			this.callHooks();
@@ -42,6 +57,10 @@ export class RdbQuery {
 
 	public getRdbSelectClause() {
 		return this.rdb_select;
+	}
+
+	public getRdbWhereClause() {
+		return this.rdb_where;
 	}
 
 	public subscribe(hook: HookType) {
